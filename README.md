@@ -21,6 +21,8 @@ This hardening release closes trust-boundary and recovery defects that could pre
 
 The detailed independent-style engineering review is in `docs/audit/Project_Daybreak_v1.0.2_Elite_Review.md`.
 
+A follow-up independent audit (`docs/audit/Project_Daybreak_v1.0.2_Independent_Audit_2026-08-02.md`) re-verified that review's findings against the current tree and found two new Critical gaps — reconciliation not checking bracket legs, and an unguarded alert call able to skip the emergency flatten — plus several related High findings. Read it before treating this tree as ready for target-environment paper qualification.
+
 ## Architecture
 
 | Layer | Responsibility | Primary safety property |
