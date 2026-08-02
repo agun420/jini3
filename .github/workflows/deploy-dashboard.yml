@@ -1,0 +1,62 @@
+name: Deploy Daybreak Dashboard
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "dashboard/**"
+      - "scripts/validate_dashboard.py"
+      - "tests/dashboard/**"
+      - ".github/workflows/deploy-dashboard.yml"
+  pull_request:
+    paths:
+      - "dashboard/**"
+      - "scripts/validate_dashboard.py"
+      - "tests/dashboard/**"
+      - ".github/workflows/deploy-dashboard.yml"
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Validate static artifact (secrets, inline scripts, external assets, path escapes)
+        run: python scripts/validate_dashboard.py
+      - name: Check JavaScript module syntax
+        run: |
+          node --check dashboard/assets/data.mjs
+          node --check dashboard/assets/app.mjs
+      - name: Run data-layer tests
+        run: node --test tests/dashboard/*.test.mjs
+
+  deploy:
+    if: github.event_name != 'pull_request'
+    needs: validate
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dashboard
+      - id: deployment
+        uses: actions/deploy-pages@v4

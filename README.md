@@ -111,6 +111,14 @@ daybreak production-review \
 
 Exit code `0` from `production-review` means only that the supplied paper-release evidence passed its deterministic policy. Approval records identify claimed reviewers but are not digital identity signatures; the organization must authenticate reviewers and preserve the signed or access-controlled approval record externally.
 
+## Dashboard
+
+`dashboard/` is a read-only GitHub Pages site — the Daybreak Command Center — with Overview,
+Trading, Performance, and System views over a JSON snapshot. It has no broker client, order
+controls, or third-party runtime dependencies, and ships with fictional public-safe demo data. See
+`dashboard/README.md` for local preview, verification, and publishing instructions, and the
+"Dashboard" section of `SECURITY.md` for its public-data boundary.
+
 ## Qualification boundary
 
 The repository is offline-verified software, not proof of target-environment readiness. No automated test in this package contacts Alpaca, OpenAI, SEC, or a production PostgreSQL instance. Paper qualification still requires the target-VM campaign: 30 complete sessions, at least 50 fully reconciled paper fills, authenticated paper-account and database checks, replay hashes, restore validation, NTP evidence, required failure drills, and final human approvals over the exact v1.0.2 evidence package.

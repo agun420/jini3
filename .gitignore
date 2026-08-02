@@ -38,3 +38,8 @@ config/daybreak.paper.toml
 Thumbs.db
 .vscode/
 .idea/
+
+# Dashboard — never commit a private snapshot
+dashboard/data/private*.json
+dashboard/data/local*.json
+*.log
