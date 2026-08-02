@@ -114,8 +114,10 @@ Exit code `0` from `production-review` means only that the supplied paper-releas
 ## Dashboard
 
 `dashboard/` is a read-only GitHub Pages site — the Daybreak Command Center — with Overview,
-Trading, Performance, and System views over a JSON snapshot. It has no broker client, order
-controls, or third-party runtime dependencies, and ships with fictional public-safe demo data. See
+Trading, Performance, and System views over a JSON snapshot, including a searchable setup ledger
+with decision-detail dialogs, a risk gauge, an equity/drawdown chart, and a live freshness
+indicator. It has no broker client, order controls, or third-party runtime dependencies, ships a
+strict Content-Security-Policy, and ships with fictional public-safe demo data. See
 `dashboard/README.md` for local preview, verification, and publishing instructions, and the
 "Dashboard" section of `SECURITY.md` for its public-data boundary.
 

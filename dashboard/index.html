@@ -1,52 +1,526 @@
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Daybreak Command Center</title>
-  <meta name="description" content="Read-only paper-trading dashboard for Project Daybreak." />
-  <meta name="robots" content="noindex" />
-  <link rel="stylesheet" href="./assets/styles.css" />
-</head>
-<body>
-  <div class="viz-root">
-    <header class="topbar">
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'; frame-ancestors 'none'"
+    >
+    <meta name="color-scheme" content="dark light">
+    <meta name="theme-color" content="#07111f">
+    <meta
+      name="description"
+      content="Project Daybreak paper-trading command center for system health, risk, signals, performance, and qualification evidence."
+    >
+    <title>Daybreak Command Center</title>
+    <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="assets/styles.css">
+    <script type="module" src="assets/app.mjs"></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">Skip to dashboard</a>
+
+    <aside class="sidebar" aria-label="Primary navigation">
       <div class="brand">
-        <span class="brand-mark" aria-hidden="true"></span>
-        <span class="brand-name">Daybreak Command Center</span>
+        <span class="brand-mark" aria-hidden="true">
+          <span class="brand-sun"></span>
+          <span class="brand-line"></span>
+        </span>
+        <span>
+          <strong>DAYBREAK</strong>
+          <small>Command Center</small>
+        </span>
       </div>
-      <nav class="tabs" role="tablist" aria-label="Dashboard views">
-        <button class="tab is-active" type="button" role="tab" data-view="overview" aria-selected="true">Overview</button>
-        <button class="tab" type="button" role="tab" data-view="trading" aria-selected="false">Trading</button>
-        <button class="tab" type="button" role="tab" data-view="performance" aria-selected="false">Performance</button>
-        <button class="tab" type="button" role="tab" data-view="system" aria-selected="false">System</button>
+
+      <div class="mode-card" role="group" aria-label="Execution mode">
+        <span class="mode-dot"></span>
+        <span>
+          <small>Environment</small>
+          <strong id="sidebar-mode">Paper only</strong>
+        </span>
+      </div>
+
+      <nav class="nav-list">
+        <button class="nav-item is-active" type="button" data-view="overview" aria-current="page">
+          <span class="nav-icon" aria-hidden="true">⌂</span>
+          <span>Overview</span>
+        </button>
+        <button class="nav-item" type="button" data-view="trading">
+          <span class="nav-icon" aria-hidden="true">↗</span>
+          <span>Trading</span>
+          <span class="nav-count" id="nav-signal-count">0</span>
+        </button>
+        <button class="nav-item" type="button" data-view="performance">
+          <span class="nav-icon" aria-hidden="true">⌁</span>
+          <span>Performance</span>
+        </button>
+        <button class="nav-item" type="button" data-view="system">
+          <span class="nav-icon" aria-hidden="true">◎</span>
+          <span>System</span>
+          <span class="nav-alert-dot" id="nav-alert-dot" hidden></span>
+        </button>
       </nav>
-      <div class="source-controls">
-        <span id="source-label" class="source-label">Loading…</span>
-        <label class="file-button">
-          Load private snapshot
-          <input id="private-file-input" type="file" accept="application/json" />
-        </label>
-        <button id="reset-source-button" class="ghost-button" type="button" hidden>Return to demo data</button>
+
+      <div class="sidebar-footer">
+        <button class="utility-button" id="theme-toggle" type="button" aria-label="Switch color theme">
+          <span aria-hidden="true">◐</span>
+          <span>Theme</span>
+        </button>
+        <div class="sidebar-version">
+          <span>Core</span>
+          <strong id="sidebar-version">v—</strong>
+        </div>
       </div>
-    </header>
+    </aside>
 
-    <main id="app">
-      <section id="view-overview" class="view" data-view="overview"></section>
-      <section id="view-trading" class="view" data-view="trading" hidden></section>
-      <section id="view-performance" class="view" data-view="performance" hidden></section>
-      <section id="view-system" class="view" data-view="system" hidden></section>
-    </main>
+    <div class="app-shell">
+      <header class="topbar">
+        <div class="mobile-brand">
+          <span class="brand-mark brand-mark-small" aria-hidden="true">
+            <span class="brand-sun"></span>
+            <span class="brand-line"></span>
+          </span>
+          <strong>DAYBREAK</strong>
+        </div>
+        <div class="page-heading">
+          <p class="eyebrow" id="page-eyebrow">Live operating picture</p>
+          <h1 id="page-title">Command Center</h1>
+        </div>
+        <div class="topbar-actions">
+          <div class="freshness-chip" id="freshness-chip" data-status="loading" role="status">
+            <span class="status-dot"></span>
+            <span id="freshness-text">Loading snapshot</span>
+          </div>
+          <button class="icon-button" id="refresh-button" type="button" aria-label="Refresh published snapshot" title="Refresh published snapshot">
+            <span aria-hidden="true">↻</span>
+          </button>
+          <button class="primary-button" id="load-file-button" type="button">
+            <span aria-hidden="true">＋</span>
+            Load private snapshot
+          </button>
+          <input id="snapshot-file" type="file" accept="application/json,.json" hidden>
+        </div>
+      </header>
 
-    <footer class="foot">
-      <p>
-        Informational only. This dashboard cannot place orders, reset a kill switch, change risk
-        limits, connect to a broker, or enable live capital. A private snapshot loaded above stays
-        in this browser tab's memory only and is never uploaded or retained by the page.
-      </p>
-    </footer>
-  </div>
+      <main id="main-content" tabindex="-1">
+        <section class="source-banner" id="source-banner" data-mode="loading" aria-live="polite">
+          <div class="source-banner-icon" aria-hidden="true">i</div>
+          <div>
+            <strong id="source-banner-title">Loading dashboard data</strong>
+            <p id="source-banner-message">Checking the published snapshot.</p>
+          </div>
+          <button class="text-button" id="restore-published-button" type="button" hidden>
+            Return to published data
+          </button>
+        </section>
 
-  <script type="module" src="./assets/app.mjs"></script>
-</body>
+        <section class="view is-active" id="view-overview" data-view-panel="overview" aria-label="Command Center overview">
+          <div class="status-strip" id="status-strip">
+            <article class="status-strip-item">
+              <span class="status-label">Session state</span>
+              <strong id="session-state">—</strong>
+              <small id="session-clock">—</small>
+            </article>
+            <article class="status-strip-item">
+              <span class="status-label">Market</span>
+              <strong id="market-status">—</strong>
+              <small id="market-detail">—</small>
+            </article>
+            <article class="status-strip-item">
+              <span class="status-label">Safety state</span>
+              <strong id="safety-state">—</strong>
+              <small id="safety-detail">—</small>
+            </article>
+            <article class="status-strip-item">
+              <span class="status-label">Data observed</span>
+              <strong id="observed-time">—</strong>
+              <small id="observed-date">—</small>
+            </article>
+          </div>
+
+          <div class="kpi-grid" id="overview-kpis" role="group" aria-label="Key session metrics"></div>
+
+          <div class="dashboard-grid dashboard-grid-primary">
+            <article class="panel panel-span-8">
+              <header class="panel-header">
+                <div>
+                  <p class="panel-kicker">Paper equity</p>
+                  <h2>Performance curve</h2>
+                </div>
+                <div class="panel-stat">
+                  <span id="equity-period-label">30 sessions</span>
+                  <strong id="equity-change">—</strong>
+                </div>
+              </header>
+              <div class="chart chart-large" id="equity-chart" role="img" aria-label="Paper account equity curve"></div>
+              <footer class="chart-footer" id="equity-chart-footer"></footer>
+            </article>
+
+            <article class="panel panel-span-4 risk-panel">
+              <header class="panel-header">
+                <div>
+                  <p class="panel-kicker">Capital protection</p>
+                  <h2>Risk budget</h2>
+                </div>
+                <span class="pill pill-neutral" id="risk-state-pill">—</span>
+              </header>
+              <div class="risk-gauge-wrap">
+                <div class="risk-gauge" id="risk-gauge" role="img" aria-label="Open risk utilization">
+                  <div class="risk-gauge-inner">
+                    <strong id="risk-gauge-value">—</strong>
+                    <span>open risk used</span>
+                  </div>
+                </div>
+              </div>
+              <dl class="metric-list" id="risk-metrics"></dl>
+            </article>
+          </div>
+
+          <div class="dashboard-grid">
+            <article class="panel panel-span-8">
+              <header class="panel-header">
+                <div>
+                  <p class="panel-kicker">Evaluator → risk → execution</p>
+                  <h2>Today’s setup board</h2>
+                </div>
+                <button class="text-button" type="button" data-go-view="trading">View all setups →</button>
+              </header>
+              <div class="setup-board" id="setup-board"></div>
+            </article>
+
+            <article class="panel panel-span-4">
+              <header class="panel-header">
+                <div>
+                  <p class="panel-kicker">Nine-layer stack</p>
+                  <h2>System pulse</h2>
+                </div>
+                <button class="text-button" type="button" data-go-view="system">Inspect →</button>
+              </header>
+              <div class="service-compact-list" id="service-compact-list"></div>
+            </article>
+          </div>
+
+          <div class="dashboard-grid">
+            <article class="panel panel-span-7">
+              <header class="panel-header">
+                <div>
+                  <p class="panel-kicker">Target-environment campaign</p>
+                  <h2>Paper qualification</h2>
+                </div>
+                <strong class="panel-score" id="qualification-score">—</strong>
+              </header>
+              <div class="qualification-summary">
+                <div class="progress-track progress-track-large" aria-hidden="true">
+                  <span id="qualification-progress"></span>
+                </div>
+                <p id="qualification-summary-text">—</p>
+              </div>
+              <div class="milestone-grid" id="qualification-preview"></div>
+            </article>
+
+            <article class="panel panel-span-5">
+              <header class="panel-header">
+                <div>
+                  <p class="panel-kicker">Requires attention</p>
+                  <h2>Alert desk</h2>
+                </div>
+                <span class="pill" id="alert-count-pill">0 open</span>
+              </header>
+              <div class="alert-list" id="alert-preview"></div>
+            </article>
+          </div>
+        </section>
+
+        <section class="view" id="view-trading" data-view-panel="trading" aria-label="Trading Desk" hidden>
+          <div class="section-toolbar">
+            <div class="segmented-control" id="trading-tabs" role="group" aria-label="Trading data view">
+              <button class="is-active" type="button" data-trading-tab="signals">Setups</button>
+              <button type="button" data-trading-tab="positions">Positions</button>
+              <button type="button" data-trading-tab="orders">Orders</button>
+            </div>
+            <div class="filter-group" id="signal-filters">
+              <label class="search-field">
+                <span class="sr-only">Search setups</span>
+                <span aria-hidden="true">⌕</span>
+                <input id="signal-search" type="search" placeholder="Search ticker or catalyst" autocomplete="off">
+              </label>
+              <label class="select-field">
+                <span class="sr-only">Filter setup status</span>
+                <select id="signal-status-filter">
+                  <option value="all">All statuses</option>
+                  <option value="approved">Approved</option>
+                  <option value="qualified">Qualified</option>
+                  <option value="excluded">Excluded</option>
+                </select>
+              </label>
+            </div>
+          </div>
+
+          <div class="trading-panel is-active" data-trading-panel="signals">
+            <div class="kpi-grid kpi-grid-compact" id="trading-kpis"></div>
+            <article class="panel table-panel">
+              <header class="panel-header">
+                <div>
+                  <p class="panel-kicker">Ranked at eligibility lock</p>
+                  <h2>Setup ledger</h2>
+                </div>
+                <span class="table-count" id="signal-table-count">0 setups</span>
+              </header>
+              <div class="table-scroll">
+                <table>
+                  <thead>
+                    <tr>
+                      <th scope="col">Rank / ticker</th>
+                      <th scope="col">Decision</th>
+                      <th scope="col">Score</th>
+                      <th scope="col">Technical</th>
+                      <th scope="col">Entry</th>
+                      <th scope="col">Stop</th>
+                      <th scope="col">Target</th>
+                      <th scope="col">Risk</th>
+                      <th scope="col"><span class="sr-only">Details</span></th>
+                    </tr>
+                  </thead>
+                  <tbody id="signal-table-body"></tbody>
+                </table>
+              </div>
+              <div class="empty-state" id="signal-empty" hidden>
+                <span aria-hidden="true">⌕</span>
+                <h3>No setups match</h3>
+                <p>Clear the search or choose a different status.</p>
+              </div>
+            </article>
+          </div>
+
+          <div class="trading-panel" data-trading-panel="positions" hidden>
+            <div class="kpi-grid kpi-grid-compact" id="position-kpis"></div>
+            <article class="panel table-panel">
+              <header class="panel-header">
+                <div>
+                  <p class="panel-kicker">Broker-reconciled holdings</p>
+                  <h2>Managed positions</h2>
+                </div>
+                <span class="pill" id="positions-flat-pill">—</span>
+              </header>
+              <div class="position-grid" id="position-grid"></div>
+            </article>
+          </div>
+
+          <div class="trading-panel" data-trading-panel="orders" hidden>
+            <div class="kpi-grid kpi-grid-compact" id="order-kpis"></div>
+            <article class="panel table-panel">
+              <header class="panel-header">
+                <div>
+                  <p class="panel-kicker">Owned Daybreak orders only</p>
+                  <h2>Order ledger</h2>
+                </div>
+                <span class="table-count" id="order-table-count">0 orders</span>
+              </header>
+              <div class="table-scroll">
+                <table>
+                  <thead>
+                    <tr>
+                      <th scope="col">Time</th>
+                      <th scope="col">Ticker</th>
+                      <th scope="col">Side</th>
+                      <th scope="col">Type</th>
+                      <th scope="col">Quantity</th>
+                      <th scope="col">Price</th>
+                      <th scope="col">Status</th>
+                      <th scope="col">Order ID</th>
+                    </tr>
+                  </thead>
+                  <tbody id="order-table-body"></tbody>
+                </table>
+              </div>
+              <div class="empty-state" id="order-empty" hidden>
+                <span aria-hidden="true">✓</span>
+                <h3>No orders in this snapshot</h3>
+                <p>The order ledger is currently empty.</p>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section class="view" id="view-performance" data-view-panel="performance" aria-label="Performance analysis" hidden>
+          <div class="kpi-grid" id="performance-kpis"></div>
+
+          <div class="dashboard-grid dashboard-grid-primary">
+            <article class="panel panel-span-8">
+              <header class="panel-header">
+                <div>
+                  <p class="panel-kicker">Cumulative paper results</p>
+                  <h2>Equity and drawdown</h2>
+                </div>
+                <div class="legend-inline">
+                  <span><i class="legend-line legend-line-primary"></i> Equity</span>
+                  <span><i class="legend-line legend-line-danger"></i> Drawdown</span>
+                </div>
+              </header>
+              <div class="chart chart-large" id="performance-chart" role="img" aria-label="Equity and drawdown chart"></div>
+            </article>
+
+            <article class="panel panel-span-4">
+              <header class="panel-header">
+                <div>
+                  <p class="panel-kicker">Outcome quality</p>
+                  <h2>Trade distribution</h2>
+                </div>
+              </header>
+              <div class="donut-layout">
+                <div class="donut" id="outcome-donut" role="img" aria-label="Win loss and breakeven distribution">
+                  <div>
+                    <strong id="donut-win-rate">—</strong>
+                    <span>win rate</span>
+                  </div>
+                </div>
+                <dl class="donut-legend" id="outcome-legend"></dl>
+              </div>
+              <dl class="metric-list" id="performance-metric-list"></dl>
+            </article>
+          </div>
+
+          <div class="dashboard-grid">
+            <article class="panel panel-span-7">
+              <header class="panel-header">
+                <div>
+                  <p class="panel-kicker">Session-by-session</p>
+                  <h2>Daily paper P&amp;L</h2>
+                </div>
+              </header>
+              <div class="chart" id="daily-pnl-chart" role="img" aria-label="Daily paper profit and loss bar chart"></div>
+            </article>
+
+            <article class="panel panel-span-5">
+              <header class="panel-header">
+                <div>
+                  <p class="panel-kicker">What is working</p>
+                  <h2>Attribution</h2>
+                </div>
+              </header>
+              <div class="attribution-list" id="attribution-list"></div>
+            </article>
+          </div>
+
+          <article class="panel table-panel">
+            <header class="panel-header">
+              <div>
+                <p class="panel-kicker">Closed positions</p>
+                <h2>Recent trade outcomes</h2>
+              </div>
+              <span class="table-count" id="trade-table-count">0 trades</span>
+            </header>
+            <div class="table-scroll">
+              <table>
+                <thead>
+                  <tr>
+                    <th scope="col">Date</th>
+                    <th scope="col">Ticker</th>
+                    <th scope="col">Rank</th>
+                    <th scope="col">Entry</th>
+                    <th scope="col">Exit</th>
+                    <th scope="col">Net P&amp;L</th>
+                    <th scope="col">R multiple</th>
+                    <th scope="col">Exit reason</th>
+                  </tr>
+                </thead>
+                <tbody id="trade-table-body"></tbody>
+              </table>
+            </div>
+          </article>
+        </section>
+
+        <section class="view" id="view-system" data-view-panel="system" aria-label="System and safety" hidden>
+          <div class="system-summary" id="system-summary"></div>
+
+          <div class="dashboard-grid">
+            <article class="panel panel-span-8">
+              <header class="panel-header">
+                <div>
+                  <p class="panel-kicker">Runtime stack</p>
+                  <h2>Service health</h2>
+                </div>
+                <span class="pill" id="service-health-pill">—</span>
+              </header>
+              <div class="service-grid" id="service-grid"></div>
+            </article>
+
+            <article class="panel panel-span-4">
+              <header class="panel-header">
+                <div>
+                  <p class="panel-kicker">Fail-closed controls</p>
+                  <h2>Safety interlocks</h2>
+                </div>
+              </header>
+              <div class="control-list" id="control-list"></div>
+            </article>
+          </div>
+
+          <div class="dashboard-grid">
+            <article class="panel panel-span-7">
+              <header class="panel-header">
+                <div>
+                  <p class="panel-kicker">Mandatory before operational paper designation</p>
+                  <h2>Qualification evidence</h2>
+                </div>
+                <strong class="panel-score" id="qualification-detail-score">—</strong>
+              </header>
+              <div class="qualification-list" id="qualification-list"></div>
+              <div class="blocker-box" id="blocker-box">
+                <strong>Open blockers</strong>
+                <ul id="blocker-list"></ul>
+              </div>
+            </article>
+
+            <article class="panel panel-span-5">
+              <header class="panel-header">
+                <div>
+                  <p class="panel-kicker">Immutable release proof</p>
+                  <h2>Build evidence</h2>
+                </div>
+                <span class="pill" id="release-status-pill">—</span>
+              </header>
+              <dl class="evidence-grid" id="evidence-grid"></dl>
+              <div class="hash-box">
+                <span>Candidate report</span>
+                <code id="release-report-hash">Unavailable</code>
+              </div>
+            </article>
+          </div>
+
+          <article class="panel">
+            <header class="panel-header">
+              <div>
+                <p class="panel-kicker">Newest first</p>
+                <h2>Alerts and operating events</h2>
+              </div>
+              <span class="table-count" id="system-alert-count">0 events</span>
+            </header>
+            <div class="timeline" id="alert-timeline"></div>
+          </article>
+        </section>
+      </main>
+
+      <footer class="app-footer">
+        <p>
+          Read-only dashboard · Paper trading only · Never place credentials or private account data in a GitHub Pages snapshot.
+        </p>
+        <p id="footer-source">Source: —</p>
+      </footer>
+    </div>
+
+    <dialog class="detail-dialog" id="signal-dialog" aria-labelledby="dialog-title">
+      <form method="dialog">
+        <button class="dialog-close" type="submit" value="close" aria-label="Close details">×</button>
+      </form>
+      <div id="dialog-content"></div>
+    </dialog>
+
+    <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+    <noscript>
+      <div class="noscript-message">JavaScript is required to render the Daybreak dashboard.</div>
+    </noscript>
+  </body>
 </html>

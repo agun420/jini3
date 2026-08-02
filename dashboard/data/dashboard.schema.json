@@ -1,0 +1,278 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/project-daybreak/dashboard-v1.schema.json",
+  "title": "Project Daybreak Dashboard Snapshot",
+  "description": "Read-only, sanitized data contract consumed by the GitHub Pages dashboard.",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "generated_at",
+    "data_mode",
+    "environment",
+    "public_safe",
+    "system",
+    "safety",
+    "account",
+    "session",
+    "performance",
+    "signals",
+    "positions",
+    "orders",
+    "services",
+    "qualification",
+    "release",
+    "alerts"
+  ],
+  "properties": {
+    "schema_version": { "const": "1.0" },
+    "generated_at": { "type": "string", "format": "date-time" },
+    "data_mode": { "enum": ["demo", "published", "local", "offline"] },
+    "environment": { "const": "paper" },
+    "public_safe": { "type": "boolean" },
+    "system": {
+      "type": "object",
+      "required": ["name", "version", "specification_version", "phase", "market_status", "timezone", "freshness_threshold_seconds"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "version": { "type": "string", "minLength": 1 },
+        "specification_version": { "type": "string", "minLength": 1 },
+        "phase": { "type": "string", "minLength": 1 },
+        "market_status": { "type": "string", "minLength": 1 },
+        "market_detail": { "type": "string" },
+        "timezone": { "const": "America/New_York" },
+        "freshness_threshold_seconds": { "type": "number", "exclusiveMinimum": 0 }
+      },
+      "additionalProperties": false
+    },
+    "safety": {
+      "type": "object",
+      "required": ["paper_only", "live_capital_eligible", "kill_switch_active", "entries_enabled", "all_positions_flat"],
+      "properties": {
+        "paper_only": { "const": true },
+        "live_capital_eligible": { "const": false },
+        "kill_switch_active": { "type": "boolean" },
+        "entries_enabled": { "type": "boolean" },
+        "all_positions_flat": { "type": "boolean" },
+        "account_reconciled": { "type": "boolean" },
+        "leadership_valid": { "type": "boolean" },
+        "protective_orders_verified": { "type": "boolean" }
+      },
+      "additionalProperties": false
+    },
+    "account": {
+      "type": "object",
+      "required": ["currency"],
+      "properties": {
+        "currency": { "type": "string", "pattern": "^[A-Z]{3}$" },
+        "equity": { "$ref": "#/$defs/nullableNumber" },
+        "session_start_equity": { "$ref": "#/$defs/nullableNumber" },
+        "buying_power": { "$ref": "#/$defs/nullableNumber" },
+        "cash": { "$ref": "#/$defs/nullableNumber" },
+        "gross_exposure": { "$ref": "#/$defs/nullableNonNegative" },
+        "gross_exposure_limit": { "$ref": "#/$defs/nullableNonNegative" },
+        "open_risk": { "$ref": "#/$defs/nullableNonNegative" },
+        "open_risk_limit": { "$ref": "#/$defs/nullableNonNegative" },
+        "daily_pnl": { "$ref": "#/$defs/nullableNumber" },
+        "daily_pnl_pct": { "$ref": "#/$defs/nullableNumber" },
+        "realized_pnl": { "$ref": "#/$defs/nullableNumber" },
+        "unrealized_pnl": { "$ref": "#/$defs/nullableNumber" },
+        "hard_daily_loss_limit": { "$ref": "#/$defs/nullableNonNegative" }
+      },
+      "additionalProperties": false
+    },
+    "session": {
+      "type": "object",
+      "required": ["session_id", "trading_date", "state"],
+      "properties": {
+        "session_id": { "type": "string", "minLength": 1 },
+        "trading_date": { "type": "string", "format": "date" },
+        "state": { "type": "string", "minLength": 1 },
+        "state_detail": { "type": "string" },
+        "started_at": { "$ref": "#/$defs/nullableDateTime" },
+        "next_transition_at": { "$ref": "#/$defs/nullableDateTime" },
+        "next_transition_label": { "type": "string" },
+        "raw_event_count": { "$ref": "#/$defs/nonNegative" },
+        "evaluator_run_count": { "$ref": "#/$defs/nonNegative" },
+        "approved_setup_count": { "$ref": "#/$defs/nonNegative" },
+        "qualified_setup_count": { "$ref": "#/$defs/nonNegative" },
+        "excluded_ticker_count": { "$ref": "#/$defs/nonNegative" },
+        "orders_submitted": { "$ref": "#/$defs/nonNegative" },
+        "orders_filled": { "$ref": "#/$defs/nonNegative" },
+        "invariant_violations": { "$ref": "#/$defs/nonNegative" },
+        "unresolved_reconciliations": { "$ref": "#/$defs/nonNegative" },
+        "duplicate_order_count": { "$ref": "#/$defs/nonNegative" }
+      },
+      "additionalProperties": false
+    },
+    "performance": {
+      "type": "object",
+      "required": ["summary", "equity_curve", "daily", "attributions", "trades"],
+      "properties": {
+        "summary": { "type": "object" },
+        "equity_curve": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["timestamp", "equity", "drawdown"],
+            "properties": {
+              "timestamp": { "type": "string", "format": "date-time" },
+              "equity": { "$ref": "#/$defs/nullableNumber" },
+              "drawdown": { "$ref": "#/$defs/nullableNonNegative" }
+            },
+            "additionalProperties": false
+          }
+        },
+        "daily": { "type": "array", "items": { "type": "object" } },
+        "attributions": { "type": "array", "items": { "type": "object" } },
+        "trades": { "type": "array", "items": { "type": "object" } }
+      },
+      "additionalProperties": false
+    },
+    "signals": { "type": "array", "items": { "$ref": "#/$defs/signal" } },
+    "positions": { "type": "array", "items": { "$ref": "#/$defs/position" } },
+    "orders": { "type": "array", "items": { "$ref": "#/$defs/order" } },
+    "services": { "type": "array", "items": { "$ref": "#/$defs/service" } },
+    "qualification": {
+      "type": "object",
+      "required": ["status", "items", "blockers"],
+      "properties": {
+        "status": { "type": "string", "minLength": 1 },
+        "items": { "type": "array", "items": { "$ref": "#/$defs/qualificationItem" } },
+        "blockers": { "type": "array", "items": { "type": "string", "minLength": 1 } }
+      },
+      "additionalProperties": false
+    },
+    "release": {
+      "type": "object",
+      "required": ["status", "release_version", "specification_version", "live_capital_eligible"],
+      "properties": {
+        "status": { "type": "string", "minLength": 1 },
+        "release_version": { "type": "string", "minLength": 1 },
+        "specification_version": { "type": "string", "minLength": 1 },
+        "tests_passed": { "$ref": "#/$defs/nullableNonNegative" },
+        "tests_collected": { "$ref": "#/$defs/nullableNonNegative" },
+        "branch_coverage_pct": { "$ref": "#/$defs/nullableNonNegative" },
+        "ruff_errors": { "$ref": "#/$defs/nullableNonNegative" },
+        "mypy_errors": { "$ref": "#/$defs/nullableNonNegative" },
+        "security_findings": { "$ref": "#/$defs/nullableNonNegative" },
+        "dependency_vulnerabilities": { "$ref": "#/$defs/nullableNonNegative" },
+        "schema_count": { "$ref": "#/$defs/nullableNonNegative" },
+        "invariant_count": { "$ref": "#/$defs/nullableNonNegative" },
+        "report_hash": { "type": "string" },
+        "generated_at": { "$ref": "#/$defs/nullableDateTime" },
+        "paper_release_candidate": { "type": "boolean" },
+        "live_capital_eligible": { "const": false }
+      },
+      "additionalProperties": false
+    },
+    "alerts": { "type": "array", "items": { "$ref": "#/$defs/alert" } }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "nonNegative": { "type": "number", "minimum": 0 },
+    "nullableNumber": { "type": ["number", "null"] },
+    "nullableNonNegative": { "type": ["number", "null"], "minimum": 0 },
+    "nullableDateTime": { "type": ["string", "null"], "format": "date-time" },
+    "signal": {
+      "type": "object",
+      "required": ["ticker", "rank", "status", "conviction_score"],
+      "properties": {
+        "ticker": { "type": "string", "minLength": 1 },
+        "rank": { "type": "number", "minimum": 0 },
+        "status": { "type": "string", "minLength": 1 },
+        "execution_status": { "type": "string" },
+        "conviction_score": { "type": "number", "minimum": 0, "maximum": 100 },
+        "technical_grade": { "type": "string" },
+        "catalyst_source": { "type": "string" },
+        "catalyst_age_hours": { "$ref": "#/$defs/nullableNonNegative" },
+        "source_type": { "type": "string" },
+        "corroborated": { "type": "boolean" },
+        "catalyst": { "type": "string" },
+        "thesis": { "type": "string" },
+        "reference_price": { "$ref": "#/$defs/nullableNonNegative" },
+        "entry_price": { "$ref": "#/$defs/nullableNonNegative" },
+        "stop_price": { "$ref": "#/$defs/nullableNonNegative" },
+        "target_price": { "$ref": "#/$defs/nullableNonNegative" },
+        "quantity": { "$ref": "#/$defs/nullableNonNegative" },
+        "modeled_risk": { "$ref": "#/$defs/nullableNonNegative" },
+        "risk_flags": { "type": "array", "items": { "type": "string" } },
+        "rejection_reason": { "type": "string" },
+        "updated_at": { "$ref": "#/$defs/nullableDateTime" }
+      },
+      "additionalProperties": false
+    },
+    "position": {
+      "type": "object",
+      "required": ["ticker", "side", "quantity"],
+      "properties": {
+        "ticker": { "type": "string", "minLength": 1 },
+        "side": { "type": "string" },
+        "quantity": { "type": "number", "minimum": 0 },
+        "average_entry_price": { "$ref": "#/$defs/nullableNonNegative" },
+        "last_price": { "$ref": "#/$defs/nullableNonNegative" },
+        "market_value": { "$ref": "#/$defs/nullableNonNegative" },
+        "unrealized_pnl": { "$ref": "#/$defs/nullableNumber" },
+        "unrealized_pnl_pct": { "$ref": "#/$defs/nullableNumber" },
+        "stop_price": { "$ref": "#/$defs/nullableNonNegative" },
+        "target_price": { "$ref": "#/$defs/nullableNonNegative" },
+        "protective_status": { "type": "string" },
+        "updated_at": { "$ref": "#/$defs/nullableDateTime" }
+      },
+      "additionalProperties": false
+    },
+    "order": {
+      "type": "object",
+      "required": ["ticker", "side", "type", "quantity", "status", "client_order_id"],
+      "properties": {
+        "submitted_at": { "$ref": "#/$defs/nullableDateTime" },
+        "ticker": { "type": "string" },
+        "side": { "type": "string" },
+        "type": { "type": "string" },
+        "order_class": { "type": "string" },
+        "quantity": { "type": "number", "minimum": 0 },
+        "filled_quantity": { "type": "number", "minimum": 0 },
+        "price": { "$ref": "#/$defs/nullableNonNegative" },
+        "status": { "type": "string" },
+        "client_order_id": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "service": {
+      "type": "object",
+      "required": ["name", "status", "detail"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "status": { "type": "string", "minLength": 1 },
+        "detail": { "type": "string" },
+        "latency_ms": { "$ref": "#/$defs/nullableNonNegative" },
+        "updated_at": { "$ref": "#/$defs/nullableDateTime" }
+      },
+      "additionalProperties": false
+    },
+    "qualificationItem": {
+      "type": "object",
+      "required": ["key", "label", "current", "target", "status"],
+      "properties": {
+        "key": { "type": "string", "minLength": 1 },
+        "label": { "type": "string", "minLength": 1 },
+        "detail": { "type": "string" },
+        "current": { "type": "number", "minimum": 0 },
+        "target": { "type": "number", "minimum": 0 },
+        "status": { "type": "string", "minLength": 1 }
+      },
+      "additionalProperties": false
+    },
+    "alert": {
+      "type": "object",
+      "required": ["severity", "title", "message", "source"],
+      "properties": {
+        "severity": { "type": "string", "minLength": 1 },
+        "title": { "type": "string", "minLength": 1 },
+        "message": { "type": "string", "minLength": 1 },
+        "timestamp": { "$ref": "#/$defs/nullableDateTime" },
+        "source": { "type": "string", "minLength": 1 }
+      },
+      "additionalProperties": false
+    }
+  }
+}

@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Daybreak">
+  <rect width="64" height="64" rx="16" fill="#0b192b"/>
+  <path d="M17 39h30" fill="none" stroke="#58e0b5" stroke-linecap="round" stroke-width="4"/>
+  <path d="M21 39a11 11 0 0 1 22 0" fill="none" stroke="#58e0b5" stroke-width="4"/>
+  <path d="M23 47h18" fill="none" stroke="#6aa9ff" stroke-linecap="round" stroke-width="3"/>
+</svg>
