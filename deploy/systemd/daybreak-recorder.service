@@ -1,0 +1,37 @@
+[Unit]
+Description=Project Daybreak Phase 1 Recorder
+After=network-online.target postgresql.service chrony.service
+Wants=network-online.target
+StartLimitIntervalSec=300
+StartLimitBurst=3
+
+[Service]
+Type=simple
+User=daybreak
+Group=daybreak
+WorkingDirectory=/opt/project-daybreak
+EnvironmentFile=/etc/daybreak/daybreak.env
+Environment=TZ=America/New_York
+ExecStart=/opt/project-daybreak/.venv/bin/daybreak-recorder run
+Restart=on-failure
+RestartSec=10
+TimeoutStopSec=90
+KillSignal=SIGTERM
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictSUIDSGID=true
+LockPersonality=true
+PrivateDevices=true
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+SystemCallArchitectures=native
+ReadWritePaths=/var/lib/daybreak /var/log/daybreak
+UMask=0077
+LimitNOFILE=65536
+
+[Install]
+WantedBy=multi-user.target

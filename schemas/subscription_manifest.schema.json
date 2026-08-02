@@ -1,0 +1,90 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "configuration_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Configuration Hash",
+      "type": "string"
+    },
+    "effective_at": {
+      "format": "date-time",
+      "title": "Effective At",
+      "type": "string"
+    },
+    "feed": {
+      "const": "sip",
+      "default": "sip",
+      "title": "Feed",
+      "type": "string"
+    },
+    "ingest_session_id": {
+      "format": "uuid",
+      "title": "Ingest Session Id",
+      "type": "string"
+    },
+    "manifest_id": {
+      "format": "uuid",
+      "title": "Manifest Id",
+      "type": "string"
+    },
+    "news_symbols": {
+      "default": [
+        "*"
+      ],
+      "items": {
+        "type": "string"
+      },
+      "title": "News Symbols",
+      "type": "array"
+    },
+    "schema_version": {
+      "const": "subscription_manifest_v1",
+      "default": "subscription_manifest_v1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "tick_symbols": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "title": "Tick Symbols",
+      "type": "array"
+    },
+    "version": {
+      "minimum": 1,
+      "title": "Version",
+      "type": "integer"
+    },
+    "wildcard_minute_bars": {
+      "default": true,
+      "title": "Wildcard Minute Bars",
+      "type": "boolean"
+    },
+    "wildcard_quotes": {
+      "const": false,
+      "default": false,
+      "title": "Wildcard Quotes",
+      "type": "boolean"
+    },
+    "wildcard_trades": {
+      "const": false,
+      "default": false,
+      "title": "Wildcard Trades",
+      "type": "boolean"
+    },
+    "wildcard_trading_statuses": {
+      "default": true,
+      "title": "Wildcard Trading Statuses",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "ingest_session_id",
+    "version",
+    "effective_at",
+    "configuration_hash"
+  ],
+  "title": "SubscriptionManifest",
+  "type": "object"
+}

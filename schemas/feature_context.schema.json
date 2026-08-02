@@ -1,0 +1,764 @@
+{
+  "$defs": {
+    "BorrowStatus": {
+      "enum": [
+        "easy",
+        "hard_to_borrow",
+        "unknown"
+      ],
+      "title": "BorrowStatus",
+      "type": "string"
+    },
+    "CandidateSourceData": {
+      "additionalProperties": false,
+      "properties": {
+        "borrow_status": {
+          "$ref": "#/$defs/BorrowStatus",
+          "default": "unknown"
+        },
+        "catalysts": {
+          "items": {
+            "$ref": "#/$defs/CatalystRecord"
+          },
+          "title": "Catalysts",
+          "type": "array"
+        },
+        "current_session_events": {
+          "items": {
+            "$ref": "#/$defs/TradeLedgerEvent"
+          },
+          "title": "Current Session Events",
+          "type": "array"
+        },
+        "daily_bars": {
+          "items": {
+            "$ref": "#/$defs/DailyBar"
+          },
+          "title": "Daily Bars",
+          "type": "array"
+        },
+        "float_records": {
+          "items": {
+            "$ref": "#/$defs/FloatRecord"
+          },
+          "title": "Float Records",
+          "type": "array"
+        },
+        "halted": {
+          "default": false,
+          "title": "Halted",
+          "type": "boolean"
+        },
+        "historical_premarket_sessions": {
+          "items": {
+            "$ref": "#/$defs/PremarketSession"
+          },
+          "title": "Historical Premarket Sessions",
+          "type": "array"
+        },
+        "history_complete_since_listing": {
+          "title": "History Complete Since Listing",
+          "type": "boolean"
+        },
+        "previous_regular_close": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0.0,
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            }
+          ],
+          "title": "Previous Regular Close"
+        },
+        "ticker": {
+          "pattern": "^[A-Z0-9](?:[A-Z0-9.-]{0,13}[A-Z0-9])?$",
+          "title": "Ticker",
+          "type": "string"
+        }
+      },
+      "required": [
+        "ticker",
+        "previous_regular_close",
+        "current_session_events",
+        "historical_premarket_sessions",
+        "daily_bars",
+        "history_complete_since_listing",
+        "float_records",
+        "catalysts"
+      ],
+      "title": "CandidateSourceData",
+      "type": "object"
+    },
+    "CatalystRecord": {
+      "additionalProperties": false,
+      "properties": {
+        "catalyst_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Catalyst Id",
+          "type": "string"
+        },
+        "catalyst_text": {
+          "minLength": 1,
+          "title": "Catalyst Text",
+          "type": "string"
+        },
+        "corroborated": {
+          "title": "Corroborated",
+          "type": "boolean"
+        },
+        "disqualifier_flags": {
+          "default": [],
+          "items": {
+            "enum": [
+              "paid_promotion",
+              "reverse_split_only",
+              "unconfirmed_rumor",
+              "non_operating_promotion",
+              "other_disqualifying_catalyst"
+            ],
+            "type": "string"
+          },
+          "title": "Disqualifier Flags",
+          "type": "array"
+        },
+        "observed_at": {
+          "format": "date-time",
+          "title": "Observed At",
+          "type": "string"
+        },
+        "source_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Source Hash",
+          "type": "string"
+        },
+        "source_name": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Source Name",
+          "type": "string"
+        },
+        "source_timestamp": {
+          "format": "date-time",
+          "title": "Source Timestamp",
+          "type": "string"
+        },
+        "source_type": {
+          "$ref": "#/$defs/SourceType"
+        },
+        "ticker": {
+          "pattern": "^[A-Z0-9](?:[A-Z0-9.-]{0,13}[A-Z0-9])?$",
+          "title": "Ticker",
+          "type": "string"
+        }
+      },
+      "required": [
+        "catalyst_id",
+        "ticker",
+        "catalyst_text",
+        "source_type",
+        "source_name",
+        "source_timestamp",
+        "observed_at",
+        "corroborated",
+        "source_hash"
+      ],
+      "title": "CatalystRecord",
+      "type": "object"
+    },
+    "DailyBar": {
+      "additionalProperties": false,
+      "properties": {
+        "close": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0.0,
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            }
+          ],
+          "title": "Close"
+        },
+        "dividend_adjusted": {
+          "const": false,
+          "default": false,
+          "title": "Dividend Adjusted",
+          "type": "boolean"
+        },
+        "high": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0.0,
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            }
+          ],
+          "title": "High"
+        },
+        "low": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0.0,
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            }
+          ],
+          "title": "Low"
+        },
+        "open": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0.0,
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            }
+          ],
+          "title": "Open"
+        },
+        "session_date": {
+          "format": "date",
+          "title": "Session Date",
+          "type": "string"
+        },
+        "split_adjusted": {
+          "const": true,
+          "default": true,
+          "title": "Split Adjusted",
+          "type": "boolean"
+        },
+        "volume": {
+          "minimum": 0,
+          "title": "Volume",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "session_date",
+        "open",
+        "high",
+        "low",
+        "close",
+        "volume"
+      ],
+      "title": "DailyBar",
+      "type": "object"
+    },
+    "FeatureEngineConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "allow_single_source_float": {
+          "default": true,
+          "title": "Allow Single Source Float",
+          "type": "boolean"
+        },
+        "atr_period": {
+          "const": 14,
+          "default": 14,
+          "title": "Atr Period",
+          "type": "integer"
+        },
+        "blue_sky_sentinel": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            }
+          ],
+          "default": "99.0",
+          "title": "Blue Sky Sentinel"
+        },
+        "cluster_lookback_sessions": {
+          "const": 180,
+          "default": 180,
+          "title": "Cluster Lookback Sessions",
+          "type": "integer"
+        },
+        "cluster_recency_sessions": {
+          "const": 120,
+          "default": 120,
+          "title": "Cluster Recency Sessions",
+          "type": "integer"
+        },
+        "cluster_tolerance_atr": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            }
+          ],
+          "default": "0.5",
+          "title": "Cluster Tolerance Atr"
+        },
+        "distance_decimal_places": {
+          "const": 6,
+          "default": 6,
+          "title": "Distance Decimal Places",
+          "type": "integer"
+        },
+        "engine_version": {
+          "const": "daily_features_v1",
+          "default": "daily_features_v1",
+          "title": "Engine Version",
+          "type": "string"
+        },
+        "gap_min_pct": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            }
+          ],
+          "default": "4.0",
+          "title": "Gap Min Pct"
+        },
+        "max_evaluator_candidates": {
+          "default": 20,
+          "maximum": 25,
+          "minimum": 1,
+          "title": "Max Evaluator Candidates",
+          "type": "integer"
+        },
+        "min_daily_history": {
+          "default": 30,
+          "minimum": 14,
+          "title": "Min Daily History",
+          "type": "integer"
+        },
+        "module_versions": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "default": {
+            "atr_wilder_14": "1.0.1",
+            "daily_pivot_cluster_v1": "1.0.1",
+            "float_join": "1.0.1",
+            "gap": "1.0.1",
+            "news_join": "1.0.1",
+            "premarket_volume": "1.0.1",
+            "premarket_vwap": "1.0.1",
+            "prequalification": "1.0.1",
+            "rvol_time_matched": "1.0.1",
+            "snapshot_builder": "1.0.1",
+            "trade_ledger": "1.0.1",
+            "volume_profile": "1.0.1"
+          },
+          "title": "Module Versions",
+          "type": "object"
+        },
+        "pivot_left_width": {
+          "const": 5,
+          "default": 5,
+          "title": "Pivot Left Width",
+          "type": "integer"
+        },
+        "pivot_right_width": {
+          "const": 5,
+          "default": 5,
+          "title": "Pivot Right Width",
+          "type": "integer"
+        },
+        "premarket_start_et": {
+          "default": "04:00:00",
+          "title": "Premarket Start Et",
+          "type": "string"
+        },
+        "premarket_volume_min": {
+          "default": 500000,
+          "title": "Premarket Volume Min",
+          "type": "integer"
+        },
+        "resistance_min_atr": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            }
+          ],
+          "default": "1.0",
+          "title": "Resistance Min Atr"
+        },
+        "rvol_lookback_sessions": {
+          "default": 20,
+          "minimum": 1,
+          "title": "Rvol Lookback Sessions",
+          "type": "integer"
+        },
+        "rvol_min": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            }
+          ],
+          "default": "5.0",
+          "title": "Rvol Min"
+        },
+        "snapshot_time_et": {
+          "default": "09:23:00",
+          "title": "Snapshot Time Et",
+          "type": "string"
+        },
+        "spiky_max_bucket_share": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            }
+          ],
+          "default": "0.35",
+          "title": "Spiky Max Bucket Share"
+        },
+        "spiky_min_nonempty_coverage": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            }
+          ],
+          "default": "0.60",
+          "title": "Spiky Min Nonempty Coverage"
+        },
+        "volume_bucket_minutes": {
+          "const": 5,
+          "default": 5,
+          "title": "Volume Bucket Minutes",
+          "type": "integer"
+        }
+      },
+      "title": "FeatureEngineConfig",
+      "type": "object"
+    },
+    "FloatRecord": {
+      "additionalProperties": false,
+      "properties": {
+        "effective_date": {
+          "format": "date",
+          "title": "Effective Date",
+          "type": "string"
+        },
+        "expires_at": {
+          "format": "date-time",
+          "title": "Expires At",
+          "type": "string"
+        },
+        "float_shares": {
+          "exclusiveMinimum": 0,
+          "title": "Float Shares",
+          "type": "integer"
+        },
+        "observed_at": {
+          "format": "date-time",
+          "title": "Observed At",
+          "type": "string"
+        },
+        "quality_status": {
+          "$ref": "#/$defs/QualityStatus"
+        },
+        "raw_response_hashes": {
+          "items": {
+            "pattern": "^[0-9a-f]{64}$",
+            "type": "string"
+          },
+          "title": "Raw Response Hashes",
+          "type": "array"
+        },
+        "source": {
+          "enum": [
+            "fmp",
+            "massive",
+            "sec_api",
+            "fixture"
+          ],
+          "title": "Source",
+          "type": "string"
+        },
+        "ticker": {
+          "pattern": "^[A-Z0-9](?:[A-Z0-9.-]{0,13}[A-Z0-9])?$",
+          "title": "Ticker",
+          "type": "string"
+        },
+        "validated_at": {
+          "format": "date-time",
+          "title": "Validated At",
+          "type": "string"
+        }
+      },
+      "required": [
+        "ticker",
+        "float_shares",
+        "effective_date",
+        "observed_at",
+        "validated_at",
+        "expires_at",
+        "quality_status",
+        "source",
+        "raw_response_hashes"
+      ],
+      "title": "FloatRecord",
+      "type": "object"
+    },
+    "PremarketSession": {
+      "additionalProperties": false,
+      "properties": {
+        "complete": {
+          "default": true,
+          "title": "Complete",
+          "type": "boolean"
+        },
+        "events": {
+          "items": {
+            "$ref": "#/$defs/TradeLedgerEvent"
+          },
+          "title": "Events",
+          "type": "array"
+        },
+        "session_date": {
+          "format": "date",
+          "title": "Session Date",
+          "type": "string"
+        }
+      },
+      "required": [
+        "session_date",
+        "events"
+      ],
+      "title": "PremarketSession",
+      "type": "object"
+    },
+    "QualityStatus": {
+      "enum": [
+        "verified",
+        "single_source"
+      ],
+      "title": "QualityStatus",
+      "type": "string"
+    },
+    "SourceType": {
+      "enum": [
+        "primary",
+        "secondary",
+        "unconfirmed"
+      ],
+      "title": "SourceType",
+      "type": "string"
+    },
+    "TradeAction": {
+      "enum": [
+        "new",
+        "correction",
+        "cancel"
+      ],
+      "title": "TradeAction",
+      "type": "string"
+    },
+    "TradeLedgerEvent": {
+      "additionalProperties": false,
+      "properties": {
+        "action": {
+          "$ref": "#/$defs/TradeAction"
+        },
+        "eligible": {
+          "default": true,
+          "title": "Eligible",
+          "type": "boolean"
+        },
+        "event_timestamp": {
+          "format": "date-time",
+          "title": "Event Timestamp",
+          "type": "string"
+        },
+        "ingest_seq": {
+          "exclusiveMinimum": 0,
+          "title": "Ingest Seq",
+          "type": "integer"
+        },
+        "original_trade_id": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Original Trade Id"
+        },
+        "price": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0.0,
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Price"
+        },
+        "size": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Size"
+        },
+        "trade_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Trade Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "ingest_seq",
+        "trade_id",
+        "action",
+        "event_timestamp"
+      ],
+      "title": "TradeLedgerEvent",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "candidates": {
+      "items": {
+        "$ref": "#/$defs/CandidateSourceData"
+      },
+      "title": "Candidates",
+      "type": "array"
+    },
+    "catalyst_freshness_threshold_hours": {
+      "anyOf": [
+        {
+          "exclusiveMinimum": 0.0,
+          "type": "number"
+        },
+        {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "type": "string"
+        }
+      ],
+      "title": "Catalyst Freshness Threshold Hours"
+    },
+    "config": {
+      "$ref": "#/$defs/FeatureEngineConfig",
+      "default": {
+        "allow_single_source_float": true,
+        "atr_period": 14,
+        "blue_sky_sentinel": "99.0",
+        "cluster_lookback_sessions": 180,
+        "cluster_recency_sessions": 120,
+        "cluster_tolerance_atr": "0.5",
+        "distance_decimal_places": 6,
+        "engine_version": "daily_features_v1",
+        "gap_min_pct": "4.0",
+        "max_evaluator_candidates": 20,
+        "min_daily_history": 30,
+        "module_versions": {
+          "atr_wilder_14": "1.0.1",
+          "daily_pivot_cluster_v1": "1.0.1",
+          "float_join": "1.0.1",
+          "gap": "1.0.1",
+          "news_join": "1.0.1",
+          "premarket_volume": "1.0.1",
+          "premarket_vwap": "1.0.1",
+          "prequalification": "1.0.1",
+          "rvol_time_matched": "1.0.1",
+          "snapshot_builder": "1.0.1",
+          "trade_ledger": "1.0.1",
+          "volume_profile": "1.0.1"
+        },
+        "pivot_left_width": 5,
+        "pivot_right_width": 5,
+        "premarket_start_et": "04:00:00",
+        "premarket_volume_min": 500000,
+        "resistance_min_atr": "1.0",
+        "rvol_lookback_sessions": 20,
+        "rvol_min": "5.0",
+        "snapshot_time_et": "09:23:00",
+        "spiky_max_bucket_share": "0.35",
+        "spiky_min_nonempty_coverage": "0.60",
+        "volume_bucket_minutes": 5
+      }
+    },
+    "evaluation_timestamp": {
+      "format": "date-time",
+      "title": "Evaluation Timestamp",
+      "type": "string"
+    },
+    "market_status": {
+      "enum": [
+        "normal",
+        "limit_up_down_active",
+        "circuit_breaker_halt"
+      ],
+      "title": "Market Status",
+      "type": "string"
+    },
+    "payload_timestamp": {
+      "format": "date-time",
+      "title": "Payload Timestamp",
+      "type": "string"
+    }
+  },
+  "required": [
+    "evaluation_timestamp",
+    "payload_timestamp",
+    "catalyst_freshness_threshold_hours",
+    "market_status",
+    "candidates"
+  ],
+  "title": "FeatureContext",
+  "type": "object"
+}

@@ -1,0 +1,73 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "artifact_hash_verified": {
+      "title": "Artifact Hash Verified",
+      "type": "boolean"
+    },
+    "backup_id": {
+      "title": "Backup Id",
+      "type": "string"
+    },
+    "errors": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "title": "Errors",
+      "type": "array"
+    },
+    "passed": {
+      "title": "Passed",
+      "type": "boolean"
+    },
+    "replay_verified": {
+      "title": "Replay Verified",
+      "type": "boolean"
+    },
+    "restored_at": {
+      "format": "date-time",
+      "title": "Restored At",
+      "type": "string"
+    },
+    "schema_revision_match": {
+      "title": "Schema Revision Match",
+      "type": "boolean"
+    },
+    "table_counts_match": {
+      "title": "Table Counts Match",
+      "type": "boolean"
+    },
+    "target_database": {
+      "maxLength": 256,
+      "minLength": 1,
+      "title": "Target Database",
+      "type": "string"
+    },
+    "validation_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Validation Hash",
+      "type": "string"
+    },
+    "validation_id": {
+      "maxLength": 64,
+      "minLength": 8,
+      "title": "Validation Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "validation_id",
+    "backup_id",
+    "restored_at",
+    "target_database",
+    "artifact_hash_verified",
+    "schema_revision_match",
+    "table_counts_match",
+    "replay_verified",
+    "passed",
+    "validation_hash"
+  ],
+  "title": "RestoreValidation",
+  "type": "object"
+}

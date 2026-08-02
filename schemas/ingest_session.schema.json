@@ -1,0 +1,108 @@
+{
+  "$defs": {
+    "SessionStatus": {
+      "enum": [
+        "starting",
+        "running",
+        "stopping",
+        "completed",
+        "completed_partial",
+        "failed",
+        "skipped_non_trading_day"
+      ],
+      "title": "SessionStatus",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "alpaca_feed": {
+      "const": "sip",
+      "default": "sip",
+      "title": "Alpaca Feed",
+      "type": "string"
+    },
+    "configuration_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Configuration Hash",
+      "type": "string"
+    },
+    "ended_at": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Ended At"
+    },
+    "error_message": {
+      "anyOf": [
+        {
+          "maxLength": 4096,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Error Message"
+    },
+    "host_name": {
+      "maxLength": 255,
+      "minLength": 1,
+      "title": "Host Name",
+      "type": "string"
+    },
+    "ingest_session_id": {
+      "format": "uuid",
+      "title": "Ingest Session Id",
+      "type": "string"
+    },
+    "process_id": {
+      "exclusiveMinimum": 0,
+      "title": "Process Id",
+      "type": "integer"
+    },
+    "scheduled_start": {
+      "format": "date-time",
+      "title": "Scheduled Start",
+      "type": "string"
+    },
+    "scheduled_stop": {
+      "format": "date-time",
+      "title": "Scheduled Stop",
+      "type": "string"
+    },
+    "started_at": {
+      "format": "date-time",
+      "title": "Started At",
+      "type": "string"
+    },
+    "status": {
+      "$ref": "#/$defs/SessionStatus",
+      "default": "starting"
+    },
+    "trading_date": {
+      "format": "date",
+      "title": "Trading Date",
+      "type": "string"
+    }
+  },
+  "required": [
+    "trading_date",
+    "scheduled_start",
+    "scheduled_stop",
+    "started_at",
+    "configuration_hash",
+    "host_name",
+    "process_id"
+  ],
+  "title": "IngestSession",
+  "type": "object"
+}

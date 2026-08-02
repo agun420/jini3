@@ -1,0 +1,1262 @@
+{
+  "$defs": {
+    "AccountSnapshot": {
+      "additionalProperties": false,
+      "properties": {
+        "account_blocked": {
+          "title": "Account Blocked",
+          "type": "boolean"
+        },
+        "buying_power": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,20}|(?=[\\d.]{1,31}0*$)\\d{0,20}\\.\\d{0,10}0*$)",
+              "type": "string"
+            }
+          ],
+          "title": "Buying Power"
+        },
+        "cash": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,20}|(?=[\\d.]{1,31}0*$)\\d{0,20}\\.\\d{0,10}0*$)",
+              "type": "string"
+            }
+          ],
+          "title": "Cash"
+        },
+        "equity": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,20}|(?=[\\d.]{1,31}0*$)\\d{0,20}\\.\\d{0,10}0*$)",
+              "type": "string"
+            }
+          ],
+          "title": "Equity"
+        },
+        "initial_margin": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,20}|(?=[\\d.]{1,31}0*$)\\d{0,20}\\.\\d{0,10}0*$)",
+              "type": "string"
+            }
+          ],
+          "title": "Initial Margin"
+        },
+        "last_equity": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,20}|(?=[\\d.]{1,31}0*$)\\d{0,20}\\.\\d{0,10}0*$)",
+              "type": "string"
+            }
+          ],
+          "title": "Last Equity"
+        },
+        "long_market_value": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,20}|(?=[\\d.]{1,31}0*$)\\d{0,20}\\.\\d{0,10}0*$)",
+              "type": "string"
+            }
+          ],
+          "title": "Long Market Value"
+        },
+        "maintenance_margin": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,20}|(?=[\\d.]{1,31}0*$)\\d{0,20}\\.\\d{0,10}0*$)",
+              "type": "string"
+            }
+          ],
+          "title": "Maintenance Margin"
+        },
+        "multiplier": {
+          "anyOf": [
+            {
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            }
+          ],
+          "title": "Multiplier"
+        },
+        "non_marginable_buying_power": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,20}|(?=[\\d.]{1,31}0*$)\\d{0,20}\\.\\d{0,10}0*$)",
+              "type": "string"
+            }
+          ],
+          "title": "Non Marginable Buying Power"
+        },
+        "pending_transfer_in": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,20}|(?=[\\d.]{1,31}0*$)\\d{0,20}\\.\\d{0,10}0*$)",
+              "type": "string"
+            }
+          ],
+          "default": "0",
+          "title": "Pending Transfer In"
+        },
+        "pending_transfer_out": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,20}|(?=[\\d.]{1,31}0*$)\\d{0,20}\\.\\d{0,10}0*$)",
+              "type": "string"
+            }
+          ],
+          "default": "0",
+          "title": "Pending Transfer Out"
+        },
+        "regt_buying_power": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,20}|(?=[\\d.]{1,31}0*$)\\d{0,20}\\.\\d{0,10}0*$)",
+              "type": "string"
+            }
+          ],
+          "title": "Regt Buying Power"
+        },
+        "snapshot_timestamp": {
+          "format": "date-time",
+          "title": "Snapshot Timestamp",
+          "type": "string"
+        },
+        "status": {
+          "title": "Status",
+          "type": "string"
+        },
+        "trade_suspended_by_user": {
+          "title": "Trade Suspended By User",
+          "type": "boolean"
+        },
+        "trading_blocked": {
+          "title": "Trading Blocked",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "snapshot_timestamp",
+        "status",
+        "account_blocked",
+        "trading_blocked",
+        "trade_suspended_by_user",
+        "equity",
+        "last_equity",
+        "cash",
+        "buying_power",
+        "non_marginable_buying_power",
+        "regt_buying_power",
+        "initial_margin",
+        "maintenance_margin",
+        "long_market_value",
+        "multiplier"
+      ],
+      "title": "AccountSnapshot",
+      "type": "object"
+    },
+    "ApprovedSetup": {
+      "additionalProperties": false,
+      "properties": {
+        "catalyst_age_hours": {
+          "minimum": 0,
+          "title": "Catalyst Age Hours",
+          "type": "number"
+        },
+        "catalyst_source": {
+          "title": "Catalyst Source",
+          "type": "string"
+        },
+        "conviction_score": {
+          "maximum": 100,
+          "minimum": 0,
+          "title": "Conviction Score",
+          "type": "integer"
+        },
+        "corroborated": {
+          "title": "Corroborated",
+          "type": "boolean"
+        },
+        "master_thesis": {
+          "title": "Master Thesis",
+          "type": "string"
+        },
+        "risk_flags": {
+          "items": {
+            "$ref": "#/$defs/RiskFlag"
+          },
+          "title": "Risk Flags",
+          "type": "array"
+        },
+        "score_breakdown": {
+          "$ref": "#/$defs/ScoreBreakdown"
+        },
+        "side": {
+          "const": "long",
+          "title": "Side",
+          "type": "string"
+        },
+        "source_timestamp": {
+          "title": "Source Timestamp",
+          "type": "string"
+        },
+        "source_type": {
+          "$ref": "#/$defs/SourceType"
+        },
+        "ticker": {
+          "pattern": "^[A-Z0-9](?:[A-Z0-9.-]{0,13}[A-Z0-9])?$",
+          "title": "Ticker",
+          "type": "string"
+        },
+        "trade_parameters": {
+          "$ref": "#/$defs/TradeParameters"
+        }
+      },
+      "required": [
+        "ticker",
+        "side",
+        "conviction_score",
+        "score_breakdown",
+        "master_thesis",
+        "catalyst_source",
+        "source_type",
+        "source_timestamp",
+        "catalyst_age_hours",
+        "corroborated",
+        "risk_flags",
+        "trade_parameters"
+      ],
+      "title": "ApprovedSetup",
+      "type": "object"
+    },
+    "CatalystZeroReason": {
+      "enum": [
+        "disqualifier_flag",
+        "unconfirmed_source",
+        "stale_catalyst",
+        "no_valid_driver"
+      ],
+      "title": "CatalystZeroReason",
+      "type": "string"
+    },
+    "EvidencePurpose": {
+      "enum": [
+        "magnitude",
+        "disqualifier",
+        "none"
+      ],
+      "title": "EvidencePurpose",
+      "type": "string"
+    },
+    "LiquiditySnapshot": {
+      "additionalProperties": false,
+      "properties": {
+        "adv20_shares": {
+          "exclusiveMinimum": 0,
+          "title": "Adv20 Shares",
+          "type": "integer"
+        },
+        "asset_fractionable": {
+          "default": false,
+          "title": "Asset Fractionable",
+          "type": "boolean"
+        },
+        "asset_marginable": {
+          "default": false,
+          "title": "Asset Marginable",
+          "type": "boolean"
+        },
+        "asset_status": {
+          "default": "active",
+          "title": "Asset Status",
+          "type": "string"
+        },
+        "asset_tradable": {
+          "default": true,
+          "title": "Asset Tradable",
+          "type": "boolean"
+        },
+        "premarket_volume": {
+          "exclusiveMinimum": 0,
+          "title": "Premarket Volume",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "premarket_volume",
+        "adv20_shares"
+      ],
+      "title": "LiquiditySnapshot",
+      "type": "object"
+    },
+    "MagnitudeBucket": {
+      "enum": [
+        "major_concrete",
+        "material_partially_quantified",
+        "credible_unquantified",
+        "weak_or_preliminary",
+        "no_valid_driver"
+      ],
+      "title": "MagnitudeBucket",
+      "type": "string"
+    },
+    "QuoteSnapshot": {
+      "additionalProperties": false,
+      "properties": {
+        "ask_price": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,20}|(?=[\\d.]{1,31}0*$)\\d{0,20}\\.\\d{0,10}0*$)",
+              "type": "string"
+            }
+          ],
+          "title": "Ask Price"
+        },
+        "ask_size": {
+          "minimum": 0,
+          "title": "Ask Size",
+          "type": "integer"
+        },
+        "bid_price": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,20}|(?=[\\d.]{1,31}0*$)\\d{0,20}\\.\\d{0,10}0*$)",
+              "type": "string"
+            }
+          ],
+          "title": "Bid Price"
+        },
+        "bid_size": {
+          "minimum": 0,
+          "title": "Bid Size",
+          "type": "integer"
+        },
+        "first_regular_session_nbbo_confirmed": {
+          "title": "First Regular Session Nbbo Confirmed",
+          "type": "boolean"
+        },
+        "last_price": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,20}|(?=[\\d.]{1,31}0*$)\\d{0,20}\\.\\d{0,10}0*$)",
+              "type": "string"
+            }
+          ],
+          "title": "Last Price"
+        },
+        "last_trade_timestamp": {
+          "format": "date-time",
+          "title": "Last Trade Timestamp",
+          "type": "string"
+        },
+        "quote_timestamp": {
+          "format": "date-time",
+          "title": "Quote Timestamp",
+          "type": "string"
+        }
+      },
+      "required": [
+        "quote_timestamp",
+        "last_trade_timestamp",
+        "bid_price",
+        "ask_price",
+        "bid_size",
+        "ask_size",
+        "last_price",
+        "first_regular_session_nbbo_confirmed"
+      ],
+      "title": "QuoteSnapshot",
+      "type": "object"
+    },
+    "RiskFlag": {
+      "enum": [
+        "parabolic_vwap_extension",
+        "hard_to_borrow",
+        "unknown_borrow",
+        "low_float",
+        "spiky_volume",
+        "secondary_source"
+      ],
+      "title": "RiskFlag",
+      "type": "string"
+    },
+    "RiskPolicyConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "allow_fractional_shares": {
+          "const": false,
+          "default": false,
+          "title": "Allow Fractional Shares",
+          "type": "boolean"
+        },
+        "allow_margin": {
+          "const": false,
+          "default": false,
+          "title": "Allow Margin",
+          "type": "boolean"
+        },
+        "allow_overnight_positions": {
+          "const": false,
+          "default": false,
+          "title": "Allow Overnight Positions",
+          "type": "boolean"
+        },
+        "buying_power_reserve_pct": {
+          "anyOf": [
+            {
+              "exclusiveMaximum": 1.0,
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            }
+          ],
+          "title": "Buying Power Reserve Pct"
+        },
+        "hard_daily_loss_pct": {
+          "anyOf": [
+            {
+              "exclusiveMaximum": 1.0,
+              "exclusiveMinimum": 0.0,
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            }
+          ],
+          "title": "Hard Daily Loss Pct"
+        },
+        "mandatory_flatten_time_et": {
+          "default": "15:50:00",
+          "format": "time",
+          "title": "Mandatory Flatten Time Et",
+          "type": "string"
+        },
+        "max_account_snapshot_age_ms": {
+          "default": 1000,
+          "exclusiveMinimum": 0,
+          "maximum": 10000,
+          "title": "Max Account Snapshot Age Ms",
+          "type": "integer"
+        },
+        "max_concurrent_positions": {
+          "exclusiveMinimum": 0,
+          "maximum": 3,
+          "title": "Max Concurrent Positions",
+          "type": "integer"
+        },
+        "max_consecutive_losses": {
+          "exclusiveMinimum": 0,
+          "maximum": 10,
+          "title": "Max Consecutive Losses",
+          "type": "integer"
+        },
+        "max_entries_per_ticker_per_day": {
+          "const": 1,
+          "default": 1,
+          "title": "Max Entries Per Ticker Per Day",
+          "type": "integer"
+        },
+        "max_entry_drift_atr_multiple": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0.0,
+              "maximum": 2.0,
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            }
+          ],
+          "default": "0.25",
+          "title": "Max Entry Drift Atr Multiple"
+        },
+        "max_entry_drift_pct": {
+          "anyOf": [
+            {
+              "exclusiveMaximum": 1.0,
+              "exclusiveMinimum": 0.0,
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            }
+          ],
+          "default": "0.01",
+          "title": "Max Entry Drift Pct"
+        },
+        "max_gross_long_exposure_pct": {
+          "anyOf": [
+            {
+              "exclusiveMaximum": 1.0,
+              "exclusiveMinimum": 0.0,
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            }
+          ],
+          "title": "Max Gross Long Exposure Pct"
+        },
+        "max_last_trade_age_ms": {
+          "default": 2000,
+          "exclusiveMinimum": 0,
+          "maximum": 30000,
+          "title": "Max Last Trade Age Ms",
+          "type": "integer"
+        },
+        "max_new_entries_per_day": {
+          "exclusiveMinimum": 0,
+          "maximum": 3,
+          "title": "Max New Entries Per Day",
+          "type": "integer"
+        },
+        "max_open_risk_pct": {
+          "anyOf": [
+            {
+              "exclusiveMaximum": 1.0,
+              "exclusiveMinimum": 0.0,
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            }
+          ],
+          "title": "Max Open Risk Pct"
+        },
+        "max_pct_adv20": {
+          "anyOf": [
+            {
+              "exclusiveMaximum": 1.0,
+              "exclusiveMinimum": 0.0,
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            }
+          ],
+          "title": "Max Pct Adv20"
+        },
+        "max_pct_premarket_volume": {
+          "anyOf": [
+            {
+              "exclusiveMaximum": 1.0,
+              "exclusiveMinimum": 0.0,
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            }
+          ],
+          "title": "Max Pct Premarket Volume"
+        },
+        "max_position_notional_pct": {
+          "anyOf": [
+            {
+              "exclusiveMaximum": 1.0,
+              "exclusiveMinimum": 0.0,
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            }
+          ],
+          "title": "Max Position Notional Pct"
+        },
+        "max_quote_age_ms": {
+          "default": 1000,
+          "exclusiveMinimum": 0,
+          "maximum": 10000,
+          "title": "Max Quote Age Ms",
+          "type": "integer"
+        },
+        "max_spread_atr_fraction": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0.0,
+              "maximum": 1.0,
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            }
+          ],
+          "default": "0.10",
+          "title": "Max Spread Atr Fraction"
+        },
+        "max_spread_pct": {
+          "anyOf": [
+            {
+              "exclusiveMaximum": 1.0,
+              "exclusiveMinimum": 0.0,
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            }
+          ],
+          "default": "0.01",
+          "title": "Max Spread Pct"
+        },
+        "minimum_quantity": {
+          "const": 1,
+          "default": 1,
+          "title": "Minimum Quantity",
+          "type": "integer"
+        },
+        "pnl_reconciliation_tolerance": {
+          "anyOf": [
+            {
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,20}|(?=[\\d.]{1,31}0*$)\\d{0,20}\\.\\d{0,10}0*$)",
+              "type": "string"
+            }
+          ],
+          "default": "1.00",
+          "title": "Pnl Reconciliation Tolerance"
+        },
+        "policy_version": {
+          "const": "position_risk_policy_v1",
+          "default": "position_risk_policy_v1",
+          "title": "Policy Version",
+          "type": "string"
+        },
+        "profile_name": {
+          "$ref": "#/$defs/RiskProfileName"
+        },
+        "risk_per_trade_pct": {
+          "anyOf": [
+            {
+              "exclusiveMaximum": 1.0,
+              "exclusiveMinimum": 0.0,
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            }
+          ],
+          "title": "Risk Per Trade Pct"
+        },
+        "slippage_buffer_atr_multiple": {
+          "anyOf": [
+            {
+              "maximum": 2.0,
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            }
+          ],
+          "title": "Slippage Buffer Atr Multiple"
+        },
+        "slippage_buffer_spread_multiple": {
+          "anyOf": [
+            {
+              "maximum": 5.0,
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            }
+          ],
+          "title": "Slippage Buffer Spread Multiple"
+        },
+        "soft_daily_loss_pct": {
+          "anyOf": [
+            {
+              "exclusiveMaximum": 1.0,
+              "exclusiveMinimum": 0.0,
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            }
+          ],
+          "title": "Soft Daily Loss Pct"
+        }
+      },
+      "required": [
+        "profile_name",
+        "risk_per_trade_pct",
+        "max_open_risk_pct",
+        "max_position_notional_pct",
+        "max_gross_long_exposure_pct",
+        "buying_power_reserve_pct",
+        "max_concurrent_positions",
+        "max_new_entries_per_day",
+        "soft_daily_loss_pct",
+        "hard_daily_loss_pct",
+        "max_consecutive_losses",
+        "slippage_buffer_atr_multiple",
+        "slippage_buffer_spread_multiple",
+        "max_pct_adv20",
+        "max_pct_premarket_volume"
+      ],
+      "title": "RiskPolicyConfig",
+      "type": "object"
+    },
+    "RiskProfileName": {
+      "enum": [
+        "paper_v1",
+        "live_pilot_v1"
+      ],
+      "title": "RiskProfileName",
+      "type": "string"
+    },
+    "ScoreBreakdown": {
+      "additionalProperties": false,
+      "properties": {
+        "catalyst_magnitude_bucket": {
+          "$ref": "#/$defs/MagnitudeBucket"
+        },
+        "catalyst_magnitude_points": {
+          "maximum": 4,
+          "minimum": 0,
+          "title": "Catalyst Magnitude Points",
+          "type": "integer"
+        },
+        "catalyst_points": {
+          "maximum": 40,
+          "minimum": 0,
+          "title": "Catalyst Points",
+          "type": "integer"
+        },
+        "catalyst_score_raw": {
+          "maximum": 10,
+          "minimum": 0,
+          "title": "Catalyst Score Raw",
+          "type": "integer"
+        },
+        "catalyst_zero_override": {
+          "title": "Catalyst Zero Override",
+          "type": "boolean"
+        },
+        "catalyst_zero_reason": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CatalystZeroReason"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "evidence_purpose": {
+          "$ref": "#/$defs/EvidencePurpose"
+        },
+        "magnitude_evidence_end_char": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Magnitude Evidence End Char"
+        },
+        "magnitude_evidence_excerpt": {
+          "maxLength": 200,
+          "title": "Magnitude Evidence Excerpt",
+          "type": "string"
+        },
+        "magnitude_evidence_start_char": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Magnitude Evidence Start Char"
+        },
+        "magnitude_evidence_truncated": {
+          "title": "Magnitude Evidence Truncated",
+          "type": "boolean"
+        },
+        "parabolic_adjusted": {
+          "title": "Parabolic Adjusted",
+          "type": "boolean"
+        },
+        "source_quality_points": {
+          "maximum": 6,
+          "minimum": 0,
+          "title": "Source Quality Points",
+          "type": "integer"
+        },
+        "technical_base_points": {
+          "enum": [
+            0,
+            13,
+            22,
+            25
+          ],
+          "title": "Technical Base Points",
+          "type": "integer"
+        },
+        "technical_grade": {
+          "$ref": "#/$defs/TechnicalGrade"
+        },
+        "technical_points": {
+          "enum": [
+            0,
+            7,
+            13,
+            16,
+            19,
+            22,
+            25
+          ],
+          "title": "Technical Points",
+          "type": "integer"
+        },
+        "volume_points": {
+          "enum": [
+            0,
+            15,
+            25,
+            35
+          ],
+          "title": "Volume Points",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "source_quality_points",
+        "catalyst_magnitude_bucket",
+        "catalyst_magnitude_points",
+        "evidence_purpose",
+        "magnitude_evidence_excerpt",
+        "magnitude_evidence_truncated",
+        "magnitude_evidence_start_char",
+        "magnitude_evidence_end_char",
+        "catalyst_zero_override",
+        "catalyst_zero_reason",
+        "catalyst_score_raw",
+        "catalyst_points",
+        "volume_points",
+        "technical_grade",
+        "technical_base_points",
+        "technical_points",
+        "parabolic_adjusted"
+      ],
+      "title": "ScoreBreakdown",
+      "type": "object"
+    },
+    "SessionRiskState": {
+      "additionalProperties": false,
+      "properties": {
+        "account_state_reconciled": {
+          "default": true,
+          "title": "Account State Reconciled",
+          "type": "boolean"
+        },
+        "completed_entry_count": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Completed Entry Count",
+          "type": "integer"
+        },
+        "consecutive_closed_losses": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Consecutive Closed Losses",
+          "type": "integer"
+        },
+        "current_long_market_value": {
+          "anyOf": [
+            {
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,20}|(?=[\\d.]{1,31}0*$)\\d{0,20}\\.\\d{0,10}0*$)",
+              "type": "string"
+            }
+          ],
+          "default": "0",
+          "title": "Current Long Market Value"
+        },
+        "current_total_open_risk": {
+          "anyOf": [
+            {
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,20}|(?=[\\d.]{1,31}0*$)\\d{0,20}\\.\\d{0,10}0*$)",
+              "type": "string"
+            }
+          ],
+          "default": "0",
+          "title": "Current Total Open Risk"
+        },
+        "database_healthy": {
+          "default": true,
+          "title": "Database Healthy",
+          "type": "boolean"
+        },
+        "internal_realized_pnl": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,20}|(?=[\\d.]{1,31}0*$)\\d{0,20}\\.\\d{0,10}0*$)",
+              "type": "string"
+            }
+          ],
+          "default": "0",
+          "title": "Internal Realized Pnl"
+        },
+        "internal_unrealized_pnl": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,20}|(?=[\\d.]{1,31}0*$)\\d{0,20}\\.\\d{0,10}0*$)",
+              "type": "string"
+            }
+          ],
+          "default": "0",
+          "title": "Internal Unrealized Pnl"
+        },
+        "kill_switch_active": {
+          "default": false,
+          "title": "Kill Switch Active",
+          "type": "boolean"
+        },
+        "net_external_cash_flow": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,20}|(?=[\\d.]{1,31}0*$)\\d{0,20}\\.\\d{0,10}0*$)",
+              "type": "string"
+            }
+          ],
+          "default": "0",
+          "title": "Net External Cash Flow"
+        },
+        "open_daybreak_position_count": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Open Daybreak Position Count",
+          "type": "integer"
+        },
+        "reserved_entry_notional": {
+          "anyOf": [
+            {
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,20}|(?=[\\d.]{1,31}0*$)\\d{0,20}\\.\\d{0,10}0*$)",
+              "type": "string"
+            }
+          ],
+          "default": "0",
+          "title": "Reserved Entry Notional"
+        },
+        "reserved_entry_position_count": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Reserved Entry Position Count",
+          "type": "integer"
+        },
+        "session_reference_equity": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0.0,
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,20}|(?=[\\d.]{1,31}0*$)\\d{0,20}\\.\\d{0,10}0*$)",
+              "type": "string"
+            }
+          ],
+          "title": "Session Reference Equity"
+        },
+        "session_start_equity": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0.0,
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,20}|(?=[\\d.]{1,31}0*$)\\d{0,20}\\.\\d{0,10}0*$)",
+              "type": "string"
+            }
+          ],
+          "title": "Session Start Equity"
+        },
+        "streams_healthy": {
+          "default": true,
+          "title": "Streams Healthy",
+          "type": "boolean"
+        },
+        "traded_tickers_today": {
+          "default": [],
+          "items": {
+            "pattern": "^[A-Z0-9](?:[A-Z0-9.-]{0,13}[A-Z0-9])?$",
+            "type": "string"
+          },
+          "title": "Traded Tickers Today",
+          "type": "array"
+        }
+      },
+      "required": [
+        "session_reference_equity",
+        "session_start_equity"
+      ],
+      "title": "SessionRiskState",
+      "type": "object"
+    },
+    "SourceType": {
+      "enum": [
+        "primary",
+        "secondary",
+        "unconfirmed"
+      ],
+      "title": "SourceType",
+      "type": "string"
+    },
+    "TechnicalGrade": {
+      "enum": [
+        "A+",
+        "A",
+        "B",
+        "C"
+      ],
+      "title": "TechnicalGrade",
+      "type": "string"
+    },
+    "TradeParameters": {
+      "additionalProperties": false,
+      "properties": {
+        "atr_value_used": {
+          "exclusiveMinimum": 0,
+          "title": "Atr Value Used",
+          "type": "number"
+        },
+        "invalidation_note": {
+          "const": "Thesis is invalid if price breaks below the supplied premarket low before 9:35 AM ET.",
+          "title": "Invalidation Note",
+          "type": "string"
+        },
+        "premarket_low_used": {
+          "exclusiveMinimum": 0,
+          "title": "Premarket Low Used",
+          "type": "number"
+        },
+        "profit_target_atr_multiple": {
+          "maximum": 2.0,
+          "minimum": 2.0,
+          "title": "Profit Target Atr Multiple",
+          "type": "number"
+        },
+        "reference_price": {
+          "exclusiveMinimum": 0,
+          "title": "Reference Price",
+          "type": "number"
+        },
+        "risk_stop_atr_multiple": {
+          "maximum": 1.0,
+          "minimum": 1.0,
+          "title": "Risk Stop Atr Multiple",
+          "type": "number"
+        }
+      },
+      "required": [
+        "reference_price",
+        "atr_value_used",
+        "premarket_low_used",
+        "risk_stop_atr_multiple",
+        "profit_target_atr_multiple",
+        "invalidation_note"
+      ],
+      "title": "TradeParameters",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "account": {
+      "$ref": "#/$defs/AccountSnapshot"
+    },
+    "calculated_at": {
+      "format": "date-time",
+      "title": "Calculated At",
+      "type": "string"
+    },
+    "configuration_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Configuration Hash",
+      "type": "string"
+    },
+    "execution_cutoff_timestamp": {
+      "format": "date-time",
+      "title": "Execution Cutoff Timestamp",
+      "type": "string"
+    },
+    "final_rank": {
+      "maximum": 3,
+      "minimum": 1,
+      "title": "Final Rank",
+      "type": "integer"
+    },
+    "liquidity": {
+      "$ref": "#/$defs/LiquiditySnapshot"
+    },
+    "market_status_normal": {
+      "default": true,
+      "title": "Market Status Normal",
+      "type": "boolean"
+    },
+    "planned_entry_limit": {
+      "anyOf": [
+        {
+          "exclusiveMinimum": 0.0,
+          "type": "number"
+        },
+        {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,20}|(?=[\\d.]{1,31}0*$)\\d{0,20}\\.\\d{0,10}0*$)",
+          "type": "string"
+        }
+      ],
+      "title": "Planned Entry Limit"
+    },
+    "policy": {
+      "$ref": "#/$defs/RiskPolicyConfig"
+    },
+    "quote": {
+      "$ref": "#/$defs/QuoteSnapshot"
+    },
+    "request_id": {
+      "title": "Request Id",
+      "type": "string"
+    },
+    "run_id": {
+      "title": "Run Id",
+      "type": "string"
+    },
+    "session": {
+      "$ref": "#/$defs/SessionRiskState"
+    },
+    "setup": {
+      "$ref": "#/$defs/ApprovedSetup"
+    },
+    "symbol_halted": {
+      "default": false,
+      "title": "Symbol Halted",
+      "type": "boolean"
+    },
+    "tick_size": {
+      "anyOf": [
+        {
+          "exclusiveMinimum": 0.0,
+          "type": "number"
+        },
+        {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,20}|(?=[\\d.]{1,31}0*$)\\d{0,20}\\.\\d{0,10}0*$)",
+          "type": "string"
+        }
+      ],
+      "title": "Tick Size"
+    },
+    "trading_date": {
+      "format": "date",
+      "title": "Trading Date",
+      "type": "string"
+    }
+  },
+  "required": [
+    "request_id",
+    "run_id",
+    "trading_date",
+    "final_rank",
+    "calculated_at",
+    "execution_cutoff_timestamp",
+    "setup",
+    "policy",
+    "account",
+    "quote",
+    "liquidity",
+    "session",
+    "planned_entry_limit",
+    "tick_size",
+    "configuration_hash"
+  ],
+  "title": "SizingRequest",
+  "type": "object"
+}

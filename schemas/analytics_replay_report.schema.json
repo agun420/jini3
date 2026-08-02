@@ -1,0 +1,167 @@
+{
+  "$defs": {
+    "ReplayComponent": {
+      "enum": [
+        "recorder",
+        "features",
+        "evaluator",
+        "risk",
+        "execution",
+        "orchestration"
+      ],
+      "title": "ReplayComponent",
+      "type": "string"
+    },
+    "ReplayComponentEvidence": {
+      "additionalProperties": false,
+      "properties": {
+        "actual_hash": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Actual Hash"
+        },
+        "component": {
+          "$ref": "#/$defs/ReplayComponent"
+        },
+        "errors": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Errors",
+          "type": "array"
+        },
+        "evidence_count": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Evidence Count",
+          "type": "integer"
+        },
+        "expected_hash": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Expected Hash"
+        },
+        "verified": {
+          "title": "Verified",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "component",
+        "verified"
+      ],
+      "title": "ReplayComponentEvidence",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "actual_raw_event_count": {
+      "minimum": 0,
+      "title": "Actual Raw Event Count",
+      "type": "integer"
+    },
+    "complete": {
+      "title": "Complete",
+      "type": "boolean"
+    },
+    "components": {
+      "items": {
+        "$ref": "#/$defs/ReplayComponentEvidence"
+      },
+      "title": "Components",
+      "type": "array"
+    },
+    "errors": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Errors",
+      "type": "array"
+    },
+    "event_ordering_verified": {
+      "title": "Event Ordering Verified",
+      "type": "boolean"
+    },
+    "expected_raw_event_count": {
+      "minimum": 0,
+      "title": "Expected Raw Event Count",
+      "type": "integer"
+    },
+    "passed": {
+      "title": "Passed",
+      "type": "boolean"
+    },
+    "point_in_time_integrity_verified": {
+      "title": "Point In Time Integrity Verified",
+      "type": "boolean"
+    },
+    "replay_id": {
+      "maxLength": 64,
+      "minLength": 8,
+      "title": "Replay Id",
+      "type": "string"
+    },
+    "replayed_at": {
+      "format": "date-time",
+      "title": "Replayed At",
+      "type": "string"
+    },
+    "report_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Report Hash",
+      "type": "string"
+    },
+    "request_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Request Hash",
+      "type": "string"
+    },
+    "session_id": {
+      "maxLength": 64,
+      "minLength": 8,
+      "title": "Session Id",
+      "type": "string"
+    },
+    "trading_date": {
+      "format": "date",
+      "title": "Trading Date",
+      "type": "string"
+    }
+  },
+  "required": [
+    "replay_id",
+    "session_id",
+    "trading_date",
+    "replayed_at",
+    "complete",
+    "passed",
+    "expected_raw_event_count",
+    "actual_raw_event_count",
+    "event_ordering_verified",
+    "point_in_time_integrity_verified",
+    "components",
+    "errors",
+    "request_hash",
+    "report_hash"
+  ],
+  "title": "FullSessionReplayReport",
+  "type": "object"
+}

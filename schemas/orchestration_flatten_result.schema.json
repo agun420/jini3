@@ -1,0 +1,206 @@
+{
+  "$defs": {
+    "FlattenOrder": {
+      "additionalProperties": false,
+      "properties": {
+        "broker_order_id": {
+          "title": "Broker Order Id",
+          "type": "string"
+        },
+        "client_order_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Client Order Id"
+        },
+        "quantity": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0.0,
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            }
+          ],
+          "title": "Quantity"
+        },
+        "raw_response_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Raw Response Hash",
+          "type": "string"
+        },
+        "submitted_at": {
+          "format": "date-time",
+          "title": "Submitted At",
+          "type": "string"
+        },
+        "symbol": {
+          "pattern": "^[A-Z0-9](?:[A-Z0-9.-]{0,13}[A-Z0-9])?$",
+          "title": "Symbol",
+          "type": "string"
+        }
+      },
+      "required": [
+        "symbol",
+        "quantity",
+        "broker_order_id",
+        "submitted_at",
+        "raw_response_hash"
+      ],
+      "title": "FlattenOrder",
+      "type": "object"
+    },
+    "SessionPosition": {
+      "additionalProperties": false,
+      "properties": {
+        "average_entry_price": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0.0,
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Average Entry Price"
+        },
+        "observed_at": {
+          "format": "date-time",
+          "title": "Observed At",
+          "type": "string"
+        },
+        "quantity": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0.0,
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            }
+          ],
+          "title": "Quantity"
+        },
+        "raw_response_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Raw Response Hash",
+          "type": "string"
+        },
+        "side": {
+          "const": "long",
+          "default": "long",
+          "title": "Side",
+          "type": "string"
+        },
+        "symbol": {
+          "pattern": "^[A-Z0-9](?:[A-Z0-9.-]{0,13}[A-Z0-9])?$",
+          "title": "Symbol",
+          "type": "string"
+        }
+      },
+      "required": [
+        "symbol",
+        "quantity",
+        "observed_at",
+        "raw_response_hash"
+      ],
+      "title": "SessionPosition",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "canceled_order_count": {
+      "minimum": 0,
+      "title": "Canceled Order Count",
+      "type": "integer"
+    },
+    "close_orders": {
+      "items": {
+        "$ref": "#/$defs/FlattenOrder"
+      },
+      "title": "Close Orders",
+      "type": "array"
+    },
+    "complete": {
+      "title": "Complete",
+      "type": "boolean"
+    },
+    "completed_at": {
+      "format": "date-time",
+      "title": "Completed At",
+      "type": "string"
+    },
+    "errors": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "title": "Errors",
+      "type": "array"
+    },
+    "flatten_id": {
+      "maxLength": 64,
+      "minLength": 8,
+      "title": "Flatten Id",
+      "type": "string"
+    },
+    "initial_positions": {
+      "items": {
+        "$ref": "#/$defs/SessionPosition"
+      },
+      "title": "Initial Positions",
+      "type": "array"
+    },
+    "remaining_positions": {
+      "items": {
+        "$ref": "#/$defs/SessionPosition"
+      },
+      "title": "Remaining Positions",
+      "type": "array"
+    },
+    "result_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Result Hash",
+      "type": "string"
+    },
+    "session_id": {
+      "title": "Session Id",
+      "type": "string"
+    },
+    "started_at": {
+      "format": "date-time",
+      "title": "Started At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "flatten_id",
+    "session_id",
+    "started_at",
+    "completed_at",
+    "canceled_order_count",
+    "initial_positions",
+    "close_orders",
+    "remaining_positions",
+    "complete",
+    "result_hash"
+  ],
+  "title": "FlattenResult",
+  "type": "object"
+}

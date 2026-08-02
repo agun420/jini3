@@ -1,0 +1,709 @@
+{
+  "$defs": {
+    "BrokerOrderCommand": {
+      "additionalProperties": false,
+      "properties": {
+        "client_order_id": {
+          "maxLength": 48,
+          "minLength": 1,
+          "title": "Client Order Id",
+          "type": "string"
+        },
+        "command_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Command Hash",
+          "type": "string"
+        },
+        "command_id": {
+          "maxLength": 64,
+          "minLength": 8,
+          "title": "Command Id",
+          "type": "string"
+        },
+        "execution_id": {
+          "title": "Execution Id",
+          "type": "string"
+        },
+        "extended_hours": {
+          "const": false,
+          "default": false,
+          "title": "Extended Hours",
+          "type": "boolean"
+        },
+        "limit_price": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0.0,
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,20}|(?=[\\d.]{1,31}0*$)\\d{0,20}\\.\\d{0,10}0*$)",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Limit Price"
+        },
+        "order_class": {
+          "$ref": "#/$defs/OrderClass"
+        },
+        "order_type": {
+          "$ref": "#/$defs/OrderType"
+        },
+        "parent_client_order_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Parent Client Order Id"
+        },
+        "quantity": {
+          "exclusiveMinimum": 0,
+          "title": "Quantity",
+          "type": "integer"
+        },
+        "side": {
+          "$ref": "#/$defs/OrderSide"
+        },
+        "stop_loss_stop_price": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0.0,
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,20}|(?=[\\d.]{1,31}0*$)\\d{0,20}\\.\\d{0,10}0*$)",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Stop Loss Stop Price"
+        },
+        "stop_price": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0.0,
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,20}|(?=[\\d.]{1,31}0*$)\\d{0,20}\\.\\d{0,10}0*$)",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Stop Price"
+        },
+        "symbol": {
+          "pattern": "^[A-Z0-9](?:[A-Z0-9.-]{0,13}[A-Z0-9])?$",
+          "title": "Symbol",
+          "type": "string"
+        },
+        "take_profit_limit_price": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0.0,
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,20}|(?=[\\d.]{1,31}0*$)\\d{0,20}\\.\\d{0,10}0*$)",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Take Profit Limit Price"
+        },
+        "time_in_force": {
+          "$ref": "#/$defs/TimeInForce"
+        }
+      },
+      "required": [
+        "command_id",
+        "execution_id",
+        "client_order_id",
+        "symbol",
+        "quantity",
+        "side",
+        "order_type",
+        "time_in_force",
+        "order_class",
+        "command_hash"
+      ],
+      "title": "BrokerOrderCommand",
+      "type": "object"
+    },
+    "BrokerOrderLeg": {
+      "additionalProperties": false,
+      "properties": {
+        "broker_order_id": {
+          "title": "Broker Order Id",
+          "type": "string"
+        },
+        "client_order_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Client Order Id"
+        },
+        "filled_quantity": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            }
+          ],
+          "title": "Filled Quantity"
+        },
+        "limit_price": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,20}|(?=[\\d.]{1,31}0*$)\\d{0,20}\\.\\d{0,10}0*$)",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Limit Price"
+        },
+        "order_type": {
+          "title": "Order Type",
+          "type": "string"
+        },
+        "quantity": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            }
+          ],
+          "title": "Quantity"
+        },
+        "side": {
+          "title": "Side",
+          "type": "string"
+        },
+        "status": {
+          "title": "Status",
+          "type": "string"
+        },
+        "stop_price": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,20}|(?=[\\d.]{1,31}0*$)\\d{0,20}\\.\\d{0,10}0*$)",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Stop Price"
+        }
+      },
+      "required": [
+        "broker_order_id",
+        "side",
+        "order_type",
+        "status",
+        "quantity",
+        "filled_quantity"
+      ],
+      "title": "BrokerOrderLeg",
+      "type": "object"
+    },
+    "BrokerOrderSnapshot": {
+      "additionalProperties": false,
+      "properties": {
+        "broker_order_id": {
+          "title": "Broker Order Id",
+          "type": "string"
+        },
+        "client_order_id": {
+          "title": "Client Order Id",
+          "type": "string"
+        },
+        "filled_avg_price": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,20}|(?=[\\d.]{1,31}0*$)\\d{0,20}\\.\\d{0,10}0*$)",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filled Avg Price"
+        },
+        "filled_quantity": {
+          "anyOf": [
+            {
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            }
+          ],
+          "title": "Filled Quantity"
+        },
+        "legs": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/BrokerOrderLeg"
+          },
+          "title": "Legs",
+          "type": "array"
+        },
+        "limit_price": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,20}|(?=[\\d.]{1,31}0*$)\\d{0,20}\\.\\d{0,10}0*$)",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Limit Price"
+        },
+        "order_class": {
+          "title": "Order Class",
+          "type": "string"
+        },
+        "order_type": {
+          "$ref": "#/$defs/OrderType"
+        },
+        "quantity": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0.0,
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            }
+          ],
+          "title": "Quantity"
+        },
+        "raw_response": {
+          "additionalProperties": true,
+          "title": "Raw Response",
+          "type": "object"
+        },
+        "raw_response_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Raw Response Hash",
+          "type": "string"
+        },
+        "side": {
+          "$ref": "#/$defs/OrderSide"
+        },
+        "snapshot_id": {
+          "maxLength": 64,
+          "minLength": 8,
+          "title": "Snapshot Id",
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/$defs/BrokerOrderStatus"
+        },
+        "stop_price": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,20}|(?=[\\d.]{1,31}0*$)\\d{0,20}\\.\\d{0,10}0*$)",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Stop Price"
+        },
+        "submitted_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Submitted At"
+        },
+        "symbol": {
+          "pattern": "^[A-Z0-9](?:[A-Z0-9.-]{0,13}[A-Z0-9])?$",
+          "title": "Symbol",
+          "type": "string"
+        },
+        "time_in_force": {
+          "title": "Time In Force",
+          "type": "string"
+        },
+        "updated_at": {
+          "format": "date-time",
+          "title": "Updated At",
+          "type": "string"
+        }
+      },
+      "required": [
+        "snapshot_id",
+        "broker_order_id",
+        "client_order_id",
+        "symbol",
+        "side",
+        "order_type",
+        "time_in_force",
+        "order_class",
+        "status",
+        "quantity",
+        "filled_quantity",
+        "updated_at",
+        "raw_response_hash",
+        "raw_response"
+      ],
+      "title": "BrokerOrderSnapshot",
+      "type": "object"
+    },
+    "BrokerOrderStatus": {
+      "enum": [
+        "accepted",
+        "accepted_for_bidding",
+        "pending_new",
+        "new",
+        "partially_filled",
+        "filled",
+        "done_for_day",
+        "canceled",
+        "expired",
+        "replaced",
+        "pending_cancel",
+        "pending_replace",
+        "stopped",
+        "rejected",
+        "suspended",
+        "calculated"
+      ],
+      "title": "BrokerOrderStatus",
+      "type": "string"
+    },
+    "ExecutionEvent": {
+      "additionalProperties": false,
+      "properties": {
+        "broker_order_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Broker Order Id"
+        },
+        "client_order_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Client Order Id"
+        },
+        "details": {
+          "additionalProperties": true,
+          "title": "Details",
+          "type": "object"
+        },
+        "event_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Event Hash",
+          "type": "string"
+        },
+        "event_sequence": {
+          "minimum": 1,
+          "title": "Event Sequence",
+          "type": "integer"
+        },
+        "event_timestamp": {
+          "format": "date-time",
+          "title": "Event Timestamp",
+          "type": "string"
+        },
+        "event_type": {
+          "$ref": "#/$defs/ExecutionEventType"
+        },
+        "execution_id": {
+          "title": "Execution Id",
+          "type": "string"
+        },
+        "filled_quantity": {
+          "anyOf": [
+            {
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filled Quantity"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status"
+        }
+      },
+      "required": [
+        "execution_id",
+        "event_sequence",
+        "event_type",
+        "event_timestamp",
+        "event_hash"
+      ],
+      "title": "ExecutionEvent",
+      "type": "object"
+    },
+    "ExecutionEventType": {
+      "enum": [
+        "request_accepted",
+        "command_persisted",
+        "broker_lookup",
+        "submit_started",
+        "broker_acknowledged",
+        "trade_update",
+        "cancel_requested",
+        "protective_stop_submit_started",
+        "protective_stop_acknowledged",
+        "rejected",
+        "reconciliation_required"
+      ],
+      "title": "ExecutionEventType",
+      "type": "string"
+    },
+    "ExecutionOutcome": {
+      "enum": [
+        "submitted",
+        "existing_reconciled",
+        "partial_fill_protected",
+        "rejected",
+        "reconciliation_required"
+      ],
+      "title": "ExecutionOutcome",
+      "type": "string"
+    },
+    "ExecutionRejectionCode": {
+      "enum": [
+        "PAPER_MODE_REQUIRED",
+        "LIVE_ENDPOINT_FORBIDDEN",
+        "RISK_DECISION_NOT_APPROVED",
+        "RESERVATION_MISSING",
+        "RESERVATION_EXPIRED",
+        "SUBMISSION_CUTOFF_EXCEEDED",
+        "REQUEST_STALE",
+        "INVALID_ORDER_GEOMETRY",
+        "COMMAND_IDENTITY_CONFLICT",
+        "BROKER_ORDER_MISMATCH",
+        "BROKER_REJECTED",
+        "BROKER_TIMEOUT_UNKNOWN_STATE",
+        "BROKER_TRANSPORT_FAILURE",
+        "PARTIAL_FILL_PROTECTION_FAILED",
+        "POSITION_RECONCILIATION_FAILURE"
+      ],
+      "title": "ExecutionRejectionCode",
+      "type": "string"
+    },
+    "OrderClass": {
+      "enum": [
+        "bracket",
+        "simple"
+      ],
+      "title": "OrderClass",
+      "type": "string"
+    },
+    "OrderSide": {
+      "enum": [
+        "buy",
+        "sell"
+      ],
+      "title": "OrderSide",
+      "type": "string"
+    },
+    "OrderType": {
+      "enum": [
+        "limit",
+        "stop"
+      ],
+      "title": "OrderType",
+      "type": "string"
+    },
+    "TimeInForce": {
+      "enum": [
+        "day"
+      ],
+      "title": "TimeInForce",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "broker_order": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/BrokerOrderSnapshot"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "command": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/BrokerOrderCommand"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "completed_at": {
+      "format": "date-time",
+      "title": "Completed At",
+      "type": "string"
+    },
+    "events": {
+      "items": {
+        "$ref": "#/$defs/ExecutionEvent"
+      },
+      "title": "Events",
+      "type": "array"
+    },
+    "execution_id": {
+      "title": "Execution Id",
+      "type": "string"
+    },
+    "outcome": {
+      "$ref": "#/$defs/ExecutionOutcome"
+    },
+    "protective_order": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/BrokerOrderSnapshot"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "reconciliation_required": {
+      "title": "Reconciliation Required",
+      "type": "boolean"
+    },
+    "rejection_reasons": {
+      "items": {
+        "$ref": "#/$defs/ExecutionRejectionCode"
+      },
+      "title": "Rejection Reasons",
+      "type": "array"
+    },
+    "request_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Request Hash",
+      "type": "string"
+    },
+    "result_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Result Hash",
+      "type": "string"
+    },
+    "result_id": {
+      "title": "Result Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "result_id",
+    "execution_id",
+    "outcome",
+    "rejection_reasons",
+    "command",
+    "broker_order",
+    "reconciliation_required",
+    "events",
+    "completed_at",
+    "request_hash",
+    "result_hash"
+  ],
+  "title": "ExecutionResult",
+  "type": "object"
+}

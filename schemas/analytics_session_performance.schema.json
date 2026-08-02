@@ -1,0 +1,323 @@
+{
+  "$defs": {
+    "AttributionBucket": {
+      "additionalProperties": false,
+      "properties": {
+        "average_r_multiple": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            }
+          ],
+          "title": "Average R Multiple"
+        },
+        "dimension": {
+          "enum": [
+            "source_type",
+            "chart_structure",
+            "risk_flag",
+            "exit_reason"
+          ],
+          "title": "Dimension",
+          "type": "string"
+        },
+        "expectancy": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            }
+          ],
+          "title": "Expectancy"
+        },
+        "key": {
+          "title": "Key",
+          "type": "string"
+        },
+        "net_pnl": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            }
+          ],
+          "title": "Net Pnl"
+        },
+        "trade_count": {
+          "exclusiveMinimum": 0,
+          "title": "Trade Count",
+          "type": "integer"
+        },
+        "win_rate": {
+          "anyOf": [
+            {
+              "maximum": 1.0,
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            }
+          ],
+          "title": "Win Rate"
+        }
+      },
+      "required": [
+        "dimension",
+        "key",
+        "trade_count",
+        "net_pnl",
+        "win_rate",
+        "expectancy",
+        "average_r_multiple"
+      ],
+      "title": "AttributionBucket",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "analytics_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Analytics Hash",
+      "type": "string"
+    },
+    "analytics_id": {
+      "maxLength": 64,
+      "minLength": 8,
+      "title": "Analytics Id",
+      "type": "string"
+    },
+    "attributions": {
+      "items": {
+        "$ref": "#/$defs/AttributionBucket"
+      },
+      "title": "Attributions",
+      "type": "array"
+    },
+    "average_entry_slippage_bps": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "type": "string"
+        }
+      ],
+      "title": "Average Entry Slippage Bps"
+    },
+    "average_loss": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "type": "string"
+        }
+      ],
+      "title": "Average Loss"
+    },
+    "average_r_multiple": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "type": "string"
+        }
+      ],
+      "title": "Average R Multiple"
+    },
+    "average_win": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "type": "string"
+        }
+      ],
+      "title": "Average Win"
+    },
+    "breakeven_trade_count": {
+      "minimum": 0,
+      "title": "Breakeven Trade Count",
+      "type": "integer"
+    },
+    "evidence_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Evidence Hash",
+      "type": "string"
+    },
+    "expectancy": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "type": "string"
+        }
+      ],
+      "title": "Expectancy"
+    },
+    "fees": {
+      "anyOf": [
+        {
+          "minimum": 0.0,
+          "type": "number"
+        },
+        {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "type": "string"
+        }
+      ],
+      "title": "Fees"
+    },
+    "gross_pnl": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "type": "string"
+        }
+      ],
+      "title": "Gross Pnl"
+    },
+    "losing_trade_count": {
+      "minimum": 0,
+      "title": "Losing Trade Count",
+      "type": "integer"
+    },
+    "maximum_drawdown": {
+      "anyOf": [
+        {
+          "minimum": 0.0,
+          "type": "number"
+        },
+        {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "type": "string"
+        }
+      ],
+      "title": "Maximum Drawdown"
+    },
+    "net_pnl": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "type": "string"
+        }
+      ],
+      "title": "Net Pnl"
+    },
+    "profit_factor": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Profit Factor"
+    },
+    "session_id": {
+      "maxLength": 64,
+      "minLength": 8,
+      "title": "Session Id",
+      "type": "string"
+    },
+    "total_entry_slippage": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "type": "string"
+        }
+      ],
+      "title": "Total Entry Slippage"
+    },
+    "trade_count": {
+      "minimum": 0,
+      "title": "Trade Count",
+      "type": "integer"
+    },
+    "trading_date": {
+      "format": "date",
+      "title": "Trading Date",
+      "type": "string"
+    },
+    "win_rate": {
+      "anyOf": [
+        {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "type": "number"
+        },
+        {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "type": "string"
+        }
+      ],
+      "title": "Win Rate"
+    },
+    "winning_trade_count": {
+      "minimum": 0,
+      "title": "Winning Trade Count",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "analytics_id",
+    "session_id",
+    "trading_date",
+    "trade_count",
+    "winning_trade_count",
+    "losing_trade_count",
+    "breakeven_trade_count",
+    "gross_pnl",
+    "fees",
+    "net_pnl",
+    "win_rate",
+    "profit_factor",
+    "expectancy",
+    "average_win",
+    "average_loss",
+    "average_r_multiple",
+    "maximum_drawdown",
+    "total_entry_slippage",
+    "average_entry_slippage_bps",
+    "attributions",
+    "evidence_hash",
+    "analytics_hash"
+  ],
+  "title": "SessionPerformance",
+  "type": "object"
+}

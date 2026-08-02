@@ -1,0 +1,76 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "allow_automatic_trade_resume": {
+      "const": false,
+      "default": false,
+      "title": "Allow Automatic Trade Resume",
+      "type": "boolean"
+    },
+    "allow_live_execution": {
+      "const": false,
+      "default": false,
+      "title": "Allow Live Execution",
+      "type": "boolean"
+    },
+    "heartbeat_interval_seconds": {
+      "default": 5,
+      "maximum": 60,
+      "minimum": 1,
+      "title": "Heartbeat Interval Seconds",
+      "type": "integer"
+    },
+    "max_heartbeat_gap_seconds": {
+      "default": 20,
+      "maximum": 300,
+      "minimum": 2,
+      "title": "Max Heartbeat Gap Seconds",
+      "type": "integer"
+    },
+    "minimum_file_descriptor_limit": {
+      "default": 4096,
+      "minimum": 256,
+      "title": "Minimum File Descriptor Limit",
+      "type": "integer"
+    },
+    "minimum_free_disk_bytes": {
+      "default": 5000000000,
+      "minimum": 100000000,
+      "title": "Minimum Free Disk Bytes",
+      "type": "integer"
+    },
+    "mode": {
+      "const": "paper",
+      "default": "paper",
+      "title": "Mode",
+      "type": "string"
+    },
+    "policy_version": {
+      "const": "operations_policy_v1",
+      "default": "operations_policy_v1",
+      "title": "Policy Version",
+      "type": "string"
+    },
+    "recovery_requires_manual_trade_enable": {
+      "const": true,
+      "default": true,
+      "title": "Recovery Requires Manual Trade Enable",
+      "type": "boolean"
+    },
+    "required_backup_retention_count": {
+      "default": 7,
+      "maximum": 365,
+      "minimum": 1,
+      "title": "Required Backup Retention Count",
+      "type": "integer"
+    },
+    "timezone": {
+      "const": "America/New_York",
+      "default": "America/New_York",
+      "title": "Timezone",
+      "type": "string"
+    }
+  },
+  "title": "OperationsPolicy",
+  "type": "object"
+}

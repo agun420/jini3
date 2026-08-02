@@ -1,0 +1,56 @@
+{
+  "$defs": {
+    "ApprovalRole": {
+      "enum": [
+        "engineering",
+        "operations",
+        "risk",
+        "security",
+        "independent_review"
+      ],
+      "title": "ApprovalRole",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "approved": {
+      "title": "Approved",
+      "type": "boolean"
+    },
+    "approved_at": {
+      "format": "date-time",
+      "title": "Approved At",
+      "type": "string"
+    },
+    "comment": {
+      "default": "",
+      "maxLength": 500,
+      "title": "Comment",
+      "type": "string"
+    },
+    "evidence_package_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Evidence Package Hash",
+      "type": "string"
+    },
+    "reviewer_id": {
+      "maxLength": 128,
+      "minLength": 2,
+      "title": "Reviewer Id",
+      "type": "string"
+    },
+    "role": {
+      "$ref": "#/$defs/ApprovalRole"
+    }
+  },
+  "required": [
+    "role",
+    "reviewer_id",
+    "approved",
+    "approved_at",
+    "evidence_package_hash"
+  ],
+  "title": "ApprovalAttestation",
+  "type": "object"
+}

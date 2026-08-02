@@ -1,0 +1,81 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "account_active": {
+      "title": "Account Active",
+      "type": "boolean"
+    },
+    "account_blocked": {
+      "default": false,
+      "title": "Account Blocked",
+      "type": "boolean"
+    },
+    "broker_healthy": {
+      "title": "Broker Healthy",
+      "type": "boolean"
+    },
+    "clock_skew_ms": {
+      "title": "Clock Skew Ms",
+      "type": "integer"
+    },
+    "clock_synchronized": {
+      "title": "Clock Synchronized",
+      "type": "boolean"
+    },
+    "configuration_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Configuration Hash",
+      "type": "string"
+    },
+    "database_healthy": {
+      "title": "Database Healthy",
+      "type": "boolean"
+    },
+    "details": {
+      "additionalProperties": true,
+      "title": "Details",
+      "type": "object"
+    },
+    "market_data_stream_healthy": {
+      "title": "Market Data Stream Healthy",
+      "type": "boolean"
+    },
+    "market_status_normal": {
+      "default": true,
+      "title": "Market Status Normal",
+      "type": "boolean"
+    },
+    "observed_at": {
+      "format": "date-time",
+      "title": "Observed At",
+      "type": "string"
+    },
+    "recorder_healthy": {
+      "title": "Recorder Healthy",
+      "type": "boolean"
+    },
+    "trade_update_stream_healthy": {
+      "title": "Trade Update Stream Healthy",
+      "type": "boolean"
+    },
+    "trading_blocked": {
+      "default": false,
+      "title": "Trading Blocked",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "observed_at",
+    "clock_synchronized",
+    "clock_skew_ms",
+    "database_healthy",
+    "recorder_healthy",
+    "market_data_stream_healthy",
+    "trade_update_stream_healthy",
+    "broker_healthy",
+    "account_active",
+    "configuration_hash"
+  ],
+  "title": "HealthSnapshot",
+  "type": "object"
+}

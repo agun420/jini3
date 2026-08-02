@@ -1,0 +1,105 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: python -m pip install --upgrade pip
+      - run: python -m pip install -e '.[recorder,evaluator,test,dev]'
+      - run: ruff format --check .
+      - run: ruff check .
+      - run: mypy daybreak daybreak_*
+
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+      - run: python -m pip install --upgrade pip
+      - run: python -m pip install -e '.[recorder,evaluator,test,dev]'
+      - name: Tests with branch coverage
+        run: >-
+          pytest
+          --cov=daybreak
+          --cov=daybreak_analytics
+          --cov=daybreak_contracts
+          --cov=daybreak_evaluator
+          --cov=daybreak_execution
+          --cov=daybreak_features
+          --cov=daybreak_operations
+          --cov=daybreak_orchestration
+          --cov=daybreak_recorder
+          --cov=daybreak_release
+          --cov=daybreak_risk
+          --cov-branch
+          --cov-report=term-missing
+          --cov-report=xml
+          --cov-fail-under=80
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coverage-python-${{ matrix.python-version }}
+          path: coverage.xml
+
+  security:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: python -m pip install --upgrade pip
+      - run: python -m pip install -e '.[recorder,evaluator,test,dev]'
+      - name: Static security analysis
+        run: >-
+          bandit -r
+          daybreak daybreak_analytics daybreak_contracts daybreak_evaluator
+          daybreak_execution daybreak_features daybreak_operations
+          daybreak_orchestration daybreak_recorder daybreak_release daybreak_risk
+          --severity-level medium --confidence-level medium
+      - name: Secret scan
+        run: python scripts/check_secrets.py
+      - name: Dependency vulnerability audit
+        run: pip-audit --skip-editable
+
+  package:
+    runs-on: ubuntu-latest
+    needs: [quality, test, security]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: python -m pip install --upgrade pip build twine
+      - run: python -m compileall -q daybreak daybreak_*
+      - run: python -m build
+      - run: python -m twine check dist/*
+      - name: Installed-wheel smoke test
+        run: |
+          python -m venv /tmp/daybreak-wheel-smoke
+          /tmp/daybreak-wheel-smoke/bin/python -m pip install --upgrade pip
+          /tmp/daybreak-wheel-smoke/bin/python -m pip install dist/*.whl
+          /tmp/daybreak-wheel-smoke/bin/daybreak version
+          /tmp/daybreak-wheel-smoke/bin/daybreak production-schema report > /tmp/report.schema.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: project-daybreak-distributions
+          path: dist/*

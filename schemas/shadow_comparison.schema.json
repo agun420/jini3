@@ -1,0 +1,160 @@
+{
+  "$defs": {
+    "TickerDisagreement": {
+      "additionalProperties": false,
+      "properties": {
+        "evidence_span_equal": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Evidence Span Equal"
+        },
+        "primary_conviction_score": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Primary Conviction Score"
+        },
+        "primary_magnitude_bucket": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Primary Magnitude Bucket"
+        },
+        "primary_terminal": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Primary Terminal"
+        },
+        "shadow_conviction_score": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Shadow Conviction Score"
+        },
+        "shadow_magnitude_bucket": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Shadow Magnitude Bucket"
+        },
+        "shadow_terminal": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Shadow Terminal"
+        },
+        "ticker": {
+          "title": "Ticker",
+          "type": "string"
+        }
+      },
+      "required": [
+        "ticker",
+        "primary_terminal",
+        "shadow_terminal",
+        "primary_magnitude_bucket",
+        "shadow_magnitude_bucket",
+        "primary_conviction_score",
+        "shadow_conviction_score",
+        "evidence_span_equal"
+      ],
+      "title": "TickerDisagreement",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "comparison_version": {
+      "const": "shadow_compare_v1",
+      "default": "shadow_compare_v1",
+      "title": "Comparison Version",
+      "type": "string"
+    },
+    "exact_output_match": {
+      "title": "Exact Output Match",
+      "type": "boolean"
+    },
+    "primary_attempt_id": {
+      "title": "Primary Attempt Id",
+      "type": "string"
+    },
+    "primary_output_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Primary Output Hash",
+      "type": "string"
+    },
+    "same_approved_order": {
+      "title": "Same Approved Order",
+      "type": "boolean"
+    },
+    "same_run_status": {
+      "title": "Same Run Status",
+      "type": "boolean"
+    },
+    "shadow_attempt_id": {
+      "title": "Shadow Attempt Id",
+      "type": "string"
+    },
+    "shadow_output_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Shadow Output Hash",
+      "type": "string"
+    },
+    "ticker_disagreements": {
+      "items": {
+        "$ref": "#/$defs/TickerDisagreement"
+      },
+      "title": "Ticker Disagreements",
+      "type": "array"
+    }
+  },
+  "required": [
+    "primary_attempt_id",
+    "shadow_attempt_id",
+    "exact_output_match",
+    "same_run_status",
+    "same_approved_order",
+    "ticker_disagreements",
+    "primary_output_hash",
+    "shadow_output_hash"
+  ],
+  "title": "ShadowComparison",
+  "type": "object"
+}

@@ -1,0 +1,912 @@
+{
+  "$defs": {
+    "BindingCap": {
+      "enum": [
+        "TRADE_RISK",
+        "OPEN_RISK",
+        "DAILY_LOSS",
+        "BUYING_POWER",
+        "POSITION_NOTIONAL",
+        "GROSS_EXPOSURE",
+        "ADV_LIQUIDITY",
+        "PREMARKET_LIQUIDITY"
+      ],
+      "title": "BindingCap",
+      "type": "string"
+    },
+    "QuantityCaps": {
+      "additionalProperties": false,
+      "properties": {
+        "adv_liquidity": {
+          "minimum": 0,
+          "title": "Adv Liquidity",
+          "type": "integer"
+        },
+        "buying_power": {
+          "minimum": 0,
+          "title": "Buying Power",
+          "type": "integer"
+        },
+        "daily_loss": {
+          "minimum": 0,
+          "title": "Daily Loss",
+          "type": "integer"
+        },
+        "gross_exposure": {
+          "minimum": 0,
+          "title": "Gross Exposure",
+          "type": "integer"
+        },
+        "open_risk": {
+          "minimum": 0,
+          "title": "Open Risk",
+          "type": "integer"
+        },
+        "position_notional": {
+          "minimum": 0,
+          "title": "Position Notional",
+          "type": "integer"
+        },
+        "premarket_liquidity": {
+          "minimum": 0,
+          "title": "Premarket Liquidity",
+          "type": "integer"
+        },
+        "trade_risk": {
+          "minimum": 0,
+          "title": "Trade Risk",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "trade_risk",
+        "open_risk",
+        "daily_loss",
+        "buying_power",
+        "position_notional",
+        "gross_exposure",
+        "adv_liquidity",
+        "premarket_liquidity"
+      ],
+      "title": "QuantityCaps",
+      "type": "object"
+    },
+    "ReservationStatus": {
+      "enum": [
+        "reserved",
+        "submitted",
+        "partially_filled",
+        "filled",
+        "released",
+        "expired",
+        "reconciliation_required"
+      ],
+      "title": "ReservationStatus",
+      "type": "string"
+    },
+    "RiskDecision": {
+      "additionalProperties": false,
+      "properties": {
+        "account_snapshot_timestamp": {
+          "format": "date-time",
+          "title": "Account Snapshot Timestamp",
+          "type": "string"
+        },
+        "adjusted_trade_risk_budget": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,20}|(?=[\\d.]{1,31}0*$)\\d{0,20}\\.\\d{0,10}0*$)",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Adjusted Trade Risk Budget"
+        },
+        "base_trade_risk_budget": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,20}|(?=[\\d.]{1,31}0*$)\\d{0,20}\\.\\d{0,10}0*$)",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Base Trade Risk Budget"
+        },
+        "binding_cap": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/BindingCap"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "broker_session_pnl": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,20}|(?=[\\d.]{1,31}0*$)\\d{0,20}\\.\\d{0,10}0*$)",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Broker Session Pnl"
+        },
+        "calculated_at": {
+          "format": "date-time",
+          "title": "Calculated At",
+          "type": "string"
+        },
+        "configuration_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Configuration Hash",
+          "type": "string"
+        },
+        "decision": {
+          "$ref": "#/$defs/RiskDecisionStatus"
+        },
+        "decision_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Decision Hash",
+          "type": "string"
+        },
+        "decision_id": {
+          "title": "Decision Id",
+          "type": "string"
+        },
+        "execution_risk_buffer": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,20}|(?=[\\d.]{1,31}0*$)\\d{0,20}\\.\\d{0,10}0*$)",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Execution Risk Buffer"
+        },
+        "final_quantity": {
+          "minimum": 0,
+          "title": "Final Quantity",
+          "type": "integer"
+        },
+        "final_rank": {
+          "maximum": 3,
+          "minimum": 1,
+          "title": "Final Rank",
+          "type": "integer"
+        },
+        "input_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Input Hash",
+          "type": "string"
+        },
+        "internal_session_pnl": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,20}|(?=[\\d.]{1,31}0*$)\\d{0,20}\\.\\d{0,10}0*$)",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Internal Session Pnl"
+        },
+        "kill_switch_required": {
+          "title": "Kill Switch Required",
+          "type": "boolean"
+        },
+        "maximum_position_notional": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,20}|(?=[\\d.]{1,31}0*$)\\d{0,20}\\.\\d{0,10}0*$)",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Maximum Position Notional"
+        },
+        "maximum_total_open_risk": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,20}|(?=[\\d.]{1,31}0*$)\\d{0,20}\\.\\d{0,10}0*$)",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Maximum Total Open Risk"
+        },
+        "modeled_risk_per_share": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,20}|(?=[\\d.]{1,31}0*$)\\d{0,20}\\.\\d{0,10}0*$)",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Modeled Risk Per Share"
+        },
+        "planned_entry_limit": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,20}|(?=[\\d.]{1,31}0*$)\\d{0,20}\\.\\d{0,10}0*$)",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Planned Entry Limit"
+        },
+        "policy_version": {
+          "const": "position_risk_policy_v1",
+          "title": "Policy Version",
+          "type": "string"
+        },
+        "profile_name": {
+          "$ref": "#/$defs/RiskProfileName"
+        },
+        "quantity_caps": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/QuantityCaps"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "quote_timestamp": {
+          "format": "date-time",
+          "title": "Quote Timestamp",
+          "type": "string"
+        },
+        "rejection_reasons": {
+          "items": {
+            "$ref": "#/$defs/RiskRejectionCode"
+          },
+          "title": "Rejection Reasons",
+          "type": "array"
+        },
+        "remaining_gross_exposure": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,20}|(?=[\\d.]{1,31}0*$)\\d{0,20}\\.\\d{0,10}0*$)",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Remaining Gross Exposure"
+        },
+        "remaining_hard_loss_capacity": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,20}|(?=[\\d.]{1,31}0*$)\\d{0,20}\\.\\d{0,10}0*$)",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Remaining Hard Loss Capacity"
+        },
+        "remaining_open_risk_capacity": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,20}|(?=[\\d.]{1,31}0*$)\\d{0,20}\\.\\d{0,10}0*$)",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Remaining Open Risk Capacity"
+        },
+        "request_id": {
+          "title": "Request Id",
+          "type": "string"
+        },
+        "reservation": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/RiskReservation"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "reserved_modeled_risk": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,20}|(?=[\\d.]{1,31}0*$)\\d{0,20}\\.\\d{0,10}0*$)",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Reserved Modeled Risk"
+        },
+        "reserved_notional": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,20}|(?=[\\d.]{1,31}0*$)\\d{0,20}\\.\\d{0,10}0*$)",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Reserved Notional"
+        },
+        "risk_flag_multiplier": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Risk Flag Multiplier"
+        },
+        "risk_session_pnl": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,20}|(?=[\\d.]{1,31}0*$)\\d{0,20}\\.\\d{0,10}0*$)",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Risk Session Pnl"
+        },
+        "run_id": {
+          "title": "Run Id",
+          "type": "string"
+        },
+        "session_reference_equity": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,20}|(?=[\\d.]{1,31}0*$)\\d{0,20}\\.\\d{0,10}0*$)",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Session Reference Equity"
+        },
+        "stop_price": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,20}|(?=[\\d.]{1,31}0*$)\\d{0,20}\\.\\d{0,10}0*$)",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Stop Price"
+        },
+        "structural_risk_per_share": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,20}|(?=[\\d.]{1,31}0*$)\\d{0,20}\\.\\d{0,10}0*$)",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Structural Risk Per Share"
+        },
+        "target_price": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,20}|(?=[\\d.]{1,31}0*$)\\d{0,20}\\.\\d{0,10}0*$)",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Target Price"
+        },
+        "ticker": {
+          "pattern": "^[A-Z0-9](?:[A-Z0-9.-]{0,13}[A-Z0-9])?$",
+          "title": "Ticker",
+          "type": "string"
+        },
+        "trading_date": {
+          "format": "date",
+          "title": "Trading Date",
+          "type": "string"
+        },
+        "usable_buying_power": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,20}|(?=[\\d.]{1,31}0*$)\\d{0,20}\\.\\d{0,10}0*$)",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Usable Buying Power"
+        }
+      },
+      "required": [
+        "decision_id",
+        "request_id",
+        "run_id",
+        "trading_date",
+        "policy_version",
+        "profile_name",
+        "ticker",
+        "final_rank",
+        "decision",
+        "rejection_reasons",
+        "kill_switch_required",
+        "session_reference_equity",
+        "broker_session_pnl",
+        "internal_session_pnl",
+        "risk_session_pnl",
+        "usable_buying_power",
+        "base_trade_risk_budget",
+        "risk_flag_multiplier",
+        "adjusted_trade_risk_budget",
+        "planned_entry_limit",
+        "stop_price",
+        "target_price",
+        "structural_risk_per_share",
+        "execution_risk_buffer",
+        "modeled_risk_per_share",
+        "maximum_total_open_risk",
+        "remaining_open_risk_capacity",
+        "remaining_hard_loss_capacity",
+        "maximum_position_notional",
+        "remaining_gross_exposure",
+        "quantity_caps",
+        "binding_cap",
+        "final_quantity",
+        "reserved_modeled_risk",
+        "reserved_notional",
+        "reservation",
+        "calculated_at",
+        "account_snapshot_timestamp",
+        "quote_timestamp",
+        "configuration_hash",
+        "input_hash",
+        "decision_hash"
+      ],
+      "title": "RiskDecision",
+      "type": "object"
+    },
+    "RiskDecisionStatus": {
+      "enum": [
+        "approved",
+        "rejected"
+      ],
+      "title": "RiskDecisionStatus",
+      "type": "string"
+    },
+    "RiskProfileName": {
+      "enum": [
+        "paper_v1",
+        "live_pilot_v1"
+      ],
+      "title": "RiskProfileName",
+      "type": "string"
+    },
+    "RiskRejectionCode": {
+      "enum": [
+        "ACCOUNT_NOT_ACTIVE",
+        "ACCOUNT_BLOCKED",
+        "TRADING_BLOCKED",
+        "TRADE_SUSPENDED_BY_USER",
+        "ACCOUNT_SNAPSHOT_STALE",
+        "INVALID_ACCOUNT_VALUE",
+        "PENDING_TRANSFER_OUT",
+        "ACCOUNT_STATE_UNRECONCILED",
+        "STREAM_HEALTH_FAILURE",
+        "DATABASE_HEALTH_FAILURE",
+        "KILL_SWITCH_ACTIVE",
+        "MARKET_NOT_NORMAL",
+        "SYMBOL_HALTED",
+        "EXECUTION_CUTOFF_EXCEEDED",
+        "QUOTE_SNAPSHOT_STALE",
+        "LAST_TRADE_STALE",
+        "INVALID_QUOTE",
+        "REGULAR_SESSION_NBBO_NOT_CONFIRMED",
+        "SPREAD_TOO_WIDE",
+        "ENTRY_PRICE_DRIFT_TOO_LARGE",
+        "ENTRY_LIMIT_NOT_MARKETABLE",
+        "INVALID_PRICE_GEOMETRY",
+        "PREMARKET_LOW_BROKEN",
+        "STOP_ABOVE_PREMARKET_LOW",
+        "INVALID_LIQUIDITY_INPUT",
+        "SOFT_DAILY_LOSS_LIMIT",
+        "HARD_DAILY_LOSS_LIMIT",
+        "SESSION_PNL_RECONCILIATION_FAILURE",
+        "MAX_CONSECUTIVE_LOSSES",
+        "MAX_NEW_ENTRIES_PER_DAY",
+        "DUPLICATE_TICKER_DAY",
+        "MAX_CONCURRENT_POSITIONS",
+        "NO_BUYING_POWER_CAPACITY",
+        "NO_OPEN_RISK_CAPACITY",
+        "NO_DAILY_LOSS_CAPACITY",
+        "NO_GROSS_EXPOSURE_CAPACITY",
+        "FINAL_QUANTITY_BELOW_MINIMUM",
+        "INVALID_POLICY_CONFIGURATION"
+      ],
+      "title": "RiskRejectionCode",
+      "type": "string"
+    },
+    "RiskReservation": {
+      "additionalProperties": false,
+      "properties": {
+        "client_order_id": {
+          "maxLength": 48,
+          "minLength": 1,
+          "title": "Client Order Id",
+          "type": "string"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "expires_at": {
+          "format": "date-time",
+          "title": "Expires At",
+          "type": "string"
+        },
+        "request_id": {
+          "title": "Request Id",
+          "type": "string"
+        },
+        "reservation_id": {
+          "title": "Reservation Id",
+          "type": "string"
+        },
+        "reserved_modeled_risk": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0.0,
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,20}|(?=[\\d.]{1,31}0*$)\\d{0,20}\\.\\d{0,10}0*$)",
+              "type": "string"
+            }
+          ],
+          "title": "Reserved Modeled Risk"
+        },
+        "reserved_notional": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0.0,
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,20}|(?=[\\d.]{1,31}0*$)\\d{0,20}\\.\\d{0,10}0*$)",
+              "type": "string"
+            }
+          ],
+          "title": "Reserved Notional"
+        },
+        "reserved_quantity": {
+          "exclusiveMinimum": 0,
+          "title": "Reserved Quantity",
+          "type": "integer"
+        },
+        "run_id": {
+          "title": "Run Id",
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/$defs/ReservationStatus",
+          "default": "reserved"
+        },
+        "ticker": {
+          "pattern": "^[A-Z0-9](?:[A-Z0-9.-]{0,13}[A-Z0-9])?$",
+          "title": "Ticker",
+          "type": "string"
+        },
+        "trading_date": {
+          "format": "date",
+          "title": "Trading Date",
+          "type": "string"
+        }
+      },
+      "required": [
+        "reservation_id",
+        "request_id",
+        "run_id",
+        "trading_date",
+        "ticker",
+        "client_order_id",
+        "reserved_quantity",
+        "reserved_notional",
+        "reserved_modeled_risk",
+        "created_at",
+        "expires_at"
+      ],
+      "title": "RiskReservation",
+      "type": "object"
+    },
+    "SessionRiskState": {
+      "additionalProperties": false,
+      "properties": {
+        "account_state_reconciled": {
+          "default": true,
+          "title": "Account State Reconciled",
+          "type": "boolean"
+        },
+        "completed_entry_count": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Completed Entry Count",
+          "type": "integer"
+        },
+        "consecutive_closed_losses": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Consecutive Closed Losses",
+          "type": "integer"
+        },
+        "current_long_market_value": {
+          "anyOf": [
+            {
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,20}|(?=[\\d.]{1,31}0*$)\\d{0,20}\\.\\d{0,10}0*$)",
+              "type": "string"
+            }
+          ],
+          "default": "0",
+          "title": "Current Long Market Value"
+        },
+        "current_total_open_risk": {
+          "anyOf": [
+            {
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,20}|(?=[\\d.]{1,31}0*$)\\d{0,20}\\.\\d{0,10}0*$)",
+              "type": "string"
+            }
+          ],
+          "default": "0",
+          "title": "Current Total Open Risk"
+        },
+        "database_healthy": {
+          "default": true,
+          "title": "Database Healthy",
+          "type": "boolean"
+        },
+        "internal_realized_pnl": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,20}|(?=[\\d.]{1,31}0*$)\\d{0,20}\\.\\d{0,10}0*$)",
+              "type": "string"
+            }
+          ],
+          "default": "0",
+          "title": "Internal Realized Pnl"
+        },
+        "internal_unrealized_pnl": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,20}|(?=[\\d.]{1,31}0*$)\\d{0,20}\\.\\d{0,10}0*$)",
+              "type": "string"
+            }
+          ],
+          "default": "0",
+          "title": "Internal Unrealized Pnl"
+        },
+        "kill_switch_active": {
+          "default": false,
+          "title": "Kill Switch Active",
+          "type": "boolean"
+        },
+        "net_external_cash_flow": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,20}|(?=[\\d.]{1,31}0*$)\\d{0,20}\\.\\d{0,10}0*$)",
+              "type": "string"
+            }
+          ],
+          "default": "0",
+          "title": "Net External Cash Flow"
+        },
+        "open_daybreak_position_count": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Open Daybreak Position Count",
+          "type": "integer"
+        },
+        "reserved_entry_notional": {
+          "anyOf": [
+            {
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,20}|(?=[\\d.]{1,31}0*$)\\d{0,20}\\.\\d{0,10}0*$)",
+              "type": "string"
+            }
+          ],
+          "default": "0",
+          "title": "Reserved Entry Notional"
+        },
+        "reserved_entry_position_count": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Reserved Entry Position Count",
+          "type": "integer"
+        },
+        "session_reference_equity": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0.0,
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,20}|(?=[\\d.]{1,31}0*$)\\d{0,20}\\.\\d{0,10}0*$)",
+              "type": "string"
+            }
+          ],
+          "title": "Session Reference Equity"
+        },
+        "session_start_equity": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0.0,
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,20}|(?=[\\d.]{1,31}0*$)\\d{0,20}\\.\\d{0,10}0*$)",
+              "type": "string"
+            }
+          ],
+          "title": "Session Start Equity"
+        },
+        "streams_healthy": {
+          "default": true,
+          "title": "Streams Healthy",
+          "type": "boolean"
+        },
+        "traded_tickers_today": {
+          "default": [],
+          "items": {
+            "pattern": "^[A-Z0-9](?:[A-Z0-9.-]{0,13}[A-Z0-9])?$",
+            "type": "string"
+          },
+          "title": "Traded Tickers Today",
+          "type": "array"
+        }
+      },
+      "required": [
+        "session_reference_equity",
+        "session_start_equity"
+      ],
+      "title": "SessionRiskState",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "decisions": {
+      "items": {
+        "$ref": "#/$defs/RiskDecision"
+      },
+      "title": "Decisions",
+      "type": "array"
+    },
+    "ending_session_state": {
+      "$ref": "#/$defs/SessionRiskState"
+    }
+  },
+  "required": [
+    "decisions",
+    "ending_session_state"
+  ],
+  "title": "BatchSizingResult",
+  "type": "object"
+}

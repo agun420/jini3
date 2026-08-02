@@ -1,0 +1,133 @@
+{
+  "$defs": {
+    "DrillObservation": {
+      "additionalProperties": false,
+      "properties": {
+        "details": {
+          "additionalProperties": true,
+          "title": "Details",
+          "type": "object"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "passed": {
+          "title": "Passed",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "name",
+        "passed",
+        "message"
+      ],
+      "title": "DrillObservation",
+      "type": "object"
+    },
+    "DrillStatus": {
+      "enum": [
+        "passed",
+        "failed",
+        "skipped"
+      ],
+      "title": "DrillStatus",
+      "type": "string"
+    },
+    "DrillType": {
+      "enum": [
+        "database_disconnect",
+        "market_data_disconnect",
+        "trade_update_disconnect",
+        "broker_timeout",
+        "clock_skew",
+        "process_restart",
+        "disk_pressure"
+      ],
+      "title": "DrillType",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "completed_at": {
+      "format": "date-time",
+      "title": "Completed At",
+      "type": "string"
+    },
+    "drill_id": {
+      "maxLength": 64,
+      "minLength": 8,
+      "title": "Drill Id",
+      "type": "string"
+    },
+    "drill_type": {
+      "$ref": "#/$defs/DrillType"
+    },
+    "errors": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "title": "Errors",
+      "type": "array"
+    },
+    "failure_detected": {
+      "title": "Failure Detected",
+      "type": "boolean"
+    },
+    "kill_switch_activated": {
+      "title": "Kill Switch Activated",
+      "type": "boolean"
+    },
+    "new_entries_blocked": {
+      "title": "New Entries Blocked",
+      "type": "boolean"
+    },
+    "observations": {
+      "items": {
+        "$ref": "#/$defs/DrillObservation"
+      },
+      "title": "Observations",
+      "type": "array"
+    },
+    "recovery_verified": {
+      "title": "Recovery Verified",
+      "type": "boolean"
+    },
+    "result_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Result Hash",
+      "type": "string"
+    },
+    "started_at": {
+      "format": "date-time",
+      "title": "Started At",
+      "type": "string"
+    },
+    "status": {
+      "$ref": "#/$defs/DrillStatus"
+    }
+  },
+  "required": [
+    "drill_id",
+    "drill_type",
+    "started_at",
+    "completed_at",
+    "status",
+    "failure_detected",
+    "new_entries_blocked",
+    "kill_switch_activated",
+    "recovery_verified",
+    "observations",
+    "result_hash"
+  ],
+  "title": "DrillResult",
+  "type": "object"
+}

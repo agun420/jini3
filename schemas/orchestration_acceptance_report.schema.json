@@ -1,0 +1,99 @@
+{
+  "$defs": {
+    "AcceptanceCheck": {
+      "additionalProperties": false,
+      "properties": {
+        "details": {
+          "additionalProperties": true,
+          "title": "Details",
+          "type": "object"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "observed_at": {
+          "format": "date-time",
+          "title": "Observed At",
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/$defs/AcceptanceStatus"
+        }
+      },
+      "required": [
+        "name",
+        "status",
+        "message",
+        "observed_at"
+      ],
+      "title": "AcceptanceCheck",
+      "type": "object"
+    },
+    "AcceptanceStatus": {
+      "enum": [
+        "pass",
+        "fail",
+        "skip"
+      ],
+      "title": "AcceptanceStatus",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "checks": {
+      "items": {
+        "$ref": "#/$defs/AcceptanceCheck"
+      },
+      "title": "Checks",
+      "type": "array"
+    },
+    "configuration_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Configuration Hash",
+      "type": "string"
+    },
+    "generated_at": {
+      "format": "date-time",
+      "title": "Generated At",
+      "type": "string"
+    },
+    "online_verified": {
+      "title": "Online Verified",
+      "type": "boolean"
+    },
+    "paper_ready": {
+      "title": "Paper Ready",
+      "type": "boolean"
+    },
+    "report_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Report Hash",
+      "type": "string"
+    },
+    "report_id": {
+      "maxLength": 64,
+      "minLength": 8,
+      "title": "Report Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "report_id",
+    "generated_at",
+    "online_verified",
+    "paper_ready",
+    "checks",
+    "configuration_hash",
+    "report_hash"
+  ],
+  "title": "AcceptanceReport",
+  "type": "object"
+}

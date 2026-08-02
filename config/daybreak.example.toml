@@ -1,0 +1,101 @@
+[runtime]
+environment = "development"
+timezone = "America/New_York"
+log_level = "INFO"
+json_logs = true
+
+[paths]
+state_dir = "state"
+artifact_dir = "artifacts"
+spec_path = "docs/spec/Project_Daybreak_v6.3_Final.md"
+
+[database]
+enabled = false
+dsn_env = "DAYBREAK_DATABASE_URL"
+connect_timeout_seconds = 5
+
+[recorder]
+enabled = false
+start_time_et = "03:55:00"
+feature_window_start_et = "04:00:00"
+feature_snapshot_time_et = "09:23:00"
+
+[evaluator]
+enabled = false
+api_key_env = "OPENAI_API_KEY"
+primary_model = "gpt-5.6-terra"
+shadow_model = "gpt-5.6-sol"
+run_shadow = true
+response_cutoff_time_et = "09:26:30"
+reasoning_effort = "low"
+max_output_tokens = 64000
+max_attempts = 2
+request_timeout_seconds = 90.0
+shadow_timeout_seconds = 180.0
+store_raw_provider_response = true
+
+[analytics]
+enabled = false
+minimum_sessions = 30
+minimum_filled_orders = 50
+minimum_clean_session_rate = 1.0
+required_drill_count = 7
+
+[production]
+enabled = false
+minimum_tests_collected = 250
+minimum_schema_count = 47
+require_independent_review = true
+
+[safety]
+live_execution_enabled = false
+require_ntp_sync = true
+max_clock_skew_ms = 250
+
+[features]
+enabled = true
+snapshot_time_et = "09:23:00"
+max_evaluator_candidates = 20
+hard_max_evaluator_candidates = 25
+allow_single_source_float = true
+
+[risk]
+enabled = false
+profile_name = "paper_v1"
+persist_reservations = true
+
+[execution]
+enabled = false
+mode = "paper"
+api_key_env = "APCA_API_KEY_ID"
+secret_key_env = "APCA_API_SECRET_KEY"
+base_url = "https://paper-api.alpaca.markets"
+request_timeout_seconds = 5.0
+cancel_unfilled_after_seconds = 10
+partial_fill_protection_enabled = true
+
+[orchestration]
+enabled = false
+holder_id = "daybreak-orchestrator-1"
+recorder_warmup_time_et = "03:55:00"
+feature_window_start_time_et = "04:00:00"
+feature_snapshot_time_et = "09:23:00"
+evaluator_cutoff_time_et = "09:26:30"
+eligibility_lock_time_et = "09:29:30"
+regular_session_open_time_et = "09:30:00"
+new_entry_cutoff_time_et = "09:31:30"
+mandatory_flatten_time_et = "15:50:00"
+final_flatten_deadline_et = "15:55:00"
+leadership_ttl_seconds = 30
+leadership_renew_interval_seconds = 10
+flatten_poll_interval_seconds = 1.0
+flatten_verification_timeout_seconds = 300.0
+alert_dedup_window_seconds = 300
+
+[operations]
+enabled = false
+heartbeat_interval_seconds = 5
+max_heartbeat_gap_seconds = 20
+minimum_free_disk_bytes = 5000000000
+minimum_file_descriptor_limit = 4096
+required_backup_retention_count = 7

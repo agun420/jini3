@@ -1,0 +1,815 @@
+{
+  "$defs": {
+    "ApprovedSetup": {
+      "additionalProperties": false,
+      "properties": {
+        "catalyst_age_hours": {
+          "minimum": 0,
+          "title": "Catalyst Age Hours",
+          "type": "number"
+        },
+        "catalyst_source": {
+          "title": "Catalyst Source",
+          "type": "string"
+        },
+        "conviction_score": {
+          "maximum": 100,
+          "minimum": 0,
+          "title": "Conviction Score",
+          "type": "integer"
+        },
+        "corroborated": {
+          "title": "Corroborated",
+          "type": "boolean"
+        },
+        "master_thesis": {
+          "title": "Master Thesis",
+          "type": "string"
+        },
+        "risk_flags": {
+          "items": {
+            "$ref": "#/$defs/RiskFlag"
+          },
+          "title": "Risk Flags",
+          "type": "array"
+        },
+        "score_breakdown": {
+          "$ref": "#/$defs/ScoreBreakdown"
+        },
+        "side": {
+          "const": "long",
+          "title": "Side",
+          "type": "string"
+        },
+        "source_timestamp": {
+          "title": "Source Timestamp",
+          "type": "string"
+        },
+        "source_type": {
+          "$ref": "#/$defs/SourceType"
+        },
+        "ticker": {
+          "pattern": "^[A-Z0-9](?:[A-Z0-9.-]{0,13}[A-Z0-9])?$",
+          "title": "Ticker",
+          "type": "string"
+        },
+        "trade_parameters": {
+          "$ref": "#/$defs/TradeParameters"
+        }
+      },
+      "required": [
+        "ticker",
+        "side",
+        "conviction_score",
+        "score_breakdown",
+        "master_thesis",
+        "catalyst_source",
+        "source_type",
+        "source_timestamp",
+        "catalyst_age_hours",
+        "corroborated",
+        "risk_flags",
+        "trade_parameters"
+      ],
+      "title": "ApprovedSetup",
+      "type": "object"
+    },
+    "BlockerCode": {
+      "enum": [
+        "MARKET_NOT_NORMAL",
+        "PAYLOAD_STALE"
+      ],
+      "title": "BlockerCode",
+      "type": "string"
+    },
+    "CatalystZeroReason": {
+      "enum": [
+        "disqualifier_flag",
+        "unconfirmed_source",
+        "stale_catalyst",
+        "no_valid_driver"
+      ],
+      "title": "CatalystZeroReason",
+      "type": "string"
+    },
+    "EvaluationSnapshot": {
+      "additionalProperties": false,
+      "properties": {
+        "catalyst_magnitude_bucket": {
+          "$ref": "#/$defs/MagnitudeBucket"
+        },
+        "catalyst_magnitude_points": {
+          "maximum": 4,
+          "minimum": 0,
+          "title": "Catalyst Magnitude Points",
+          "type": "integer"
+        },
+        "catalyst_points": {
+          "maximum": 40,
+          "minimum": 0,
+          "title": "Catalyst Points",
+          "type": "integer"
+        },
+        "catalyst_score_raw": {
+          "maximum": 10,
+          "minimum": 0,
+          "title": "Catalyst Score Raw",
+          "type": "integer"
+        },
+        "catalyst_zero_override": {
+          "title": "Catalyst Zero Override",
+          "type": "boolean"
+        },
+        "catalyst_zero_reason": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CatalystZeroReason"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "evidence_purpose": {
+          "$ref": "#/$defs/EvidencePurpose"
+        },
+        "magnitude_evidence_end_char": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Magnitude Evidence End Char"
+        },
+        "magnitude_evidence_excerpt": {
+          "maxLength": 200,
+          "title": "Magnitude Evidence Excerpt",
+          "type": "string"
+        },
+        "magnitude_evidence_start_char": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Magnitude Evidence Start Char"
+        },
+        "magnitude_evidence_truncated": {
+          "title": "Magnitude Evidence Truncated",
+          "type": "boolean"
+        },
+        "parabolic_adjusted": {
+          "title": "Parabolic Adjusted",
+          "type": "boolean"
+        },
+        "risk_flags": {
+          "items": {
+            "$ref": "#/$defs/RiskFlag"
+          },
+          "title": "Risk Flags",
+          "type": "array"
+        },
+        "source_quality_points": {
+          "maximum": 6,
+          "minimum": 0,
+          "title": "Source Quality Points",
+          "type": "integer"
+        },
+        "technical_base_points": {
+          "enum": [
+            0,
+            13,
+            22,
+            25
+          ],
+          "title": "Technical Base Points",
+          "type": "integer"
+        },
+        "technical_grade": {
+          "$ref": "#/$defs/TechnicalGrade"
+        },
+        "technical_points": {
+          "enum": [
+            0,
+            7,
+            13,
+            16,
+            19,
+            22,
+            25
+          ],
+          "title": "Technical Points",
+          "type": "integer"
+        },
+        "volume_points": {
+          "enum": [
+            0,
+            15,
+            25,
+            35
+          ],
+          "title": "Volume Points",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "source_quality_points",
+        "catalyst_magnitude_bucket",
+        "catalyst_magnitude_points",
+        "evidence_purpose",
+        "magnitude_evidence_excerpt",
+        "magnitude_evidence_truncated",
+        "magnitude_evidence_start_char",
+        "magnitude_evidence_end_char",
+        "catalyst_zero_override",
+        "catalyst_zero_reason",
+        "catalyst_score_raw",
+        "catalyst_points",
+        "volume_points",
+        "technical_grade",
+        "technical_base_points",
+        "technical_points",
+        "parabolic_adjusted",
+        "risk_flags"
+      ],
+      "title": "EvaluationSnapshot",
+      "type": "object"
+    },
+    "EvidencePurpose": {
+      "enum": [
+        "magnitude",
+        "disqualifier",
+        "none"
+      ],
+      "title": "EvidencePurpose",
+      "type": "string"
+    },
+    "ExcludedTicker": {
+      "additionalProperties": false,
+      "properties": {
+        "additional_reasons": {
+          "items": {
+            "$ref": "#/$defs/ReasonObject"
+          },
+          "title": "Additional Reasons",
+          "type": "array"
+        },
+        "evaluation_snapshot": {
+          "$ref": "#/$defs/EvaluationSnapshot"
+        },
+        "primary_reason": {
+          "$ref": "#/$defs/ReasonObject"
+        },
+        "ticker": {
+          "pattern": "^[A-Z0-9](?:[A-Z0-9.-]{0,13}[A-Z0-9])?$",
+          "title": "Ticker",
+          "type": "string"
+        }
+      },
+      "required": [
+        "ticker",
+        "primary_reason",
+        "additional_reasons",
+        "evaluation_snapshot"
+      ],
+      "title": "ExcludedTicker",
+      "type": "object"
+    },
+    "MagnitudeBucket": {
+      "enum": [
+        "major_concrete",
+        "material_partially_quantified",
+        "credible_unquantified",
+        "weak_or_preliminary",
+        "no_valid_driver"
+      ],
+      "title": "MagnitudeBucket",
+      "type": "string"
+    },
+    "MarketStatus": {
+      "enum": [
+        "normal",
+        "limit_up_down_active",
+        "circuit_breaker_halt"
+      ],
+      "title": "MarketStatus",
+      "type": "string"
+    },
+    "QualifiedNotSelected": {
+      "additionalProperties": false,
+      "properties": {
+        "catalyst_age_hours": {
+          "minimum": 0,
+          "title": "Catalyst Age Hours",
+          "type": "number"
+        },
+        "catalyst_source": {
+          "title": "Catalyst Source",
+          "type": "string"
+        },
+        "conviction_score": {
+          "maximum": 100,
+          "minimum": 0,
+          "title": "Conviction Score",
+          "type": "integer"
+        },
+        "corroborated": {
+          "title": "Corroborated",
+          "type": "boolean"
+        },
+        "final_rank": {
+          "minimum": 4,
+          "title": "Final Rank",
+          "type": "integer"
+        },
+        "non_selection_reason_code": {
+          "const": "TOP_THREE_CAP",
+          "title": "Non Selection Reason Code",
+          "type": "string"
+        },
+        "risk_flags": {
+          "items": {
+            "$ref": "#/$defs/RiskFlag"
+          },
+          "title": "Risk Flags",
+          "type": "array"
+        },
+        "score_breakdown": {
+          "$ref": "#/$defs/ScoreBreakdown"
+        },
+        "source_timestamp": {
+          "title": "Source Timestamp",
+          "type": "string"
+        },
+        "source_type": {
+          "$ref": "#/$defs/SourceType"
+        },
+        "ticker": {
+          "pattern": "^[A-Z0-9](?:[A-Z0-9.-]{0,13}[A-Z0-9])?$",
+          "title": "Ticker",
+          "type": "string"
+        }
+      },
+      "required": [
+        "ticker",
+        "final_rank",
+        "conviction_score",
+        "score_breakdown",
+        "catalyst_source",
+        "source_type",
+        "source_timestamp",
+        "catalyst_age_hours",
+        "corroborated",
+        "risk_flags",
+        "non_selection_reason_code"
+      ],
+      "title": "QualifiedNotSelected",
+      "type": "object"
+    },
+    "ReasonCode": {
+      "enum": [
+        "HALTED",
+        "CATALYST_SCORE_TOO_LOW",
+        "UNCORROBORATED_CATALYST",
+        "GAP_TOO_SMALL",
+        "PREMARKET_VOLUME_TOO_LOW",
+        "RVOL_TOO_LOW",
+        "RESISTANCE_TOO_CLOSE",
+        "CAPPED_CHART"
+      ],
+      "title": "ReasonCode",
+      "type": "string"
+    },
+    "ReasonObject": {
+      "additionalProperties": false,
+      "properties": {
+        "field": {
+          "title": "Field",
+          "type": "string"
+        },
+        "observed_value": {
+          "title": "Observed Value",
+          "type": "string"
+        },
+        "reason": {
+          "title": "Reason",
+          "type": "string"
+        },
+        "reason_code": {
+          "$ref": "#/$defs/ReasonCode"
+        },
+        "required_condition": {
+          "title": "Required Condition",
+          "type": "string"
+        }
+      },
+      "required": [
+        "reason_code",
+        "field",
+        "observed_value",
+        "required_condition",
+        "reason"
+      ],
+      "title": "ReasonObject",
+      "type": "object"
+    },
+    "RiskFlag": {
+      "enum": [
+        "parabolic_vwap_extension",
+        "hard_to_borrow",
+        "unknown_borrow",
+        "low_float",
+        "spiky_volume",
+        "secondary_source"
+      ],
+      "title": "RiskFlag",
+      "type": "string"
+    },
+    "RunBlocker": {
+      "additionalProperties": false,
+      "properties": {
+        "blocker_code": {
+          "$ref": "#/$defs/BlockerCode"
+        },
+        "field": {
+          "title": "Field",
+          "type": "string"
+        },
+        "observed_value": {
+          "title": "Observed Value",
+          "type": "string"
+        },
+        "reason": {
+          "title": "Reason",
+          "type": "string"
+        },
+        "required_condition": {
+          "title": "Required Condition",
+          "type": "string"
+        }
+      },
+      "required": [
+        "blocker_code",
+        "field",
+        "observed_value",
+        "required_condition",
+        "reason"
+      ],
+      "title": "RunBlocker",
+      "type": "object"
+    },
+    "RunStatus": {
+      "enum": [
+        "approved",
+        "no_setups",
+        "blocked_market",
+        "stale_payload",
+        "schema_failure"
+      ],
+      "title": "RunStatus",
+      "type": "string"
+    },
+    "SchemaFailure": {
+      "additionalProperties": false,
+      "properties": {
+        "field": {
+          "title": "Field",
+          "type": "string"
+        },
+        "reason": {
+          "title": "Reason",
+          "type": "string"
+        },
+        "scope": {
+          "$ref": "#/$defs/SchemaFailureScope"
+        },
+        "ticker": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Ticker"
+        }
+      },
+      "required": [
+        "scope",
+        "ticker",
+        "field",
+        "reason"
+      ],
+      "title": "SchemaFailure",
+      "type": "object"
+    },
+    "SchemaFailureScope": {
+      "enum": [
+        "payload",
+        "ticker"
+      ],
+      "title": "SchemaFailureScope",
+      "type": "string"
+    },
+    "ScoreBreakdown": {
+      "additionalProperties": false,
+      "properties": {
+        "catalyst_magnitude_bucket": {
+          "$ref": "#/$defs/MagnitudeBucket"
+        },
+        "catalyst_magnitude_points": {
+          "maximum": 4,
+          "minimum": 0,
+          "title": "Catalyst Magnitude Points",
+          "type": "integer"
+        },
+        "catalyst_points": {
+          "maximum": 40,
+          "minimum": 0,
+          "title": "Catalyst Points",
+          "type": "integer"
+        },
+        "catalyst_score_raw": {
+          "maximum": 10,
+          "minimum": 0,
+          "title": "Catalyst Score Raw",
+          "type": "integer"
+        },
+        "catalyst_zero_override": {
+          "title": "Catalyst Zero Override",
+          "type": "boolean"
+        },
+        "catalyst_zero_reason": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CatalystZeroReason"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "evidence_purpose": {
+          "$ref": "#/$defs/EvidencePurpose"
+        },
+        "magnitude_evidence_end_char": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Magnitude Evidence End Char"
+        },
+        "magnitude_evidence_excerpt": {
+          "maxLength": 200,
+          "title": "Magnitude Evidence Excerpt",
+          "type": "string"
+        },
+        "magnitude_evidence_start_char": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Magnitude Evidence Start Char"
+        },
+        "magnitude_evidence_truncated": {
+          "title": "Magnitude Evidence Truncated",
+          "type": "boolean"
+        },
+        "parabolic_adjusted": {
+          "title": "Parabolic Adjusted",
+          "type": "boolean"
+        },
+        "source_quality_points": {
+          "maximum": 6,
+          "minimum": 0,
+          "title": "Source Quality Points",
+          "type": "integer"
+        },
+        "technical_base_points": {
+          "enum": [
+            0,
+            13,
+            22,
+            25
+          ],
+          "title": "Technical Base Points",
+          "type": "integer"
+        },
+        "technical_grade": {
+          "$ref": "#/$defs/TechnicalGrade"
+        },
+        "technical_points": {
+          "enum": [
+            0,
+            7,
+            13,
+            16,
+            19,
+            22,
+            25
+          ],
+          "title": "Technical Points",
+          "type": "integer"
+        },
+        "volume_points": {
+          "enum": [
+            0,
+            15,
+            25,
+            35
+          ],
+          "title": "Volume Points",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "source_quality_points",
+        "catalyst_magnitude_bucket",
+        "catalyst_magnitude_points",
+        "evidence_purpose",
+        "magnitude_evidence_excerpt",
+        "magnitude_evidence_truncated",
+        "magnitude_evidence_start_char",
+        "magnitude_evidence_end_char",
+        "catalyst_zero_override",
+        "catalyst_zero_reason",
+        "catalyst_score_raw",
+        "catalyst_points",
+        "volume_points",
+        "technical_grade",
+        "technical_base_points",
+        "technical_points",
+        "parabolic_adjusted"
+      ],
+      "title": "ScoreBreakdown",
+      "type": "object"
+    },
+    "SourceType": {
+      "enum": [
+        "primary",
+        "secondary",
+        "unconfirmed"
+      ],
+      "title": "SourceType",
+      "type": "string"
+    },
+    "TechnicalGrade": {
+      "enum": [
+        "A+",
+        "A",
+        "B",
+        "C"
+      ],
+      "title": "TechnicalGrade",
+      "type": "string"
+    },
+    "TradeParameters": {
+      "additionalProperties": false,
+      "properties": {
+        "atr_value_used": {
+          "exclusiveMinimum": 0,
+          "title": "Atr Value Used",
+          "type": "number"
+        },
+        "invalidation_note": {
+          "const": "Thesis is invalid if price breaks below the supplied premarket low before 9:35 AM ET.",
+          "title": "Invalidation Note",
+          "type": "string"
+        },
+        "premarket_low_used": {
+          "exclusiveMinimum": 0,
+          "title": "Premarket Low Used",
+          "type": "number"
+        },
+        "profit_target_atr_multiple": {
+          "maximum": 2.0,
+          "minimum": 2.0,
+          "title": "Profit Target Atr Multiple",
+          "type": "number"
+        },
+        "reference_price": {
+          "exclusiveMinimum": 0,
+          "title": "Reference Price",
+          "type": "number"
+        },
+        "risk_stop_atr_multiple": {
+          "maximum": 1.0,
+          "minimum": 1.0,
+          "title": "Risk Stop Atr Multiple",
+          "type": "number"
+        }
+      },
+      "required": [
+        "reference_price",
+        "atr_value_used",
+        "premarket_low_used",
+        "risk_stop_atr_multiple",
+        "profit_target_atr_multiple",
+        "invalidation_note"
+      ],
+      "title": "TradeParameters",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "approved_setups": {
+      "items": {
+        "$ref": "#/$defs/ApprovedSetup"
+      },
+      "title": "Approved Setups",
+      "type": "array"
+    },
+    "excluded_tickers": {
+      "items": {
+        "$ref": "#/$defs/ExcludedTicker"
+      },
+      "title": "Excluded Tickers",
+      "type": "array"
+    },
+    "execution_timestamp": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Execution Timestamp"
+    },
+    "market_status": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/MarketStatus"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "payload_timestamp_used": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Payload Timestamp Used"
+    },
+    "qualified_not_selected": {
+      "items": {
+        "$ref": "#/$defs/QualifiedNotSelected"
+      },
+      "title": "Qualified Not Selected",
+      "type": "array"
+    },
+    "run_blockers": {
+      "items": {
+        "$ref": "#/$defs/RunBlocker"
+      },
+      "title": "Run Blockers",
+      "type": "array"
+    },
+    "run_status": {
+      "$ref": "#/$defs/RunStatus"
+    },
+    "schema_failures": {
+      "items": {
+        "$ref": "#/$defs/SchemaFailure"
+      },
+      "title": "Schema Failures",
+      "type": "array"
+    }
+  },
+  "required": [
+    "run_status",
+    "execution_timestamp",
+    "payload_timestamp_used",
+    "market_status",
+    "approved_setups",
+    "qualified_not_selected",
+    "excluded_tickers",
+    "schema_failures",
+    "run_blockers"
+  ],
+  "title": "DaybreakOutput",
+  "type": "object"
+}

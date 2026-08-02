@@ -1,0 +1,22 @@
+include CHANGELOG.md
+include CONTRIBUTING.md
+include GITHUB_DESKTOP_SETUP.md
+include IMPLEMENTATION_STATUS.md
+include Makefile
+include NOTICE
+include SECURITY.md
+include alembic.ini
+include docker-compose.yml
+include requirements-dev.txt
+recursive-include apps *.md
+recursive-include config *.example *.toml
+recursive-include deploy *.service *.timer
+recursive-include docs *.md *.docx
+recursive-include fixtures *.json
+recursive-include migrations *.py
+recursive-include schemas *.json
+recursive-include scripts *.py *.sh
+recursive-include tests *.py *.json
+global-exclude __pycache__
+global-exclude *.py[cod]
+global-exclude .DS_Store

@@ -1,0 +1,74 @@
+{
+  "$defs": {
+    "FindingStatus": {
+      "enum": [
+        "open",
+        "resolved"
+      ],
+      "title": "FindingStatus",
+      "type": "string"
+    },
+    "ReviewSeverity": {
+      "enum": [
+        "info",
+        "low",
+        "medium",
+        "high",
+        "critical"
+      ],
+      "title": "ReviewSeverity",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "category": {
+      "maxLength": 64,
+      "minLength": 2,
+      "title": "Category",
+      "type": "string"
+    },
+    "evidence_refs": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "title": "Evidence Refs",
+      "type": "array"
+    },
+    "finding_id": {
+      "maxLength": 96,
+      "minLength": 8,
+      "title": "Finding Id",
+      "type": "string"
+    },
+    "owner": {
+      "maxLength": 128,
+      "minLength": 2,
+      "title": "Owner",
+      "type": "string"
+    },
+    "severity": {
+      "$ref": "#/$defs/ReviewSeverity"
+    },
+    "status": {
+      "$ref": "#/$defs/FindingStatus"
+    },
+    "title": {
+      "maxLength": 240,
+      "minLength": 4,
+      "title": "Title",
+      "type": "string"
+    }
+  },
+  "required": [
+    "finding_id",
+    "severity",
+    "status",
+    "category",
+    "title",
+    "owner"
+  ],
+  "title": "ReviewFinding",
+  "type": "object"
+}

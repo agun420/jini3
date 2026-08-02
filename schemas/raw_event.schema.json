@@ -1,0 +1,168 @@
+{
+  "$defs": {
+    "EventType": {
+      "enum": [
+        "trade",
+        "quote",
+        "minute_bar",
+        "updated_bar",
+        "daily_bar",
+        "trading_status",
+        "trade_cancel",
+        "trade_correction",
+        "news",
+        "trade_update",
+        "sec_submissions_snapshot",
+        "sec_submission",
+        "stream_connected",
+        "stream_disconnected",
+        "subscription_manifest",
+        "heartbeat",
+        "error"
+      ],
+      "title": "EventType",
+      "type": "string"
+    },
+    "RecorderSource": {
+      "enum": [
+        "alpaca_sip",
+        "alpaca_news",
+        "alpaca_trading",
+        "sec_edgar",
+        "system"
+      ],
+      "title": "RecorderSource",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "channel": {
+      "maxLength": 64,
+      "minLength": 1,
+      "title": "Channel",
+      "type": "string"
+    },
+    "connection_id": {
+      "format": "uuid",
+      "title": "Connection Id",
+      "type": "string"
+    },
+    "event_id": {
+      "format": "uuid",
+      "title": "Event Id",
+      "type": "string"
+    },
+    "event_timestamp": {
+      "format": "date-time",
+      "title": "Event Timestamp",
+      "type": "string"
+    },
+    "event_type": {
+      "$ref": "#/$defs/EventType"
+    },
+    "idempotency_key": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Idempotency Key",
+      "type": "string"
+    },
+    "ingest_session_id": {
+      "format": "uuid",
+      "title": "Ingest Session Id",
+      "type": "string"
+    },
+    "payload": {
+      "additionalProperties": true,
+      "title": "Payload",
+      "type": "object"
+    },
+    "payload_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Payload Sha256",
+      "type": "string"
+    },
+    "provider_event_id": {
+      "anyOf": [
+        {
+          "maxLength": 256,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Provider Event Id"
+    },
+    "received_at": {
+      "format": "date-time",
+      "title": "Received At",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "raw_event_v1",
+      "default": "raw_event_v1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "sequence_hint": {
+      "anyOf": [
+        {
+          "minimum": 0,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Sequence Hint"
+    },
+    "source": {
+      "$ref": "#/$defs/RecorderSource"
+    },
+    "symbol": {
+      "anyOf": [
+        {
+          "maxLength": 32,
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Symbol"
+    },
+    "symbols": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "title": "Symbols",
+      "type": "array"
+    },
+    "trading_date": {
+      "format": "date",
+      "title": "Trading Date",
+      "type": "string"
+    }
+  },
+  "required": [
+    "event_id",
+    "ingest_session_id",
+    "connection_id",
+    "source",
+    "channel",
+    "event_type",
+    "event_timestamp",
+    "received_at",
+    "trading_date",
+    "payload",
+    "payload_sha256",
+    "idempotency_key"
+  ],
+  "title": "RawEvent",
+  "type": "object"
+}

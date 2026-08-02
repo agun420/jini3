@@ -1,0 +1,846 @@
+{
+  "$defs": {
+    "BorrowStatus": {
+      "enum": [
+        "easy",
+        "hard_to_borrow",
+        "unknown"
+      ],
+      "title": "BorrowStatus",
+      "type": "string"
+    },
+    "CandidateFeatures": {
+      "additionalProperties": false,
+      "properties": {
+        "atr_value": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0.0,
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            }
+          ],
+          "title": "Atr Value"
+        },
+        "borrow_status": {
+          "$ref": "#/$defs/BorrowStatus"
+        },
+        "catalyst": {
+          "$ref": "#/$defs/CatalystRecord"
+        },
+        "catalyst_age_hours": {
+          "anyOf": [
+            {
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            }
+          ],
+          "title": "Catalyst Age Hours"
+        },
+        "current_price": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0.0,
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            }
+          ],
+          "title": "Current Price"
+        },
+        "distance_from_vwap_atr": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            }
+          ],
+          "title": "Distance From Vwap Atr"
+        },
+        "feature_source_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Feature Source Hash",
+          "type": "string"
+        },
+        "float_shares": {
+          "exclusiveMinimum": 0,
+          "title": "Float Shares",
+          "type": "integer"
+        },
+        "gap_pct": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            }
+          ],
+          "title": "Gap Pct"
+        },
+        "halted": {
+          "title": "Halted",
+          "type": "boolean"
+        },
+        "premarket_low": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0.0,
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            }
+          ],
+          "title": "Premarket Low"
+        },
+        "premarket_volume": {
+          "minimum": 0,
+          "title": "Premarket Volume",
+          "type": "integer"
+        },
+        "premarket_vwap": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0.0,
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            }
+          ],
+          "title": "Premarket Vwap"
+        },
+        "resistance": {
+          "$ref": "#/$defs/ResistanceAudit"
+        },
+        "rvol_time_matched": {
+          "anyOf": [
+            {
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            }
+          ],
+          "title": "Rvol Time Matched"
+        },
+        "ticker": {
+          "pattern": "^[A-Z0-9](?:[A-Z0-9.-]{0,13}[A-Z0-9])?$",
+          "title": "Ticker",
+          "type": "string"
+        },
+        "volume_profile": {
+          "enum": [
+            "clean",
+            "spiky"
+          ],
+          "title": "Volume Profile",
+          "type": "string"
+        }
+      },
+      "required": [
+        "ticker",
+        "halted",
+        "current_price",
+        "premarket_low",
+        "gap_pct",
+        "premarket_volume",
+        "rvol_time_matched",
+        "atr_value",
+        "premarket_vwap",
+        "distance_from_vwap_atr",
+        "volume_profile",
+        "float_shares",
+        "borrow_status",
+        "resistance",
+        "catalyst",
+        "catalyst_age_hours",
+        "feature_source_hash"
+      ],
+      "title": "CandidateFeatures",
+      "type": "object"
+    },
+    "CapacityOmission": {
+      "additionalProperties": false,
+      "properties": {
+        "final_capacity_rank": {
+          "exclusiveMinimum": 0,
+          "title": "Final Capacity Rank",
+          "type": "integer"
+        },
+        "policy_version": {
+          "const": "prequal_rank_v1",
+          "default": "prequal_rank_v1",
+          "title": "Policy Version",
+          "type": "string"
+        },
+        "reason_code": {
+          "const": "EVALUATOR_CAPACITY",
+          "default": "EVALUATOR_CAPACITY",
+          "title": "Reason Code",
+          "type": "string"
+        },
+        "ticker": {
+          "pattern": "^[A-Z0-9](?:[A-Z0-9.-]{0,13}[A-Z0-9])?$",
+          "title": "Ticker",
+          "type": "string"
+        }
+      },
+      "required": [
+        "ticker",
+        "final_capacity_rank"
+      ],
+      "title": "CapacityOmission",
+      "type": "object"
+    },
+    "CatalystRecord": {
+      "additionalProperties": false,
+      "properties": {
+        "catalyst_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Catalyst Id",
+          "type": "string"
+        },
+        "catalyst_text": {
+          "minLength": 1,
+          "title": "Catalyst Text",
+          "type": "string"
+        },
+        "corroborated": {
+          "title": "Corroborated",
+          "type": "boolean"
+        },
+        "disqualifier_flags": {
+          "default": [],
+          "items": {
+            "enum": [
+              "paid_promotion",
+              "reverse_split_only",
+              "unconfirmed_rumor",
+              "non_operating_promotion",
+              "other_disqualifying_catalyst"
+            ],
+            "type": "string"
+          },
+          "title": "Disqualifier Flags",
+          "type": "array"
+        },
+        "observed_at": {
+          "format": "date-time",
+          "title": "Observed At",
+          "type": "string"
+        },
+        "source_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Source Hash",
+          "type": "string"
+        },
+        "source_name": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Source Name",
+          "type": "string"
+        },
+        "source_timestamp": {
+          "format": "date-time",
+          "title": "Source Timestamp",
+          "type": "string"
+        },
+        "source_type": {
+          "$ref": "#/$defs/SourceType"
+        },
+        "ticker": {
+          "pattern": "^[A-Z0-9](?:[A-Z0-9.-]{0,13}[A-Z0-9])?$",
+          "title": "Ticker",
+          "type": "string"
+        }
+      },
+      "required": [
+        "catalyst_id",
+        "ticker",
+        "catalyst_text",
+        "source_type",
+        "source_name",
+        "source_timestamp",
+        "observed_at",
+        "corroborated",
+        "source_hash"
+      ],
+      "title": "CatalystRecord",
+      "type": "object"
+    },
+    "ChartStructure": {
+      "enum": [
+        "blue_sky",
+        "clean_short_term",
+        "moderate_room",
+        "capped"
+      ],
+      "title": "ChartStructure",
+      "type": "string"
+    },
+    "DaybreakInput": {
+      "additionalProperties": false,
+      "properties": {
+        "catalyst_freshness_threshold_hours": {
+          "exclusiveMinimum": 0,
+          "title": "Catalyst Freshness Threshold Hours",
+          "type": "number"
+        },
+        "evaluation_timestamp": {
+          "title": "Evaluation Timestamp",
+          "type": "string"
+        },
+        "market_status": {
+          "$ref": "#/$defs/MarketStatus"
+        },
+        "payload_age_seconds": {
+          "minimum": 0,
+          "title": "Payload Age Seconds",
+          "type": "integer"
+        },
+        "payload_timestamp": {
+          "title": "Payload Timestamp",
+          "type": "string"
+        },
+        "tickers": {
+          "items": {
+            "$ref": "#/$defs/TickerInput"
+          },
+          "maxItems": 25,
+          "title": "Tickers",
+          "type": "array"
+        }
+      },
+      "required": [
+        "evaluation_timestamp",
+        "payload_timestamp",
+        "payload_age_seconds",
+        "catalyst_freshness_threshold_hours",
+        "market_status",
+        "tickers"
+      ],
+      "title": "DaybreakInput",
+      "type": "object"
+    },
+    "DisqualifierFlag": {
+      "enum": [
+        "paid_promotion",
+        "reverse_split_only",
+        "unconfirmed_rumor",
+        "non_operating_promotion",
+        "other_disqualifying_catalyst"
+      ],
+      "title": "DisqualifierFlag",
+      "type": "string"
+    },
+    "LiquidityMetrics": {
+      "additionalProperties": false,
+      "properties": {
+        "borrow_status": {
+          "$ref": "#/$defs/BorrowStatus"
+        },
+        "float_shares": {
+          "exclusiveMinimum": 0,
+          "title": "Float Shares",
+          "type": "integer"
+        },
+        "gap_pct": {
+          "title": "Gap Pct",
+          "type": "number"
+        },
+        "premarket_volume": {
+          "minimum": 0,
+          "title": "Premarket Volume",
+          "type": "integer"
+        },
+        "rvol_time_matched": {
+          "minimum": 0,
+          "title": "Rvol Time Matched",
+          "type": "number"
+        },
+        "volume_profile": {
+          "$ref": "#/$defs/VolumeProfile"
+        }
+      },
+      "required": [
+        "gap_pct",
+        "premarket_volume",
+        "rvol_time_matched",
+        "float_shares",
+        "volume_profile",
+        "borrow_status"
+      ],
+      "title": "LiquidityMetrics",
+      "type": "object"
+    },
+    "MarketStatus": {
+      "enum": [
+        "normal",
+        "limit_up_down_active",
+        "circuit_breaker_halt"
+      ],
+      "title": "MarketStatus",
+      "type": "string"
+    },
+    "NewsContext": {
+      "additionalProperties": false,
+      "properties": {
+        "catalyst_age_hours": {
+          "minimum": 0,
+          "title": "Catalyst Age Hours",
+          "type": "number"
+        },
+        "catalyst_text": {
+          "maxLength": 4000,
+          "minLength": 1,
+          "title": "Catalyst Text",
+          "type": "string"
+        },
+        "corroborated": {
+          "title": "Corroborated",
+          "type": "boolean"
+        },
+        "disqualifier_flags": {
+          "items": {
+            "$ref": "#/$defs/DisqualifierFlag"
+          },
+          "maxItems": 5,
+          "title": "Disqualifier Flags",
+          "type": "array"
+        },
+        "source_name": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Source Name",
+          "type": "string"
+        },
+        "source_timestamp": {
+          "title": "Source Timestamp",
+          "type": "string"
+        },
+        "source_type": {
+          "$ref": "#/$defs/SourceType"
+        }
+      },
+      "required": [
+        "catalyst_text",
+        "source_type",
+        "source_name",
+        "source_timestamp",
+        "catalyst_age_hours",
+        "corroborated",
+        "disqualifier_flags"
+      ],
+      "title": "NewsContext",
+      "type": "object"
+    },
+    "PrequalificationDecision": {
+      "additionalProperties": false,
+      "properties": {
+        "accepted": {
+          "title": "Accepted",
+          "type": "boolean"
+        },
+        "feature_source_hash": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Feature Source Hash"
+        },
+        "reason_codes": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Reason Codes",
+          "type": "array"
+        },
+        "ticker": {
+          "pattern": "^[A-Z0-9](?:[A-Z0-9.-]{0,13}[A-Z0-9])?$",
+          "title": "Ticker",
+          "type": "string"
+        }
+      },
+      "required": [
+        "ticker",
+        "accepted",
+        "reason_codes"
+      ],
+      "title": "PrequalificationDecision",
+      "type": "object"
+    },
+    "ResistanceAudit": {
+      "additionalProperties": false,
+      "properties": {
+        "algorithm_version": {
+          "const": "daily_pivot_cluster_v1",
+          "default": "daily_pivot_cluster_v1",
+          "title": "Algorithm Version",
+          "type": "string"
+        },
+        "all_time_high_date": {
+          "format": "date",
+          "title": "All Time High Date",
+          "type": "string"
+        },
+        "all_time_high_price": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            }
+          ],
+          "title": "All Time High Price"
+        },
+        "available_completed_bars": {
+          "title": "Available Completed Bars",
+          "type": "integer"
+        },
+        "chart_structure": {
+          "enum": [
+            "blue_sky",
+            "clean_short_term",
+            "moderate_room",
+            "capped"
+          ],
+          "title": "Chart Structure",
+          "type": "string"
+        },
+        "cluster_lookback_bars": {
+          "title": "Cluster Lookback Bars",
+          "type": "integer"
+        },
+        "confirmed_pivot_count": {
+          "title": "Confirmed Pivot Count",
+          "type": "integer"
+        },
+        "distance_to_resistance_atr": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            }
+          ],
+          "title": "Distance To Resistance Atr"
+        },
+        "is_blue_sky_sentinel": {
+          "title": "Is Blue Sky Sentinel",
+          "type": "boolean"
+        },
+        "raw_distance_to_resistance_atr": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Raw Distance To Resistance Atr"
+        },
+        "selected_resistance_source": {
+          "enum": [
+            "pivot_cluster",
+            "all_time_high_fallback",
+            "none_above_all_time_high"
+          ],
+          "title": "Selected Resistance Source",
+          "type": "string"
+        },
+        "selected_touch_count": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Selected Touch Count"
+        },
+        "selected_touch_dates": {
+          "default": [],
+          "items": {
+            "format": "date",
+            "type": "string"
+          },
+          "title": "Selected Touch Dates",
+          "type": "array"
+        },
+        "selected_zone_center": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Selected Zone Center"
+        },
+        "selected_zone_high": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Selected Zone High"
+        },
+        "selected_zone_low": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Selected Zone Low"
+        },
+        "synthetic_lookback_high_added": {
+          "title": "Synthetic Lookback High Added",
+          "type": "boolean"
+        },
+        "valid_cluster_count": {
+          "title": "Valid Cluster Count",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "available_completed_bars",
+        "cluster_lookback_bars",
+        "all_time_high_price",
+        "all_time_high_date",
+        "confirmed_pivot_count",
+        "synthetic_lookback_high_added",
+        "valid_cluster_count",
+        "selected_resistance_source",
+        "distance_to_resistance_atr",
+        "chart_structure",
+        "is_blue_sky_sentinel"
+      ],
+      "title": "ResistanceAudit",
+      "type": "object"
+    },
+    "SourceType": {
+      "enum": [
+        "primary",
+        "secondary",
+        "unconfirmed"
+      ],
+      "title": "SourceType",
+      "type": "string"
+    },
+    "TechnicalContext": {
+      "additionalProperties": false,
+      "properties": {
+        "atr_value": {
+          "exclusiveMinimum": 0,
+          "title": "Atr Value",
+          "type": "number"
+        },
+        "chart_structure": {
+          "$ref": "#/$defs/ChartStructure"
+        },
+        "current_price": {
+          "exclusiveMinimum": 0,
+          "title": "Current Price",
+          "type": "number"
+        },
+        "distance_from_vwap_atr": {
+          "title": "Distance From Vwap Atr",
+          "type": "number"
+        },
+        "distance_to_resistance_atr": {
+          "minimum": 0,
+          "title": "Distance To Resistance Atr",
+          "type": "number"
+        },
+        "premarket_low": {
+          "exclusiveMinimum": 0,
+          "title": "Premarket Low",
+          "type": "number"
+        }
+      },
+      "required": [
+        "distance_to_resistance_atr",
+        "distance_from_vwap_atr",
+        "chart_structure",
+        "current_price",
+        "atr_value",
+        "premarket_low"
+      ],
+      "title": "TechnicalContext",
+      "type": "object"
+    },
+    "TickerInput": {
+      "additionalProperties": false,
+      "properties": {
+        "halted": {
+          "title": "Halted",
+          "type": "boolean"
+        },
+        "liquidity_metrics": {
+          "$ref": "#/$defs/LiquidityMetrics"
+        },
+        "news_context": {
+          "$ref": "#/$defs/NewsContext"
+        },
+        "technical_context": {
+          "$ref": "#/$defs/TechnicalContext"
+        },
+        "ticker": {
+          "pattern": "^[A-Z0-9](?:[A-Z0-9.-]{0,13}[A-Z0-9])?$",
+          "title": "Ticker",
+          "type": "string"
+        }
+      },
+      "required": [
+        "ticker",
+        "halted",
+        "news_context",
+        "liquidity_metrics",
+        "technical_context"
+      ],
+      "title": "TickerInput",
+      "type": "object"
+    },
+    "VolumeProfile": {
+      "enum": [
+        "clean",
+        "spiky"
+      ],
+      "title": "VolumeProfile",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "accepted_feature_records": {
+      "items": {
+        "$ref": "#/$defs/CandidateFeatures"
+      },
+      "title": "Accepted Feature Records",
+      "type": "array"
+    },
+    "audit_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Audit Hash",
+      "type": "string"
+    },
+    "capacity_omissions": {
+      "items": {
+        "$ref": "#/$defs/CapacityOmission"
+      },
+      "title": "Capacity Omissions",
+      "type": "array"
+    },
+    "configuration_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Configuration Hash",
+      "type": "string"
+    },
+    "context_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Context Hash",
+      "type": "string"
+    },
+    "feature_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Feature Hash",
+      "type": "string"
+    },
+    "module_manifest": {
+      "additionalProperties": {
+        "type": "string"
+      },
+      "title": "Module Manifest",
+      "type": "object"
+    },
+    "payload": {
+      "$ref": "#/$defs/DaybreakInput"
+    },
+    "payload_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Payload Hash",
+      "type": "string"
+    },
+    "prequalification": {
+      "items": {
+        "$ref": "#/$defs/PrequalificationDecision"
+      },
+      "title": "Prequalification",
+      "type": "array"
+    },
+    "snapshot_id": {
+      "title": "Snapshot Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "snapshot_id",
+    "context_hash",
+    "audit_hash",
+    "payload",
+    "payload_hash",
+    "feature_hash",
+    "configuration_hash",
+    "module_manifest",
+    "prequalification",
+    "capacity_omissions",
+    "accepted_feature_records"
+  ],
+  "title": "FeatureSnapshot",
+  "type": "object"
+}

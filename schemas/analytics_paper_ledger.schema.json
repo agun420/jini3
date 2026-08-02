@@ -1,0 +1,426 @@
+{
+  "$defs": {
+    "AcceptanceStatus": {
+      "enum": [
+        "collecting",
+        "blocked",
+        "paper_qualified"
+      ],
+      "title": "AcceptanceStatus",
+      "type": "string"
+    },
+    "AggregatePerformance": {
+      "additionalProperties": false,
+      "properties": {
+        "average_r_multiple": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            }
+          ],
+          "title": "Average R Multiple"
+        },
+        "expectancy": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            }
+          ],
+          "title": "Expectancy"
+        },
+        "fees": {
+          "anyOf": [
+            {
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            }
+          ],
+          "title": "Fees"
+        },
+        "gross_pnl": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            }
+          ],
+          "title": "Gross Pnl"
+        },
+        "maximum_drawdown": {
+          "anyOf": [
+            {
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            }
+          ],
+          "title": "Maximum Drawdown"
+        },
+        "net_pnl": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            }
+          ],
+          "title": "Net Pnl"
+        },
+        "profit_factor": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Profit Factor"
+        },
+        "session_count": {
+          "minimum": 0,
+          "title": "Session Count",
+          "type": "integer"
+        },
+        "trade_count": {
+          "minimum": 0,
+          "title": "Trade Count",
+          "type": "integer"
+        },
+        "win_rate": {
+          "anyOf": [
+            {
+              "maximum": 1.0,
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            }
+          ],
+          "title": "Win Rate"
+        }
+      },
+      "required": [
+        "session_count",
+        "trade_count",
+        "gross_pnl",
+        "fees",
+        "net_pnl",
+        "win_rate",
+        "profit_factor",
+        "expectancy",
+        "maximum_drawdown",
+        "average_r_multiple"
+      ],
+      "title": "AggregatePerformance",
+      "type": "object"
+    },
+    "AnalyticsPolicy": {
+      "additionalProperties": false,
+      "properties": {
+        "allow_live_certification": {
+          "const": false,
+          "default": false,
+          "title": "Allow Live Certification",
+          "type": "boolean"
+        },
+        "maximum_duplicate_orders": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Maximum Duplicate Orders",
+          "type": "integer"
+        },
+        "maximum_invariant_violations": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Maximum Invariant Violations",
+          "type": "integer"
+        },
+        "maximum_late_primary_responses": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Maximum Late Primary Responses",
+          "type": "integer"
+        },
+        "maximum_unresolved_reconciliations": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Maximum Unresolved Reconciliations",
+          "type": "integer"
+        },
+        "minimum_clean_session_rate": {
+          "anyOf": [
+            {
+              "maximum": 1.0,
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            }
+          ],
+          "default": "1",
+          "title": "Minimum Clean Session Rate"
+        },
+        "minimum_filled_orders": {
+          "default": 50,
+          "maximum": 10000,
+          "minimum": 1,
+          "title": "Minimum Filled Orders",
+          "type": "integer"
+        },
+        "minimum_sessions": {
+          "default": 30,
+          "maximum": 365,
+          "minimum": 1,
+          "title": "Minimum Sessions",
+          "type": "integer"
+        },
+        "mode": {
+          "const": "paper",
+          "default": "paper",
+          "title": "Mode",
+          "type": "string"
+        },
+        "performance_is_acceptance_gate": {
+          "const": false,
+          "default": false,
+          "title": "Performance Is Acceptance Gate",
+          "type": "boolean"
+        },
+        "policy_version": {
+          "const": "analytics_policy_v1",
+          "default": "analytics_policy_v1",
+          "title": "Policy Version",
+          "type": "string"
+        },
+        "require_all_positions_flat": {
+          "const": true,
+          "default": true,
+          "title": "Require All Positions Flat",
+          "type": "boolean"
+        },
+        "require_complete_replay": {
+          "const": true,
+          "default": true,
+          "title": "Require Complete Replay",
+          "type": "boolean"
+        },
+        "require_restore_validation": {
+          "const": true,
+          "default": true,
+          "title": "Require Restore Validation",
+          "type": "boolean"
+        },
+        "require_target_acceptance": {
+          "const": true,
+          "default": true,
+          "title": "Require Target Acceptance",
+          "type": "boolean"
+        },
+        "required_drill_count": {
+          "default": 7,
+          "maximum": 32,
+          "minimum": 0,
+          "title": "Required Drill Count",
+          "type": "integer"
+        }
+      },
+      "title": "AnalyticsPolicy",
+      "type": "object"
+    },
+    "SessionAcceptance": {
+      "additionalProperties": false,
+      "properties": {
+        "analytics_id": {
+          "maxLength": 64,
+          "minLength": 8,
+          "title": "Analytics Id",
+          "type": "string"
+        },
+        "clean": {
+          "title": "Clean",
+          "type": "boolean"
+        },
+        "reasons": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Reasons",
+          "type": "array"
+        },
+        "replay_id": {
+          "anyOf": [
+            {
+              "maxLength": 64,
+              "minLength": 8,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Replay Id"
+        },
+        "session_id": {
+          "maxLength": 64,
+          "minLength": 8,
+          "title": "Session Id",
+          "type": "string"
+        },
+        "trading_date": {
+          "format": "date",
+          "title": "Trading Date",
+          "type": "string"
+        }
+      },
+      "required": [
+        "session_id",
+        "trading_date",
+        "clean",
+        "reasons",
+        "analytics_id",
+        "replay_id"
+      ],
+      "title": "SessionAcceptance",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "blockers": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Blockers",
+      "type": "array"
+    },
+    "clean_session_count": {
+      "minimum": 0,
+      "title": "Clean Session Count",
+      "type": "integer"
+    },
+    "clean_session_rate": {
+      "anyOf": [
+        {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "type": "number"
+        },
+        {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "type": "string"
+        }
+      ],
+      "title": "Clean Session Rate"
+    },
+    "configuration_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Configuration Hash",
+      "type": "string"
+    },
+    "filled_order_count": {
+      "minimum": 0,
+      "title": "Filled Order Count",
+      "type": "integer"
+    },
+    "generated_at": {
+      "format": "date-time",
+      "title": "Generated At",
+      "type": "string"
+    },
+    "ledger_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Ledger Hash",
+      "type": "string"
+    },
+    "ledger_id": {
+      "maxLength": 64,
+      "minLength": 8,
+      "title": "Ledger Id",
+      "type": "string"
+    },
+    "live_ready": {
+      "const": false,
+      "default": false,
+      "title": "Live Ready",
+      "type": "boolean"
+    },
+    "paper_ready": {
+      "title": "Paper Ready",
+      "type": "boolean"
+    },
+    "performance": {
+      "$ref": "#/$defs/AggregatePerformance"
+    },
+    "policy": {
+      "$ref": "#/$defs/AnalyticsPolicy"
+    },
+    "request_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Request Hash",
+      "type": "string"
+    },
+    "session_count": {
+      "minimum": 0,
+      "title": "Session Count",
+      "type": "integer"
+    },
+    "sessions": {
+      "items": {
+        "$ref": "#/$defs/SessionAcceptance"
+      },
+      "title": "Sessions",
+      "type": "array"
+    },
+    "status": {
+      "$ref": "#/$defs/AcceptanceStatus"
+    }
+  },
+  "required": [
+    "ledger_id",
+    "generated_at",
+    "status",
+    "paper_ready",
+    "session_count",
+    "clean_session_count",
+    "filled_order_count",
+    "clean_session_rate",
+    "sessions",
+    "performance",
+    "blockers",
+    "policy",
+    "configuration_hash",
+    "request_hash",
+    "ledger_hash"
+  ],
+  "title": "PaperAcceptanceLedger",
+  "type": "object"
+}

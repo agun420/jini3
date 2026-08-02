@@ -1,0 +1,88 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "artifact_path": {
+      "format": "path",
+      "title": "Artifact Path",
+      "type": "string"
+    },
+    "artifact_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Artifact Sha256",
+      "type": "string"
+    },
+    "artifact_size_bytes": {
+      "exclusiveMinimum": 0,
+      "title": "Artifact Size Bytes",
+      "type": "integer"
+    },
+    "backup_id": {
+      "maxLength": 64,
+      "minLength": 8,
+      "title": "Backup Id",
+      "type": "string"
+    },
+    "complete": {
+      "title": "Complete",
+      "type": "boolean"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "encrypted": {
+      "title": "Encrypted",
+      "type": "boolean"
+    },
+    "manifest_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Manifest Hash",
+      "type": "string"
+    },
+    "schema_revision": {
+      "maxLength": 128,
+      "minLength": 1,
+      "title": "Schema Revision",
+      "type": "string"
+    },
+    "source_database": {
+      "maxLength": 256,
+      "minLength": 1,
+      "title": "Source Database",
+      "type": "string"
+    },
+    "table_counts": {
+      "items": {
+        "maxItems": 2,
+        "minItems": 2,
+        "prefixItems": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "integer"
+          }
+        ],
+        "type": "array"
+      },
+      "title": "Table Counts",
+      "type": "array"
+    }
+  },
+  "required": [
+    "backup_id",
+    "created_at",
+    "source_database",
+    "artifact_path",
+    "artifact_size_bytes",
+    "artifact_sha256",
+    "schema_revision",
+    "table_counts",
+    "encrypted",
+    "complete",
+    "manifest_hash"
+  ],
+  "title": "BackupManifest",
+  "type": "object"
+}

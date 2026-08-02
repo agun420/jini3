@@ -1,0 +1,202 @@
+{
+  "$defs": {
+    "ApprovalRole": {
+      "enum": [
+        "engineering",
+        "operations",
+        "risk",
+        "security",
+        "independent_review"
+      ],
+      "title": "ApprovalRole",
+      "type": "string"
+    },
+    "CandidateStatus": {
+      "enum": [
+        "incomplete",
+        "blocked",
+        "paper_release_candidate"
+      ],
+      "title": "CandidateStatus",
+      "type": "string"
+    },
+    "ReviewSummary": {
+      "additionalProperties": false,
+      "properties": {
+        "approved_roles": {
+          "items": {
+            "$ref": "#/$defs/ApprovalRole"
+          },
+          "title": "Approved Roles",
+          "type": "array"
+        },
+        "finding_count": {
+          "minimum": 0,
+          "title": "Finding Count",
+          "type": "integer"
+        },
+        "missing_roles": {
+          "items": {
+            "$ref": "#/$defs/ApprovalRole"
+          },
+          "title": "Missing Roles",
+          "type": "array"
+        },
+        "open_critical_count": {
+          "minimum": 0,
+          "title": "Open Critical Count",
+          "type": "integer"
+        },
+        "open_high_count": {
+          "minimum": 0,
+          "title": "Open High Count",
+          "type": "integer"
+        },
+        "open_info_count": {
+          "minimum": 0,
+          "title": "Open Info Count",
+          "type": "integer"
+        },
+        "open_low_count": {
+          "minimum": 0,
+          "title": "Open Low Count",
+          "type": "integer"
+        },
+        "open_medium_count": {
+          "minimum": 0,
+          "title": "Open Medium Count",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "finding_count",
+        "open_info_count",
+        "open_low_count",
+        "open_medium_count",
+        "open_high_count",
+        "open_critical_count",
+        "approved_roles",
+        "missing_roles"
+      ],
+      "title": "ReviewSummary",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "blockers": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Blockers",
+      "type": "array"
+    },
+    "build_attestation_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Build Attestation Hash",
+      "type": "string"
+    },
+    "configuration_freeze_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Configuration Freeze Hash",
+      "type": "string"
+    },
+    "configuration_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Configuration Hash",
+      "type": "string"
+    },
+    "deployment_report_id": {
+      "maxLength": 96,
+      "minLength": 8,
+      "title": "Deployment Report Id",
+      "type": "string"
+    },
+    "evidence_manifest_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Evidence Manifest Hash",
+      "type": "string"
+    },
+    "generated_at": {
+      "format": "date-time",
+      "title": "Generated At",
+      "type": "string"
+    },
+    "live_capital_eligible": {
+      "const": false,
+      "default": false,
+      "title": "Live Capital Eligible",
+      "type": "boolean"
+    },
+    "paper_ledger_id": {
+      "maxLength": 96,
+      "minLength": 8,
+      "title": "Paper Ledger Id",
+      "type": "string"
+    },
+    "paper_release_candidate": {
+      "title": "Paper Release Candidate",
+      "type": "boolean"
+    },
+    "release_version": {
+      "const": "1.0.2",
+      "title": "Release Version",
+      "type": "string"
+    },
+    "report_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Report Hash",
+      "type": "string"
+    },
+    "report_id": {
+      "maxLength": 96,
+      "minLength": 8,
+      "title": "Report Id",
+      "type": "string"
+    },
+    "request_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Request Hash",
+      "type": "string"
+    },
+    "review_summary": {
+      "$ref": "#/$defs/ReviewSummary"
+    },
+    "specification_version": {
+      "const": "6.3",
+      "title": "Specification Version",
+      "type": "string"
+    },
+    "status": {
+      "$ref": "#/$defs/CandidateStatus"
+    },
+    "warnings": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Warnings",
+      "type": "array"
+    }
+  },
+  "required": [
+    "report_id",
+    "generated_at",
+    "status",
+    "paper_release_candidate",
+    "blockers",
+    "warnings",
+    "release_version",
+    "specification_version",
+    "configuration_hash",
+    "evidence_manifest_hash",
+    "build_attestation_hash",
+    "configuration_freeze_hash",
+    "paper_ledger_id",
+    "deployment_report_id",
+    "review_summary",
+    "request_hash",
+    "report_hash"
+  ],
+  "title": "ProductionCandidateReport",
+  "type": "object"
+}

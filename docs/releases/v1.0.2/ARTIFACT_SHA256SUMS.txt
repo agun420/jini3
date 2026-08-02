@@ -1,0 +1,3 @@
+6f3cad85e26876a225b3522e30e1ae2a747cb1f1579c0c2f1d3178d390cb7a1f  dist/project_daybreak-1.0.2-py3-none-any.whl
+cea4d9d9f2bebdfd666bf95a55725859c6b4a551f09fdc9d4c17ad658a9b0809  dist/project_daybreak-1.0.2.tar.gz
+0872a5c3e168d4698819b2a4470d02566173a61caeecd4bacaa401e5f6a0fbf2  docs/spec/Project_Daybreak_v6.3_Final.md

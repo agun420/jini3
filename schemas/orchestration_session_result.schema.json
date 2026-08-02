@@ -1,0 +1,556 @@
+{
+  "$defs": {
+    "AlertRecord": {
+      "additionalProperties": false,
+      "properties": {
+        "alert_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Alert Hash",
+          "type": "string"
+        },
+        "alert_id": {
+          "maxLength": 64,
+          "minLength": 8,
+          "title": "Alert Id",
+          "type": "string"
+        },
+        "code": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Code",
+          "type": "string"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "dedup_key": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Dedup Key",
+          "type": "string"
+        },
+        "details": {
+          "additionalProperties": true,
+          "title": "Details",
+          "type": "object"
+        },
+        "message": {
+          "maxLength": 2048,
+          "minLength": 1,
+          "title": "Message",
+          "type": "string"
+        },
+        "session_id": {
+          "title": "Session Id",
+          "type": "string"
+        },
+        "severity": {
+          "$ref": "#/$defs/AlertSeverity"
+        }
+      },
+      "required": [
+        "alert_id",
+        "session_id",
+        "severity",
+        "code",
+        "message",
+        "created_at",
+        "dedup_key",
+        "alert_hash"
+      ],
+      "title": "AlertRecord",
+      "type": "object"
+    },
+    "AlertSeverity": {
+      "enum": [
+        "info",
+        "warning",
+        "critical"
+      ],
+      "title": "AlertSeverity",
+      "type": "string"
+    },
+    "FlattenOrder": {
+      "additionalProperties": false,
+      "properties": {
+        "broker_order_id": {
+          "title": "Broker Order Id",
+          "type": "string"
+        },
+        "client_order_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Client Order Id"
+        },
+        "quantity": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0.0,
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            }
+          ],
+          "title": "Quantity"
+        },
+        "raw_response_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Raw Response Hash",
+          "type": "string"
+        },
+        "submitted_at": {
+          "format": "date-time",
+          "title": "Submitted At",
+          "type": "string"
+        },
+        "symbol": {
+          "pattern": "^[A-Z0-9](?:[A-Z0-9.-]{0,13}[A-Z0-9])?$",
+          "title": "Symbol",
+          "type": "string"
+        }
+      },
+      "required": [
+        "symbol",
+        "quantity",
+        "broker_order_id",
+        "submitted_at",
+        "raw_response_hash"
+      ],
+      "title": "FlattenOrder",
+      "type": "object"
+    },
+    "FlattenResult": {
+      "additionalProperties": false,
+      "properties": {
+        "canceled_order_count": {
+          "minimum": 0,
+          "title": "Canceled Order Count",
+          "type": "integer"
+        },
+        "close_orders": {
+          "items": {
+            "$ref": "#/$defs/FlattenOrder"
+          },
+          "title": "Close Orders",
+          "type": "array"
+        },
+        "complete": {
+          "title": "Complete",
+          "type": "boolean"
+        },
+        "completed_at": {
+          "format": "date-time",
+          "title": "Completed At",
+          "type": "string"
+        },
+        "errors": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Errors",
+          "type": "array"
+        },
+        "flatten_id": {
+          "maxLength": 64,
+          "minLength": 8,
+          "title": "Flatten Id",
+          "type": "string"
+        },
+        "initial_positions": {
+          "items": {
+            "$ref": "#/$defs/SessionPosition"
+          },
+          "title": "Initial Positions",
+          "type": "array"
+        },
+        "remaining_positions": {
+          "items": {
+            "$ref": "#/$defs/SessionPosition"
+          },
+          "title": "Remaining Positions",
+          "type": "array"
+        },
+        "result_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Result Hash",
+          "type": "string"
+        },
+        "session_id": {
+          "title": "Session Id",
+          "type": "string"
+        },
+        "started_at": {
+          "format": "date-time",
+          "title": "Started At",
+          "type": "string"
+        }
+      },
+      "required": [
+        "flatten_id",
+        "session_id",
+        "started_at",
+        "completed_at",
+        "canceled_order_count",
+        "initial_positions",
+        "close_orders",
+        "remaining_positions",
+        "complete",
+        "result_hash"
+      ],
+      "title": "FlattenResult",
+      "type": "object"
+    },
+    "KillSwitchReason": {
+      "enum": [
+        "MANUAL",
+        "HARD_DAILY_LOSS",
+        "ACCOUNT_BLOCKED",
+        "TRADING_BLOCKED",
+        "MARKET_CIRCUIT_BREAKER",
+        "CLOCK_UNSYNCED",
+        "DATABASE_UNHEALTHY",
+        "RECORDER_UNHEALTHY",
+        "MARKET_DATA_UNHEALTHY",
+        "TRADE_UPDATE_STREAM_UNHEALTHY",
+        "BROKER_UNHEALTHY",
+        "LEADERSHIP_LOST",
+        "CONFIGURATION_MISMATCH",
+        "RECONCILIATION_FAILURE",
+        "UNPROTECTED_POSITION",
+        "EXECUTION_CUTOFF_EXCEEDED",
+        "FLATTEN_DEADLINE_EXCEEDED",
+        "UNKNOWN_FAILURE"
+      ],
+      "title": "KillSwitchReason",
+      "type": "string"
+    },
+    "KillSwitchState": {
+      "additionalProperties": false,
+      "properties": {
+        "activated_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Activated At"
+        },
+        "active": {
+          "title": "Active",
+          "type": "boolean"
+        },
+        "details": {
+          "additionalProperties": true,
+          "title": "Details",
+          "type": "object"
+        },
+        "reason": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/KillSwitchReason"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "reset_required": {
+          "default": false,
+          "title": "Reset Required",
+          "type": "boolean"
+        },
+        "session_id": {
+          "title": "Session Id",
+          "type": "string"
+        },
+        "state_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "State Hash",
+          "type": "string"
+        }
+      },
+      "required": [
+        "session_id",
+        "active",
+        "state_hash"
+      ],
+      "title": "KillSwitchState",
+      "type": "object"
+    },
+    "PhaseRecord": {
+      "additionalProperties": false,
+      "properties": {
+        "details": {
+          "additionalProperties": true,
+          "title": "Details",
+          "type": "object"
+        },
+        "ended_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ended At"
+        },
+        "phase": {
+          "$ref": "#/$defs/SessionPhase"
+        },
+        "record_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Record Hash",
+          "type": "string"
+        },
+        "sequence": {
+          "minimum": 1,
+          "title": "Sequence",
+          "type": "integer"
+        },
+        "session_id": {
+          "title": "Session Id",
+          "type": "string"
+        },
+        "started_at": {
+          "format": "date-time",
+          "title": "Started At",
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/$defs/PhaseStatus"
+        }
+      },
+      "required": [
+        "session_id",
+        "sequence",
+        "phase",
+        "status",
+        "started_at",
+        "record_hash"
+      ],
+      "title": "PhaseRecord",
+      "type": "object"
+    },
+    "PhaseStatus": {
+      "enum": [
+        "started",
+        "completed",
+        "failed",
+        "skipped"
+      ],
+      "title": "PhaseStatus",
+      "type": "string"
+    },
+    "SessionOutcome": {
+      "enum": [
+        "completed",
+        "no_setups",
+        "blocked",
+        "failed",
+        "killed",
+        "flatten_incomplete"
+      ],
+      "title": "SessionOutcome",
+      "type": "string"
+    },
+    "SessionPhase": {
+      "enum": [
+        "created",
+        "preflight",
+        "leadership_acquired",
+        "recorder_warmup",
+        "recording",
+        "feature_freeze",
+        "evaluation",
+        "risk",
+        "eligibility_lock",
+        "execution",
+        "monitoring",
+        "flattening",
+        "reconciliation",
+        "completed",
+        "failed",
+        "killed"
+      ],
+      "title": "SessionPhase",
+      "type": "string"
+    },
+    "SessionPosition": {
+      "additionalProperties": false,
+      "properties": {
+        "average_entry_price": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0.0,
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Average Entry Price"
+        },
+        "observed_at": {
+          "format": "date-time",
+          "title": "Observed At",
+          "type": "string"
+        },
+        "quantity": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0.0,
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            }
+          ],
+          "title": "Quantity"
+        },
+        "raw_response_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Raw Response Hash",
+          "type": "string"
+        },
+        "side": {
+          "const": "long",
+          "default": "long",
+          "title": "Side",
+          "type": "string"
+        },
+        "symbol": {
+          "pattern": "^[A-Z0-9](?:[A-Z0-9.-]{0,13}[A-Z0-9])?$",
+          "title": "Symbol",
+          "type": "string"
+        }
+      },
+      "required": [
+        "symbol",
+        "quantity",
+        "observed_at",
+        "raw_response_hash"
+      ],
+      "title": "SessionPosition",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "alerts": {
+      "items": {
+        "$ref": "#/$defs/AlertRecord"
+      },
+      "title": "Alerts",
+      "type": "array"
+    },
+    "completed_at": {
+      "format": "date-time",
+      "title": "Completed At",
+      "type": "string"
+    },
+    "error_message": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Error Message"
+    },
+    "final_phase": {
+      "$ref": "#/$defs/SessionPhase"
+    },
+    "flatten_result": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/FlattenResult"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "kill_switch": {
+      "$ref": "#/$defs/KillSwitchState"
+    },
+    "leadership_holder_id": {
+      "title": "Leadership Holder Id",
+      "type": "string"
+    },
+    "outcome": {
+      "$ref": "#/$defs/SessionOutcome"
+    },
+    "phase_records": {
+      "items": {
+        "$ref": "#/$defs/PhaseRecord"
+      },
+      "title": "Phase Records",
+      "type": "array"
+    },
+    "result_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Result Hash",
+      "type": "string"
+    },
+    "run_id": {
+      "title": "Run Id",
+      "type": "string"
+    },
+    "session_id": {
+      "title": "Session Id",
+      "type": "string"
+    },
+    "started_at": {
+      "format": "date-time",
+      "title": "Started At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "session_id",
+    "run_id",
+    "outcome",
+    "started_at",
+    "completed_at",
+    "final_phase",
+    "leadership_holder_id",
+    "kill_switch",
+    "phase_records",
+    "alerts",
+    "result_hash"
+  ],
+  "title": "SessionResult",
+  "type": "object"
+}

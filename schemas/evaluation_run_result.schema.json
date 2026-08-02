@@ -1,0 +1,1856 @@
+{
+  "$defs": {
+    "ApprovedSetup": {
+      "additionalProperties": false,
+      "properties": {
+        "catalyst_age_hours": {
+          "minimum": 0,
+          "title": "Catalyst Age Hours",
+          "type": "number"
+        },
+        "catalyst_source": {
+          "title": "Catalyst Source",
+          "type": "string"
+        },
+        "conviction_score": {
+          "maximum": 100,
+          "minimum": 0,
+          "title": "Conviction Score",
+          "type": "integer"
+        },
+        "corroborated": {
+          "title": "Corroborated",
+          "type": "boolean"
+        },
+        "master_thesis": {
+          "title": "Master Thesis",
+          "type": "string"
+        },
+        "risk_flags": {
+          "items": {
+            "$ref": "#/$defs/RiskFlag"
+          },
+          "title": "Risk Flags",
+          "type": "array"
+        },
+        "score_breakdown": {
+          "$ref": "#/$defs/ScoreBreakdown"
+        },
+        "side": {
+          "const": "long",
+          "title": "Side",
+          "type": "string"
+        },
+        "source_timestamp": {
+          "title": "Source Timestamp",
+          "type": "string"
+        },
+        "source_type": {
+          "$ref": "#/$defs/SourceType"
+        },
+        "ticker": {
+          "pattern": "^[A-Z0-9](?:[A-Z0-9.-]{0,13}[A-Z0-9])?$",
+          "title": "Ticker",
+          "type": "string"
+        },
+        "trade_parameters": {
+          "$ref": "#/$defs/TradeParameters"
+        }
+      },
+      "required": [
+        "ticker",
+        "side",
+        "conviction_score",
+        "score_breakdown",
+        "master_thesis",
+        "catalyst_source",
+        "source_type",
+        "source_timestamp",
+        "catalyst_age_hours",
+        "corroborated",
+        "risk_flags",
+        "trade_parameters"
+      ],
+      "title": "ApprovedSetup",
+      "type": "object"
+    },
+    "AttemptRole": {
+      "enum": [
+        "primary",
+        "shadow"
+      ],
+      "title": "AttemptRole",
+      "type": "string"
+    },
+    "AttemptStatus": {
+      "enum": [
+        "succeeded",
+        "deadline_exceeded",
+        "transport_error",
+        "refused",
+        "incomplete",
+        "empty_output",
+        "invalid_json",
+        "schema_invalid",
+        "invariant_invalid",
+        "canceled"
+      ],
+      "title": "AttemptStatus",
+      "type": "string"
+    },
+    "BlockerCode": {
+      "enum": [
+        "MARKET_NOT_NORMAL",
+        "PAYLOAD_STALE"
+      ],
+      "title": "BlockerCode",
+      "type": "string"
+    },
+    "BorrowStatus": {
+      "enum": [
+        "easy",
+        "hard_to_borrow",
+        "unknown"
+      ],
+      "title": "BorrowStatus",
+      "type": "string"
+    },
+    "CatalystZeroReason": {
+      "enum": [
+        "disqualifier_flag",
+        "unconfirmed_source",
+        "stale_catalyst",
+        "no_valid_driver"
+      ],
+      "title": "CatalystZeroReason",
+      "type": "string"
+    },
+    "ChartStructure": {
+      "enum": [
+        "blue_sky",
+        "clean_short_term",
+        "moderate_room",
+        "capped"
+      ],
+      "title": "ChartStructure",
+      "type": "string"
+    },
+    "CheckStatus": {
+      "enum": [
+        "pass",
+        "fail",
+        "not_evaluated"
+      ],
+      "title": "CheckStatus",
+      "type": "string"
+    },
+    "DaybreakInput": {
+      "additionalProperties": false,
+      "properties": {
+        "catalyst_freshness_threshold_hours": {
+          "exclusiveMinimum": 0,
+          "title": "Catalyst Freshness Threshold Hours",
+          "type": "number"
+        },
+        "evaluation_timestamp": {
+          "title": "Evaluation Timestamp",
+          "type": "string"
+        },
+        "market_status": {
+          "$ref": "#/$defs/MarketStatus"
+        },
+        "payload_age_seconds": {
+          "minimum": 0,
+          "title": "Payload Age Seconds",
+          "type": "integer"
+        },
+        "payload_timestamp": {
+          "title": "Payload Timestamp",
+          "type": "string"
+        },
+        "tickers": {
+          "items": {
+            "$ref": "#/$defs/TickerInput"
+          },
+          "maxItems": 25,
+          "title": "Tickers",
+          "type": "array"
+        }
+      },
+      "required": [
+        "evaluation_timestamp",
+        "payload_timestamp",
+        "payload_age_seconds",
+        "catalyst_freshness_threshold_hours",
+        "market_status",
+        "tickers"
+      ],
+      "title": "DaybreakInput",
+      "type": "object"
+    },
+    "DaybreakOutput": {
+      "additionalProperties": false,
+      "properties": {
+        "approved_setups": {
+          "items": {
+            "$ref": "#/$defs/ApprovedSetup"
+          },
+          "title": "Approved Setups",
+          "type": "array"
+        },
+        "excluded_tickers": {
+          "items": {
+            "$ref": "#/$defs/ExcludedTicker"
+          },
+          "title": "Excluded Tickers",
+          "type": "array"
+        },
+        "execution_timestamp": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Execution Timestamp"
+        },
+        "market_status": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/MarketStatus"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "payload_timestamp_used": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Payload Timestamp Used"
+        },
+        "qualified_not_selected": {
+          "items": {
+            "$ref": "#/$defs/QualifiedNotSelected"
+          },
+          "title": "Qualified Not Selected",
+          "type": "array"
+        },
+        "run_blockers": {
+          "items": {
+            "$ref": "#/$defs/RunBlocker"
+          },
+          "title": "Run Blockers",
+          "type": "array"
+        },
+        "run_status": {
+          "$ref": "#/$defs/daybreak_contracts__enums__RunStatus"
+        },
+        "schema_failures": {
+          "items": {
+            "$ref": "#/$defs/SchemaFailure"
+          },
+          "title": "Schema Failures",
+          "type": "array"
+        }
+      },
+      "required": [
+        "run_status",
+        "execution_timestamp",
+        "payload_timestamp_used",
+        "market_status",
+        "approved_setups",
+        "qualified_not_selected",
+        "excluded_tickers",
+        "schema_failures",
+        "run_blockers"
+      ],
+      "title": "DaybreakOutput",
+      "type": "object"
+    },
+    "DisqualifierFlag": {
+      "enum": [
+        "paid_promotion",
+        "reverse_split_only",
+        "unconfirmed_rumor",
+        "non_operating_promotion",
+        "other_disqualifying_catalyst"
+      ],
+      "title": "DisqualifierFlag",
+      "type": "string"
+    },
+    "EvaluationAttempt": {
+      "additionalProperties": false,
+      "properties": {
+        "attempt_id": {
+          "title": "Attempt Id",
+          "type": "string"
+        },
+        "attempt_number": {
+          "maximum": 2,
+          "minimum": 1,
+          "title": "Attempt Number",
+          "type": "integer"
+        },
+        "error_message": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Error Message"
+        },
+        "error_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Error Type"
+        },
+        "model": {
+          "title": "Model",
+          "type": "string"
+        },
+        "output": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/DaybreakOutput"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "prompt_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Prompt Hash",
+          "type": "string"
+        },
+        "raw_output_text": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Raw Output Text"
+        },
+        "raw_provider_response": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Raw Provider Response"
+        },
+        "raw_response_hash": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Raw Response Hash"
+        },
+        "request_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Request Hash",
+          "type": "string"
+        },
+        "request_started_at": {
+          "format": "date-time",
+          "title": "Request Started At",
+          "type": "string"
+        },
+        "response_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Response Id"
+        },
+        "response_received_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Response Received At"
+        },
+        "response_text_hash": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Response Text Hash"
+        },
+        "role": {
+          "$ref": "#/$defs/AttemptRole"
+        },
+        "run_id": {
+          "title": "Run Id",
+          "type": "string"
+        },
+        "schema_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Schema Hash",
+          "type": "string"
+        },
+        "spec_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Spec Hash",
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/$defs/AttemptStatus"
+        },
+        "usage": {
+          "$ref": "#/$defs/TokenUsage",
+          "default": {
+            "cached_input_tokens": 0,
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "reasoning_tokens": 0,
+            "total_tokens": 0
+          }
+        },
+        "validation_report": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ValidationReport"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "attempt_id",
+        "run_id",
+        "role",
+        "attempt_number",
+        "model",
+        "request_started_at",
+        "status",
+        "request_hash",
+        "prompt_hash",
+        "spec_hash",
+        "schema_hash"
+      ],
+      "title": "EvaluationAttempt",
+      "type": "object"
+    },
+    "EvaluationEvidence": {
+      "additionalProperties": false,
+      "properties": {
+        "audit_hash": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Audit Hash"
+        },
+        "capacity_omissions_logged": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Capacity Omissions Logged",
+          "type": "array",
+          "uniqueItems": true
+        },
+        "capacity_omitted_tickers": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Capacity Omitted Tickers",
+          "type": "array",
+          "uniqueItems": true
+        },
+        "configuration_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Configuration Hash",
+          "type": "string"
+        },
+        "context_hash": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Context Hash"
+        },
+        "feature_hash": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Feature Hash"
+        },
+        "payload_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Payload Hash",
+          "type": "string"
+        },
+        "prequalified_out_tickers": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Prequalified Out Tickers",
+          "type": "array",
+          "uniqueItems": true
+        },
+        "preselection_policy_version": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Preselection Policy Version"
+        },
+        "snapshot_id": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Snapshot Id"
+        }
+      },
+      "required": [
+        "payload_hash",
+        "configuration_hash"
+      ],
+      "title": "EvaluationEvidence",
+      "type": "object"
+    },
+    "EvaluationRequest": {
+      "additionalProperties": false,
+      "properties": {
+        "evidence": {
+          "$ref": "#/$defs/EvaluationEvidence"
+        },
+        "input_payload": {
+          "$ref": "#/$defs/DaybreakInput"
+        },
+        "requested_at": {
+          "format": "date-time",
+          "title": "Requested At",
+          "type": "string"
+        },
+        "response_cutoff_timestamp": {
+          "format": "date-time",
+          "title": "Response Cutoff Timestamp",
+          "type": "string"
+        },
+        "run_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Run Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "run_id",
+        "input_payload",
+        "evidence",
+        "response_cutoff_timestamp",
+        "requested_at"
+      ],
+      "title": "EvaluationRequest",
+      "type": "object"
+    },
+    "EvaluationSnapshot": {
+      "additionalProperties": false,
+      "properties": {
+        "catalyst_magnitude_bucket": {
+          "$ref": "#/$defs/MagnitudeBucket"
+        },
+        "catalyst_magnitude_points": {
+          "maximum": 4,
+          "minimum": 0,
+          "title": "Catalyst Magnitude Points",
+          "type": "integer"
+        },
+        "catalyst_points": {
+          "maximum": 40,
+          "minimum": 0,
+          "title": "Catalyst Points",
+          "type": "integer"
+        },
+        "catalyst_score_raw": {
+          "maximum": 10,
+          "minimum": 0,
+          "title": "Catalyst Score Raw",
+          "type": "integer"
+        },
+        "catalyst_zero_override": {
+          "title": "Catalyst Zero Override",
+          "type": "boolean"
+        },
+        "catalyst_zero_reason": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CatalystZeroReason"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "evidence_purpose": {
+          "$ref": "#/$defs/EvidencePurpose"
+        },
+        "magnitude_evidence_end_char": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Magnitude Evidence End Char"
+        },
+        "magnitude_evidence_excerpt": {
+          "maxLength": 200,
+          "title": "Magnitude Evidence Excerpt",
+          "type": "string"
+        },
+        "magnitude_evidence_start_char": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Magnitude Evidence Start Char"
+        },
+        "magnitude_evidence_truncated": {
+          "title": "Magnitude Evidence Truncated",
+          "type": "boolean"
+        },
+        "parabolic_adjusted": {
+          "title": "Parabolic Adjusted",
+          "type": "boolean"
+        },
+        "risk_flags": {
+          "items": {
+            "$ref": "#/$defs/RiskFlag"
+          },
+          "title": "Risk Flags",
+          "type": "array"
+        },
+        "source_quality_points": {
+          "maximum": 6,
+          "minimum": 0,
+          "title": "Source Quality Points",
+          "type": "integer"
+        },
+        "technical_base_points": {
+          "enum": [
+            0,
+            13,
+            22,
+            25
+          ],
+          "title": "Technical Base Points",
+          "type": "integer"
+        },
+        "technical_grade": {
+          "$ref": "#/$defs/TechnicalGrade"
+        },
+        "technical_points": {
+          "enum": [
+            0,
+            7,
+            13,
+            16,
+            19,
+            22,
+            25
+          ],
+          "title": "Technical Points",
+          "type": "integer"
+        },
+        "volume_points": {
+          "enum": [
+            0,
+            15,
+            25,
+            35
+          ],
+          "title": "Volume Points",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "source_quality_points",
+        "catalyst_magnitude_bucket",
+        "catalyst_magnitude_points",
+        "evidence_purpose",
+        "magnitude_evidence_excerpt",
+        "magnitude_evidence_truncated",
+        "magnitude_evidence_start_char",
+        "magnitude_evidence_end_char",
+        "catalyst_zero_override",
+        "catalyst_zero_reason",
+        "catalyst_score_raw",
+        "catalyst_points",
+        "volume_points",
+        "technical_grade",
+        "technical_base_points",
+        "technical_points",
+        "parabolic_adjusted",
+        "risk_flags"
+      ],
+      "title": "EvaluationSnapshot",
+      "type": "object"
+    },
+    "EvidencePurpose": {
+      "enum": [
+        "magnitude",
+        "disqualifier",
+        "none"
+      ],
+      "title": "EvidencePurpose",
+      "type": "string"
+    },
+    "ExcludedTicker": {
+      "additionalProperties": false,
+      "properties": {
+        "additional_reasons": {
+          "items": {
+            "$ref": "#/$defs/ReasonObject"
+          },
+          "title": "Additional Reasons",
+          "type": "array"
+        },
+        "evaluation_snapshot": {
+          "$ref": "#/$defs/EvaluationSnapshot"
+        },
+        "primary_reason": {
+          "$ref": "#/$defs/ReasonObject"
+        },
+        "ticker": {
+          "pattern": "^[A-Z0-9](?:[A-Z0-9.-]{0,13}[A-Z0-9])?$",
+          "title": "Ticker",
+          "type": "string"
+        }
+      },
+      "required": [
+        "ticker",
+        "primary_reason",
+        "additional_reasons",
+        "evaluation_snapshot"
+      ],
+      "title": "ExcludedTicker",
+      "type": "object"
+    },
+    "InvariantCheck": {
+      "additionalProperties": false,
+      "properties": {
+        "invariant_number": {
+          "maximum": 77,
+          "minimum": 1,
+          "title": "Invariant Number",
+          "type": "integer"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "note": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Note"
+        },
+        "status": {
+          "$ref": "#/$defs/CheckStatus"
+        },
+        "violations": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/InvariantViolation"
+          },
+          "title": "Violations",
+          "type": "array"
+        }
+      },
+      "required": [
+        "invariant_number",
+        "name",
+        "status"
+      ],
+      "title": "InvariantCheck",
+      "type": "object"
+    },
+    "InvariantViolation": {
+      "additionalProperties": false,
+      "properties": {
+        "expected": {
+          "title": "Expected",
+          "type": "string"
+        },
+        "invariant_number": {
+          "maximum": 77,
+          "minimum": 1,
+          "title": "Invariant Number",
+          "type": "integer"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        },
+        "observed": {
+          "title": "Observed",
+          "type": "string"
+        },
+        "path": {
+          "title": "Path",
+          "type": "string"
+        }
+      },
+      "required": [
+        "invariant_number",
+        "path",
+        "expected",
+        "observed",
+        "message"
+      ],
+      "title": "InvariantViolation",
+      "type": "object"
+    },
+    "LiquidityMetrics": {
+      "additionalProperties": false,
+      "properties": {
+        "borrow_status": {
+          "$ref": "#/$defs/BorrowStatus"
+        },
+        "float_shares": {
+          "exclusiveMinimum": 0,
+          "title": "Float Shares",
+          "type": "integer"
+        },
+        "gap_pct": {
+          "title": "Gap Pct",
+          "type": "number"
+        },
+        "premarket_volume": {
+          "minimum": 0,
+          "title": "Premarket Volume",
+          "type": "integer"
+        },
+        "rvol_time_matched": {
+          "minimum": 0,
+          "title": "Rvol Time Matched",
+          "type": "number"
+        },
+        "volume_profile": {
+          "$ref": "#/$defs/VolumeProfile"
+        }
+      },
+      "required": [
+        "gap_pct",
+        "premarket_volume",
+        "rvol_time_matched",
+        "float_shares",
+        "volume_profile",
+        "borrow_status"
+      ],
+      "title": "LiquidityMetrics",
+      "type": "object"
+    },
+    "MagnitudeBucket": {
+      "enum": [
+        "major_concrete",
+        "material_partially_quantified",
+        "credible_unquantified",
+        "weak_or_preliminary",
+        "no_valid_driver"
+      ],
+      "title": "MagnitudeBucket",
+      "type": "string"
+    },
+    "MarketStatus": {
+      "enum": [
+        "normal",
+        "limit_up_down_active",
+        "circuit_breaker_halt"
+      ],
+      "title": "MarketStatus",
+      "type": "string"
+    },
+    "NewsContext": {
+      "additionalProperties": false,
+      "properties": {
+        "catalyst_age_hours": {
+          "minimum": 0,
+          "title": "Catalyst Age Hours",
+          "type": "number"
+        },
+        "catalyst_text": {
+          "maxLength": 4000,
+          "minLength": 1,
+          "title": "Catalyst Text",
+          "type": "string"
+        },
+        "corroborated": {
+          "title": "Corroborated",
+          "type": "boolean"
+        },
+        "disqualifier_flags": {
+          "items": {
+            "$ref": "#/$defs/DisqualifierFlag"
+          },
+          "maxItems": 5,
+          "title": "Disqualifier Flags",
+          "type": "array"
+        },
+        "source_name": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Source Name",
+          "type": "string"
+        },
+        "source_timestamp": {
+          "title": "Source Timestamp",
+          "type": "string"
+        },
+        "source_type": {
+          "$ref": "#/$defs/SourceType"
+        }
+      },
+      "required": [
+        "catalyst_text",
+        "source_type",
+        "source_name",
+        "source_timestamp",
+        "catalyst_age_hours",
+        "corroborated",
+        "disqualifier_flags"
+      ],
+      "title": "NewsContext",
+      "type": "object"
+    },
+    "QualifiedNotSelected": {
+      "additionalProperties": false,
+      "properties": {
+        "catalyst_age_hours": {
+          "minimum": 0,
+          "title": "Catalyst Age Hours",
+          "type": "number"
+        },
+        "catalyst_source": {
+          "title": "Catalyst Source",
+          "type": "string"
+        },
+        "conviction_score": {
+          "maximum": 100,
+          "minimum": 0,
+          "title": "Conviction Score",
+          "type": "integer"
+        },
+        "corroborated": {
+          "title": "Corroborated",
+          "type": "boolean"
+        },
+        "final_rank": {
+          "minimum": 4,
+          "title": "Final Rank",
+          "type": "integer"
+        },
+        "non_selection_reason_code": {
+          "const": "TOP_THREE_CAP",
+          "title": "Non Selection Reason Code",
+          "type": "string"
+        },
+        "risk_flags": {
+          "items": {
+            "$ref": "#/$defs/RiskFlag"
+          },
+          "title": "Risk Flags",
+          "type": "array"
+        },
+        "score_breakdown": {
+          "$ref": "#/$defs/ScoreBreakdown"
+        },
+        "source_timestamp": {
+          "title": "Source Timestamp",
+          "type": "string"
+        },
+        "source_type": {
+          "$ref": "#/$defs/SourceType"
+        },
+        "ticker": {
+          "pattern": "^[A-Z0-9](?:[A-Z0-9.-]{0,13}[A-Z0-9])?$",
+          "title": "Ticker",
+          "type": "string"
+        }
+      },
+      "required": [
+        "ticker",
+        "final_rank",
+        "conviction_score",
+        "score_breakdown",
+        "catalyst_source",
+        "source_type",
+        "source_timestamp",
+        "catalyst_age_hours",
+        "corroborated",
+        "risk_flags",
+        "non_selection_reason_code"
+      ],
+      "title": "QualifiedNotSelected",
+      "type": "object"
+    },
+    "ReasonCode": {
+      "enum": [
+        "HALTED",
+        "CATALYST_SCORE_TOO_LOW",
+        "UNCORROBORATED_CATALYST",
+        "GAP_TOO_SMALL",
+        "PREMARKET_VOLUME_TOO_LOW",
+        "RVOL_TOO_LOW",
+        "RESISTANCE_TOO_CLOSE",
+        "CAPPED_CHART"
+      ],
+      "title": "ReasonCode",
+      "type": "string"
+    },
+    "ReasonObject": {
+      "additionalProperties": false,
+      "properties": {
+        "field": {
+          "title": "Field",
+          "type": "string"
+        },
+        "observed_value": {
+          "title": "Observed Value",
+          "type": "string"
+        },
+        "reason": {
+          "title": "Reason",
+          "type": "string"
+        },
+        "reason_code": {
+          "$ref": "#/$defs/ReasonCode"
+        },
+        "required_condition": {
+          "title": "Required Condition",
+          "type": "string"
+        }
+      },
+      "required": [
+        "reason_code",
+        "field",
+        "observed_value",
+        "required_condition",
+        "reason"
+      ],
+      "title": "ReasonObject",
+      "type": "object"
+    },
+    "RiskFlag": {
+      "enum": [
+        "parabolic_vwap_extension",
+        "hard_to_borrow",
+        "unknown_borrow",
+        "low_float",
+        "spiky_volume",
+        "secondary_source"
+      ],
+      "title": "RiskFlag",
+      "type": "string"
+    },
+    "RunBlocker": {
+      "additionalProperties": false,
+      "properties": {
+        "blocker_code": {
+          "$ref": "#/$defs/BlockerCode"
+        },
+        "field": {
+          "title": "Field",
+          "type": "string"
+        },
+        "observed_value": {
+          "title": "Observed Value",
+          "type": "string"
+        },
+        "reason": {
+          "title": "Reason",
+          "type": "string"
+        },
+        "required_condition": {
+          "title": "Required Condition",
+          "type": "string"
+        }
+      },
+      "required": [
+        "blocker_code",
+        "field",
+        "observed_value",
+        "required_condition",
+        "reason"
+      ],
+      "title": "RunBlocker",
+      "type": "object"
+    },
+    "SchemaFailure": {
+      "additionalProperties": false,
+      "properties": {
+        "field": {
+          "title": "Field",
+          "type": "string"
+        },
+        "reason": {
+          "title": "Reason",
+          "type": "string"
+        },
+        "scope": {
+          "$ref": "#/$defs/SchemaFailureScope"
+        },
+        "ticker": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Ticker"
+        }
+      },
+      "required": [
+        "scope",
+        "ticker",
+        "field",
+        "reason"
+      ],
+      "title": "SchemaFailure",
+      "type": "object"
+    },
+    "SchemaFailureScope": {
+      "enum": [
+        "payload",
+        "ticker"
+      ],
+      "title": "SchemaFailureScope",
+      "type": "string"
+    },
+    "ScoreBreakdown": {
+      "additionalProperties": false,
+      "properties": {
+        "catalyst_magnitude_bucket": {
+          "$ref": "#/$defs/MagnitudeBucket"
+        },
+        "catalyst_magnitude_points": {
+          "maximum": 4,
+          "minimum": 0,
+          "title": "Catalyst Magnitude Points",
+          "type": "integer"
+        },
+        "catalyst_points": {
+          "maximum": 40,
+          "minimum": 0,
+          "title": "Catalyst Points",
+          "type": "integer"
+        },
+        "catalyst_score_raw": {
+          "maximum": 10,
+          "minimum": 0,
+          "title": "Catalyst Score Raw",
+          "type": "integer"
+        },
+        "catalyst_zero_override": {
+          "title": "Catalyst Zero Override",
+          "type": "boolean"
+        },
+        "catalyst_zero_reason": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CatalystZeroReason"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "evidence_purpose": {
+          "$ref": "#/$defs/EvidencePurpose"
+        },
+        "magnitude_evidence_end_char": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Magnitude Evidence End Char"
+        },
+        "magnitude_evidence_excerpt": {
+          "maxLength": 200,
+          "title": "Magnitude Evidence Excerpt",
+          "type": "string"
+        },
+        "magnitude_evidence_start_char": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Magnitude Evidence Start Char"
+        },
+        "magnitude_evidence_truncated": {
+          "title": "Magnitude Evidence Truncated",
+          "type": "boolean"
+        },
+        "parabolic_adjusted": {
+          "title": "Parabolic Adjusted",
+          "type": "boolean"
+        },
+        "source_quality_points": {
+          "maximum": 6,
+          "minimum": 0,
+          "title": "Source Quality Points",
+          "type": "integer"
+        },
+        "technical_base_points": {
+          "enum": [
+            0,
+            13,
+            22,
+            25
+          ],
+          "title": "Technical Base Points",
+          "type": "integer"
+        },
+        "technical_grade": {
+          "$ref": "#/$defs/TechnicalGrade"
+        },
+        "technical_points": {
+          "enum": [
+            0,
+            7,
+            13,
+            16,
+            19,
+            22,
+            25
+          ],
+          "title": "Technical Points",
+          "type": "integer"
+        },
+        "volume_points": {
+          "enum": [
+            0,
+            15,
+            25,
+            35
+          ],
+          "title": "Volume Points",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "source_quality_points",
+        "catalyst_magnitude_bucket",
+        "catalyst_magnitude_points",
+        "evidence_purpose",
+        "magnitude_evidence_excerpt",
+        "magnitude_evidence_truncated",
+        "magnitude_evidence_start_char",
+        "magnitude_evidence_end_char",
+        "catalyst_zero_override",
+        "catalyst_zero_reason",
+        "catalyst_score_raw",
+        "catalyst_points",
+        "volume_points",
+        "technical_grade",
+        "technical_base_points",
+        "technical_points",
+        "parabolic_adjusted"
+      ],
+      "title": "ScoreBreakdown",
+      "type": "object"
+    },
+    "ShadowComparison": {
+      "additionalProperties": false,
+      "properties": {
+        "comparison_version": {
+          "const": "shadow_compare_v1",
+          "default": "shadow_compare_v1",
+          "title": "Comparison Version",
+          "type": "string"
+        },
+        "exact_output_match": {
+          "title": "Exact Output Match",
+          "type": "boolean"
+        },
+        "primary_attempt_id": {
+          "title": "Primary Attempt Id",
+          "type": "string"
+        },
+        "primary_output_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Primary Output Hash",
+          "type": "string"
+        },
+        "same_approved_order": {
+          "title": "Same Approved Order",
+          "type": "boolean"
+        },
+        "same_run_status": {
+          "title": "Same Run Status",
+          "type": "boolean"
+        },
+        "shadow_attempt_id": {
+          "title": "Shadow Attempt Id",
+          "type": "string"
+        },
+        "shadow_output_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Shadow Output Hash",
+          "type": "string"
+        },
+        "ticker_disagreements": {
+          "items": {
+            "$ref": "#/$defs/TickerDisagreement"
+          },
+          "title": "Ticker Disagreements",
+          "type": "array"
+        }
+      },
+      "required": [
+        "primary_attempt_id",
+        "shadow_attempt_id",
+        "exact_output_match",
+        "same_run_status",
+        "same_approved_order",
+        "ticker_disagreements",
+        "primary_output_hash",
+        "shadow_output_hash"
+      ],
+      "title": "ShadowComparison",
+      "type": "object"
+    },
+    "SourceType": {
+      "enum": [
+        "primary",
+        "secondary",
+        "unconfirmed"
+      ],
+      "title": "SourceType",
+      "type": "string"
+    },
+    "TechnicalContext": {
+      "additionalProperties": false,
+      "properties": {
+        "atr_value": {
+          "exclusiveMinimum": 0,
+          "title": "Atr Value",
+          "type": "number"
+        },
+        "chart_structure": {
+          "$ref": "#/$defs/ChartStructure"
+        },
+        "current_price": {
+          "exclusiveMinimum": 0,
+          "title": "Current Price",
+          "type": "number"
+        },
+        "distance_from_vwap_atr": {
+          "title": "Distance From Vwap Atr",
+          "type": "number"
+        },
+        "distance_to_resistance_atr": {
+          "minimum": 0,
+          "title": "Distance To Resistance Atr",
+          "type": "number"
+        },
+        "premarket_low": {
+          "exclusiveMinimum": 0,
+          "title": "Premarket Low",
+          "type": "number"
+        }
+      },
+      "required": [
+        "distance_to_resistance_atr",
+        "distance_from_vwap_atr",
+        "chart_structure",
+        "current_price",
+        "atr_value",
+        "premarket_low"
+      ],
+      "title": "TechnicalContext",
+      "type": "object"
+    },
+    "TechnicalGrade": {
+      "enum": [
+        "A+",
+        "A",
+        "B",
+        "C"
+      ],
+      "title": "TechnicalGrade",
+      "type": "string"
+    },
+    "TickerDisagreement": {
+      "additionalProperties": false,
+      "properties": {
+        "evidence_span_equal": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Evidence Span Equal"
+        },
+        "primary_conviction_score": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Primary Conviction Score"
+        },
+        "primary_magnitude_bucket": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Primary Magnitude Bucket"
+        },
+        "primary_terminal": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Primary Terminal"
+        },
+        "shadow_conviction_score": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Shadow Conviction Score"
+        },
+        "shadow_magnitude_bucket": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Shadow Magnitude Bucket"
+        },
+        "shadow_terminal": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Shadow Terminal"
+        },
+        "ticker": {
+          "title": "Ticker",
+          "type": "string"
+        }
+      },
+      "required": [
+        "ticker",
+        "primary_terminal",
+        "shadow_terminal",
+        "primary_magnitude_bucket",
+        "shadow_magnitude_bucket",
+        "primary_conviction_score",
+        "shadow_conviction_score",
+        "evidence_span_equal"
+      ],
+      "title": "TickerDisagreement",
+      "type": "object"
+    },
+    "TickerInput": {
+      "additionalProperties": false,
+      "properties": {
+        "halted": {
+          "title": "Halted",
+          "type": "boolean"
+        },
+        "liquidity_metrics": {
+          "$ref": "#/$defs/LiquidityMetrics"
+        },
+        "news_context": {
+          "$ref": "#/$defs/NewsContext"
+        },
+        "technical_context": {
+          "$ref": "#/$defs/TechnicalContext"
+        },
+        "ticker": {
+          "pattern": "^[A-Z0-9](?:[A-Z0-9.-]{0,13}[A-Z0-9])?$",
+          "title": "Ticker",
+          "type": "string"
+        }
+      },
+      "required": [
+        "ticker",
+        "halted",
+        "news_context",
+        "liquidity_metrics",
+        "technical_context"
+      ],
+      "title": "TickerInput",
+      "type": "object"
+    },
+    "TokenUsage": {
+      "additionalProperties": false,
+      "properties": {
+        "cached_input_tokens": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Cached Input Tokens",
+          "type": "integer"
+        },
+        "input_tokens": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Input Tokens",
+          "type": "integer"
+        },
+        "output_tokens": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Output Tokens",
+          "type": "integer"
+        },
+        "reasoning_tokens": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Reasoning Tokens",
+          "type": "integer"
+        },
+        "total_tokens": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Total Tokens",
+          "type": "integer"
+        }
+      },
+      "title": "TokenUsage",
+      "type": "object"
+    },
+    "TradeParameters": {
+      "additionalProperties": false,
+      "properties": {
+        "atr_value_used": {
+          "exclusiveMinimum": 0,
+          "title": "Atr Value Used",
+          "type": "number"
+        },
+        "invalidation_note": {
+          "const": "Thesis is invalid if price breaks below the supplied premarket low before 9:35 AM ET.",
+          "title": "Invalidation Note",
+          "type": "string"
+        },
+        "premarket_low_used": {
+          "exclusiveMinimum": 0,
+          "title": "Premarket Low Used",
+          "type": "number"
+        },
+        "profit_target_atr_multiple": {
+          "maximum": 2.0,
+          "minimum": 2.0,
+          "title": "Profit Target Atr Multiple",
+          "type": "number"
+        },
+        "reference_price": {
+          "exclusiveMinimum": 0,
+          "title": "Reference Price",
+          "type": "number"
+        },
+        "risk_stop_atr_multiple": {
+          "maximum": 1.0,
+          "minimum": 1.0,
+          "title": "Risk Stop Atr Multiple",
+          "type": "number"
+        }
+      },
+      "required": [
+        "reference_price",
+        "atr_value_used",
+        "premarket_low_used",
+        "risk_stop_atr_multiple",
+        "profit_target_atr_multiple",
+        "invalidation_note"
+      ],
+      "title": "TradeParameters",
+      "type": "object"
+    },
+    "ValidationReport": {
+      "additionalProperties": false,
+      "properties": {
+        "checks": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/InvariantCheck"
+          },
+          "title": "Checks",
+          "type": "array"
+        },
+        "execution_ready": {
+          "title": "Execution Ready",
+          "type": "boolean"
+        },
+        "model_errors": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Model Errors",
+          "type": "array"
+        },
+        "valid": {
+          "title": "Valid",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "valid",
+        "execution_ready"
+      ],
+      "title": "ValidationReport",
+      "type": "object"
+    },
+    "VolumeProfile": {
+      "enum": [
+        "clean",
+        "spiky"
+      ],
+      "title": "VolumeProfile",
+      "type": "string"
+    },
+    "daybreak_contracts__enums__RunStatus": {
+      "enum": [
+        "approved",
+        "no_setups",
+        "blocked_market",
+        "stale_payload",
+        "schema_failure"
+      ],
+      "title": "RunStatus",
+      "type": "string"
+    },
+    "daybreak_evaluator__models__RunStatus": {
+      "enum": [
+        "primary_valid",
+        "primary_invalid",
+        "cutoff_missed",
+        "input_rejected"
+      ],
+      "title": "RunStatus",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "comparison": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ShadowComparison"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "decision_ready_at": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Decision Ready At"
+    },
+    "late_response_rejected": {
+      "default": false,
+      "title": "Late Response Rejected",
+      "type": "boolean"
+    },
+    "output": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/DaybreakOutput"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "primary_attempts": {
+      "items": {
+        "$ref": "#/$defs/EvaluationAttempt"
+      },
+      "title": "Primary Attempts",
+      "type": "array"
+    },
+    "request": {
+      "$ref": "#/$defs/EvaluationRequest"
+    },
+    "run_id": {
+      "title": "Run Id",
+      "type": "string"
+    },
+    "selected_primary_attempt_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Selected Primary Attempt Id"
+    },
+    "shadow_attempts": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/EvaluationAttempt"
+      },
+      "title": "Shadow Attempts",
+      "type": "array"
+    },
+    "status": {
+      "$ref": "#/$defs/daybreak_evaluator__models__RunStatus"
+    }
+  },
+  "required": [
+    "run_id",
+    "status",
+    "request",
+    "primary_attempts"
+  ],
+  "title": "EvaluationRunResult",
+  "type": "object"
+}

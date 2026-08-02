@@ -1,0 +1,115 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "allow_live_certification": {
+      "const": false,
+      "default": false,
+      "title": "Allow Live Certification",
+      "type": "boolean"
+    },
+    "maximum_duplicate_orders": {
+      "default": 0,
+      "minimum": 0,
+      "title": "Maximum Duplicate Orders",
+      "type": "integer"
+    },
+    "maximum_invariant_violations": {
+      "default": 0,
+      "minimum": 0,
+      "title": "Maximum Invariant Violations",
+      "type": "integer"
+    },
+    "maximum_late_primary_responses": {
+      "default": 0,
+      "minimum": 0,
+      "title": "Maximum Late Primary Responses",
+      "type": "integer"
+    },
+    "maximum_unresolved_reconciliations": {
+      "default": 0,
+      "minimum": 0,
+      "title": "Maximum Unresolved Reconciliations",
+      "type": "integer"
+    },
+    "minimum_clean_session_rate": {
+      "anyOf": [
+        {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "type": "number"
+        },
+        {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "type": "string"
+        }
+      ],
+      "default": "1",
+      "title": "Minimum Clean Session Rate"
+    },
+    "minimum_filled_orders": {
+      "default": 50,
+      "maximum": 10000,
+      "minimum": 1,
+      "title": "Minimum Filled Orders",
+      "type": "integer"
+    },
+    "minimum_sessions": {
+      "default": 30,
+      "maximum": 365,
+      "minimum": 1,
+      "title": "Minimum Sessions",
+      "type": "integer"
+    },
+    "mode": {
+      "const": "paper",
+      "default": "paper",
+      "title": "Mode",
+      "type": "string"
+    },
+    "performance_is_acceptance_gate": {
+      "const": false,
+      "default": false,
+      "title": "Performance Is Acceptance Gate",
+      "type": "boolean"
+    },
+    "policy_version": {
+      "const": "analytics_policy_v1",
+      "default": "analytics_policy_v1",
+      "title": "Policy Version",
+      "type": "string"
+    },
+    "require_all_positions_flat": {
+      "const": true,
+      "default": true,
+      "title": "Require All Positions Flat",
+      "type": "boolean"
+    },
+    "require_complete_replay": {
+      "const": true,
+      "default": true,
+      "title": "Require Complete Replay",
+      "type": "boolean"
+    },
+    "require_restore_validation": {
+      "const": true,
+      "default": true,
+      "title": "Require Restore Validation",
+      "type": "boolean"
+    },
+    "require_target_acceptance": {
+      "const": true,
+      "default": true,
+      "title": "Require Target Acceptance",
+      "type": "boolean"
+    },
+    "required_drill_count": {
+      "default": 7,
+      "maximum": 32,
+      "minimum": 0,
+      "title": "Required Drill Count",
+      "type": "integer"
+    }
+  },
+  "title": "AnalyticsPolicy",
+  "type": "object"
+}

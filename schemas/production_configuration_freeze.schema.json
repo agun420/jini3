@@ -1,0 +1,81 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "component_versions": {
+      "items": {
+        "maxItems": 2,
+        "minItems": 2,
+        "prefixItems": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "string"
+          }
+        ],
+        "type": "array"
+      },
+      "title": "Component Versions",
+      "type": "array"
+    },
+    "configuration_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Configuration Hash",
+      "type": "string"
+    },
+    "environment": {
+      "const": "paper",
+      "title": "Environment",
+      "type": "string"
+    },
+    "freeze_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Freeze Hash",
+      "type": "string"
+    },
+    "frozen_at": {
+      "format": "date-time",
+      "title": "Frozen At",
+      "type": "string"
+    },
+    "live_execution_enabled": {
+      "const": false,
+      "title": "Live Execution Enabled",
+      "type": "boolean"
+    },
+    "migration_head": {
+      "const": "0009_phase9_release",
+      "title": "Migration Head",
+      "type": "string"
+    },
+    "release_version": {
+      "const": "1.0.2",
+      "title": "Release Version",
+      "type": "string"
+    },
+    "specification_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Specification Sha256",
+      "type": "string"
+    },
+    "specification_version": {
+      "const": "6.3",
+      "title": "Specification Version",
+      "type": "string"
+    }
+  },
+  "required": [
+    "frozen_at",
+    "release_version",
+    "specification_version",
+    "environment",
+    "live_execution_enabled",
+    "configuration_hash",
+    "specification_sha256",
+    "migration_head",
+    "component_versions",
+    "freeze_hash"
+  ],
+  "title": "ConfigurationFreeze",
+  "type": "object"
+}

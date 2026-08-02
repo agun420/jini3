@@ -1,0 +1,33 @@
+services:
+  postgres:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: daybreak
+      POSTGRES_USER: daybreak
+      POSTGRES_PASSWORD: ${DAYBREAK_POSTGRES_PASSWORD:?Set DAYBREAK_POSTGRES_PASSWORD}
+      POSTGRES_INITDB_ARGS: --data-checksums
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - daybreak_postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U daybreak -d daybreak"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 10s
+    stop_grace_period: 60s
+    command:
+      - postgres
+      - -c
+      - shared_buffers=256MB
+      - -c
+      - wal_compression=on
+      - -c
+      - checkpoint_timeout=15min
+      - -c
+      - max_wal_size=4GB
+
+volumes:
+  daybreak_postgres:

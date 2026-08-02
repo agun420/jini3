@@ -1,0 +1,346 @@
+{
+  "$defs": {
+    "RiskProfileName": {
+      "enum": [
+        "paper_v1",
+        "live_pilot_v1"
+      ],
+      "title": "RiskProfileName",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "allow_fractional_shares": {
+      "const": false,
+      "default": false,
+      "title": "Allow Fractional Shares",
+      "type": "boolean"
+    },
+    "allow_margin": {
+      "const": false,
+      "default": false,
+      "title": "Allow Margin",
+      "type": "boolean"
+    },
+    "allow_overnight_positions": {
+      "const": false,
+      "default": false,
+      "title": "Allow Overnight Positions",
+      "type": "boolean"
+    },
+    "buying_power_reserve_pct": {
+      "anyOf": [
+        {
+          "exclusiveMaximum": 1.0,
+          "minimum": 0.0,
+          "type": "number"
+        },
+        {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "type": "string"
+        }
+      ],
+      "title": "Buying Power Reserve Pct"
+    },
+    "hard_daily_loss_pct": {
+      "anyOf": [
+        {
+          "exclusiveMaximum": 1.0,
+          "exclusiveMinimum": 0.0,
+          "type": "number"
+        },
+        {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "type": "string"
+        }
+      ],
+      "title": "Hard Daily Loss Pct"
+    },
+    "mandatory_flatten_time_et": {
+      "default": "15:50:00",
+      "format": "time",
+      "title": "Mandatory Flatten Time Et",
+      "type": "string"
+    },
+    "max_account_snapshot_age_ms": {
+      "default": 1000,
+      "exclusiveMinimum": 0,
+      "maximum": 10000,
+      "title": "Max Account Snapshot Age Ms",
+      "type": "integer"
+    },
+    "max_concurrent_positions": {
+      "exclusiveMinimum": 0,
+      "maximum": 3,
+      "title": "Max Concurrent Positions",
+      "type": "integer"
+    },
+    "max_consecutive_losses": {
+      "exclusiveMinimum": 0,
+      "maximum": 10,
+      "title": "Max Consecutive Losses",
+      "type": "integer"
+    },
+    "max_entries_per_ticker_per_day": {
+      "const": 1,
+      "default": 1,
+      "title": "Max Entries Per Ticker Per Day",
+      "type": "integer"
+    },
+    "max_entry_drift_atr_multiple": {
+      "anyOf": [
+        {
+          "exclusiveMinimum": 0.0,
+          "maximum": 2.0,
+          "type": "number"
+        },
+        {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "type": "string"
+        }
+      ],
+      "default": "0.25",
+      "title": "Max Entry Drift Atr Multiple"
+    },
+    "max_entry_drift_pct": {
+      "anyOf": [
+        {
+          "exclusiveMaximum": 1.0,
+          "exclusiveMinimum": 0.0,
+          "type": "number"
+        },
+        {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "type": "string"
+        }
+      ],
+      "default": "0.01",
+      "title": "Max Entry Drift Pct"
+    },
+    "max_gross_long_exposure_pct": {
+      "anyOf": [
+        {
+          "exclusiveMaximum": 1.0,
+          "exclusiveMinimum": 0.0,
+          "type": "number"
+        },
+        {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "type": "string"
+        }
+      ],
+      "title": "Max Gross Long Exposure Pct"
+    },
+    "max_last_trade_age_ms": {
+      "default": 2000,
+      "exclusiveMinimum": 0,
+      "maximum": 30000,
+      "title": "Max Last Trade Age Ms",
+      "type": "integer"
+    },
+    "max_new_entries_per_day": {
+      "exclusiveMinimum": 0,
+      "maximum": 3,
+      "title": "Max New Entries Per Day",
+      "type": "integer"
+    },
+    "max_open_risk_pct": {
+      "anyOf": [
+        {
+          "exclusiveMaximum": 1.0,
+          "exclusiveMinimum": 0.0,
+          "type": "number"
+        },
+        {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "type": "string"
+        }
+      ],
+      "title": "Max Open Risk Pct"
+    },
+    "max_pct_adv20": {
+      "anyOf": [
+        {
+          "exclusiveMaximum": 1.0,
+          "exclusiveMinimum": 0.0,
+          "type": "number"
+        },
+        {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "type": "string"
+        }
+      ],
+      "title": "Max Pct Adv20"
+    },
+    "max_pct_premarket_volume": {
+      "anyOf": [
+        {
+          "exclusiveMaximum": 1.0,
+          "exclusiveMinimum": 0.0,
+          "type": "number"
+        },
+        {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "type": "string"
+        }
+      ],
+      "title": "Max Pct Premarket Volume"
+    },
+    "max_position_notional_pct": {
+      "anyOf": [
+        {
+          "exclusiveMaximum": 1.0,
+          "exclusiveMinimum": 0.0,
+          "type": "number"
+        },
+        {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "type": "string"
+        }
+      ],
+      "title": "Max Position Notional Pct"
+    },
+    "max_quote_age_ms": {
+      "default": 1000,
+      "exclusiveMinimum": 0,
+      "maximum": 10000,
+      "title": "Max Quote Age Ms",
+      "type": "integer"
+    },
+    "max_spread_atr_fraction": {
+      "anyOf": [
+        {
+          "exclusiveMinimum": 0.0,
+          "maximum": 1.0,
+          "type": "number"
+        },
+        {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "type": "string"
+        }
+      ],
+      "default": "0.10",
+      "title": "Max Spread Atr Fraction"
+    },
+    "max_spread_pct": {
+      "anyOf": [
+        {
+          "exclusiveMaximum": 1.0,
+          "exclusiveMinimum": 0.0,
+          "type": "number"
+        },
+        {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "type": "string"
+        }
+      ],
+      "default": "0.01",
+      "title": "Max Spread Pct"
+    },
+    "minimum_quantity": {
+      "const": 1,
+      "default": 1,
+      "title": "Minimum Quantity",
+      "type": "integer"
+    },
+    "pnl_reconciliation_tolerance": {
+      "anyOf": [
+        {
+          "minimum": 0.0,
+          "type": "number"
+        },
+        {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,20}|(?=[\\d.]{1,31}0*$)\\d{0,20}\\.\\d{0,10}0*$)",
+          "type": "string"
+        }
+      ],
+      "default": "1.00",
+      "title": "Pnl Reconciliation Tolerance"
+    },
+    "policy_version": {
+      "const": "position_risk_policy_v1",
+      "default": "position_risk_policy_v1",
+      "title": "Policy Version",
+      "type": "string"
+    },
+    "profile_name": {
+      "$ref": "#/$defs/RiskProfileName"
+    },
+    "risk_per_trade_pct": {
+      "anyOf": [
+        {
+          "exclusiveMaximum": 1.0,
+          "exclusiveMinimum": 0.0,
+          "type": "number"
+        },
+        {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "type": "string"
+        }
+      ],
+      "title": "Risk Per Trade Pct"
+    },
+    "slippage_buffer_atr_multiple": {
+      "anyOf": [
+        {
+          "maximum": 2.0,
+          "minimum": 0.0,
+          "type": "number"
+        },
+        {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "type": "string"
+        }
+      ],
+      "title": "Slippage Buffer Atr Multiple"
+    },
+    "slippage_buffer_spread_multiple": {
+      "anyOf": [
+        {
+          "maximum": 5.0,
+          "minimum": 0.0,
+          "type": "number"
+        },
+        {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "type": "string"
+        }
+      ],
+      "title": "Slippage Buffer Spread Multiple"
+    },
+    "soft_daily_loss_pct": {
+      "anyOf": [
+        {
+          "exclusiveMaximum": 1.0,
+          "exclusiveMinimum": 0.0,
+          "type": "number"
+        },
+        {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "type": "string"
+        }
+      ],
+      "title": "Soft Daily Loss Pct"
+    }
+  },
+  "required": [
+    "profile_name",
+    "risk_per_trade_pct",
+    "max_open_risk_pct",
+    "max_position_notional_pct",
+    "max_gross_long_exposure_pct",
+    "buying_power_reserve_pct",
+    "max_concurrent_positions",
+    "max_new_entries_per_day",
+    "soft_daily_loss_pct",
+    "hard_daily_loss_pct",
+    "max_consecutive_losses",
+    "slippage_buffer_atr_multiple",
+    "slippage_buffer_spread_multiple",
+    "max_pct_adv20",
+    "max_pct_premarket_volume"
+  ],
+  "title": "RiskPolicyConfig",
+  "type": "object"
+}

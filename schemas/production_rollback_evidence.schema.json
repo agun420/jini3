@@ -1,0 +1,52 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "backup_restore_verified": {
+      "title": "Backup Restore Verified",
+      "type": "boolean"
+    },
+    "database_forward_recovery_verified": {
+      "title": "Database Forward Recovery Verified",
+      "type": "boolean"
+    },
+    "emergency_flatten_verified": {
+      "title": "Emergency Flatten Verified",
+      "type": "boolean"
+    },
+    "evidence_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Evidence Hash",
+      "type": "string"
+    },
+    "previous_source_archive_available": {
+      "title": "Previous Source Archive Available",
+      "type": "boolean"
+    },
+    "previous_wheel_available": {
+      "title": "Previous Wheel Available",
+      "type": "boolean"
+    },
+    "rollback_plan_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Rollback Plan Sha256",
+      "type": "string"
+    },
+    "tested_at": {
+      "format": "date-time",
+      "title": "Tested At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "tested_at",
+    "backup_restore_verified",
+    "previous_wheel_available",
+    "previous_source_archive_available",
+    "emergency_flatten_verified",
+    "database_forward_recovery_verified",
+    "rollback_plan_sha256",
+    "evidence_hash"
+  ],
+  "title": "RollbackEvidence",
+  "type": "object"
+}

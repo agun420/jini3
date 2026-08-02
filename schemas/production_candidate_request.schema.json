@@ -1,0 +1,1237 @@
+{
+  "$defs": {
+    "AcceptanceStatus": {
+      "enum": [
+        "collecting",
+        "blocked",
+        "paper_qualified"
+      ],
+      "title": "AcceptanceStatus",
+      "type": "string"
+    },
+    "AggregatePerformance": {
+      "additionalProperties": false,
+      "properties": {
+        "average_r_multiple": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            }
+          ],
+          "title": "Average R Multiple"
+        },
+        "expectancy": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            }
+          ],
+          "title": "Expectancy"
+        },
+        "fees": {
+          "anyOf": [
+            {
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            }
+          ],
+          "title": "Fees"
+        },
+        "gross_pnl": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            }
+          ],
+          "title": "Gross Pnl"
+        },
+        "maximum_drawdown": {
+          "anyOf": [
+            {
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            }
+          ],
+          "title": "Maximum Drawdown"
+        },
+        "net_pnl": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            }
+          ],
+          "title": "Net Pnl"
+        },
+        "profit_factor": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Profit Factor"
+        },
+        "session_count": {
+          "minimum": 0,
+          "title": "Session Count",
+          "type": "integer"
+        },
+        "trade_count": {
+          "minimum": 0,
+          "title": "Trade Count",
+          "type": "integer"
+        },
+        "win_rate": {
+          "anyOf": [
+            {
+              "maximum": 1.0,
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            }
+          ],
+          "title": "Win Rate"
+        }
+      },
+      "required": [
+        "session_count",
+        "trade_count",
+        "gross_pnl",
+        "fees",
+        "net_pnl",
+        "win_rate",
+        "profit_factor",
+        "expectancy",
+        "maximum_drawdown",
+        "average_r_multiple"
+      ],
+      "title": "AggregatePerformance",
+      "type": "object"
+    },
+    "AnalyticsPolicy": {
+      "additionalProperties": false,
+      "properties": {
+        "allow_live_certification": {
+          "const": false,
+          "default": false,
+          "title": "Allow Live Certification",
+          "type": "boolean"
+        },
+        "maximum_duplicate_orders": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Maximum Duplicate Orders",
+          "type": "integer"
+        },
+        "maximum_invariant_violations": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Maximum Invariant Violations",
+          "type": "integer"
+        },
+        "maximum_late_primary_responses": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Maximum Late Primary Responses",
+          "type": "integer"
+        },
+        "maximum_unresolved_reconciliations": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Maximum Unresolved Reconciliations",
+          "type": "integer"
+        },
+        "minimum_clean_session_rate": {
+          "anyOf": [
+            {
+              "maximum": 1.0,
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            }
+          ],
+          "default": "1",
+          "title": "Minimum Clean Session Rate"
+        },
+        "minimum_filled_orders": {
+          "default": 50,
+          "maximum": 10000,
+          "minimum": 1,
+          "title": "Minimum Filled Orders",
+          "type": "integer"
+        },
+        "minimum_sessions": {
+          "default": 30,
+          "maximum": 365,
+          "minimum": 1,
+          "title": "Minimum Sessions",
+          "type": "integer"
+        },
+        "mode": {
+          "const": "paper",
+          "default": "paper",
+          "title": "Mode",
+          "type": "string"
+        },
+        "performance_is_acceptance_gate": {
+          "const": false,
+          "default": false,
+          "title": "Performance Is Acceptance Gate",
+          "type": "boolean"
+        },
+        "policy_version": {
+          "const": "analytics_policy_v1",
+          "default": "analytics_policy_v1",
+          "title": "Policy Version",
+          "type": "string"
+        },
+        "require_all_positions_flat": {
+          "const": true,
+          "default": true,
+          "title": "Require All Positions Flat",
+          "type": "boolean"
+        },
+        "require_complete_replay": {
+          "const": true,
+          "default": true,
+          "title": "Require Complete Replay",
+          "type": "boolean"
+        },
+        "require_restore_validation": {
+          "const": true,
+          "default": true,
+          "title": "Require Restore Validation",
+          "type": "boolean"
+        },
+        "require_target_acceptance": {
+          "const": true,
+          "default": true,
+          "title": "Require Target Acceptance",
+          "type": "boolean"
+        },
+        "required_drill_count": {
+          "default": 7,
+          "maximum": 32,
+          "minimum": 0,
+          "title": "Required Drill Count",
+          "type": "integer"
+        }
+      },
+      "title": "AnalyticsPolicy",
+      "type": "object"
+    },
+    "ApprovalAttestation": {
+      "additionalProperties": false,
+      "properties": {
+        "approved": {
+          "title": "Approved",
+          "type": "boolean"
+        },
+        "approved_at": {
+          "format": "date-time",
+          "title": "Approved At",
+          "type": "string"
+        },
+        "comment": {
+          "default": "",
+          "maxLength": 500,
+          "title": "Comment",
+          "type": "string"
+        },
+        "evidence_package_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Evidence Package Hash",
+          "type": "string"
+        },
+        "reviewer_id": {
+          "maxLength": 128,
+          "minLength": 2,
+          "title": "Reviewer Id",
+          "type": "string"
+        },
+        "role": {
+          "$ref": "#/$defs/ApprovalRole"
+        }
+      },
+      "required": [
+        "role",
+        "reviewer_id",
+        "approved",
+        "approved_at",
+        "evidence_package_hash"
+      ],
+      "title": "ApprovalAttestation",
+      "type": "object"
+    },
+    "ApprovalRole": {
+      "enum": [
+        "engineering",
+        "operations",
+        "risk",
+        "security",
+        "independent_review"
+      ],
+      "title": "ApprovalRole",
+      "type": "string"
+    },
+    "ArtifactEvidence": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "pattern": "^[a-z][a-z0-9_]{1,63}$",
+          "title": "Name",
+          "type": "string"
+        },
+        "required": {
+          "default": true,
+          "title": "Required",
+          "type": "boolean"
+        },
+        "sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Sha256",
+          "type": "string"
+        },
+        "size_bytes": {
+          "exclusiveMinimum": 0,
+          "title": "Size Bytes",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "name",
+        "sha256",
+        "size_bytes"
+      ],
+      "title": "ArtifactEvidence",
+      "type": "object"
+    },
+    "BuildAttestation": {
+      "additionalProperties": false,
+      "properties": {
+        "attestation_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Attestation Hash",
+          "type": "string"
+        },
+        "clean_install_passed": {
+          "title": "Clean Install Passed",
+          "type": "boolean"
+        },
+        "extracted_source_test_passed": {
+          "title": "Extracted Source Test Passed",
+          "type": "boolean"
+        },
+        "generated_at": {
+          "format": "date-time",
+          "title": "Generated At",
+          "type": "string"
+        },
+        "migration_head": {
+          "const": "0009_phase9_release",
+          "title": "Migration Head",
+          "type": "string"
+        },
+        "migrations_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Migrations Sha256",
+          "type": "string"
+        },
+        "python_compile_passed": {
+          "title": "Python Compile Passed",
+          "type": "boolean"
+        },
+        "release_version": {
+          "const": "1.0.2",
+          "title": "Release Version",
+          "type": "string"
+        },
+        "schema_count": {
+          "exclusiveMinimum": 0,
+          "title": "Schema Count",
+          "type": "integer"
+        },
+        "schemas_bundle_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Schemas Bundle Sha256",
+          "type": "string"
+        },
+        "secret_findings": {
+          "minimum": 0,
+          "title": "Secret Findings",
+          "type": "integer"
+        },
+        "source_archive_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Source Archive Sha256",
+          "type": "string"
+        },
+        "specification_version": {
+          "const": "6.3",
+          "title": "Specification Version",
+          "type": "string"
+        },
+        "tests_collected": {
+          "exclusiveMinimum": 0,
+          "title": "Tests Collected",
+          "type": "integer"
+        },
+        "tests_passed": {
+          "minimum": 0,
+          "title": "Tests Passed",
+          "type": "integer"
+        },
+        "verification_report_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Verification Report Sha256",
+          "type": "string"
+        },
+        "wheel_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Wheel Sha256",
+          "type": "string"
+        },
+        "wheel_smoke_test_passed": {
+          "title": "Wheel Smoke Test Passed",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "generated_at",
+        "release_version",
+        "specification_version",
+        "migration_head",
+        "tests_collected",
+        "tests_passed",
+        "schema_count",
+        "secret_findings",
+        "clean_install_passed",
+        "extracted_source_test_passed",
+        "python_compile_passed",
+        "wheel_smoke_test_passed",
+        "source_archive_sha256",
+        "wheel_sha256",
+        "migrations_sha256",
+        "schemas_bundle_sha256",
+        "verification_report_sha256",
+        "attestation_hash"
+      ],
+      "title": "BuildAttestation",
+      "type": "object"
+    },
+    "ConfigurationFreeze": {
+      "additionalProperties": false,
+      "properties": {
+        "component_versions": {
+          "items": {
+            "maxItems": 2,
+            "minItems": 2,
+            "prefixItems": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "type": "array"
+          },
+          "title": "Component Versions",
+          "type": "array"
+        },
+        "configuration_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Configuration Hash",
+          "type": "string"
+        },
+        "environment": {
+          "const": "paper",
+          "title": "Environment",
+          "type": "string"
+        },
+        "freeze_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Freeze Hash",
+          "type": "string"
+        },
+        "frozen_at": {
+          "format": "date-time",
+          "title": "Frozen At",
+          "type": "string"
+        },
+        "live_execution_enabled": {
+          "const": false,
+          "title": "Live Execution Enabled",
+          "type": "boolean"
+        },
+        "migration_head": {
+          "const": "0009_phase9_release",
+          "title": "Migration Head",
+          "type": "string"
+        },
+        "release_version": {
+          "const": "1.0.2",
+          "title": "Release Version",
+          "type": "string"
+        },
+        "specification_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Specification Sha256",
+          "type": "string"
+        },
+        "specification_version": {
+          "const": "6.3",
+          "title": "Specification Version",
+          "type": "string"
+        }
+      },
+      "required": [
+        "frozen_at",
+        "release_version",
+        "specification_version",
+        "environment",
+        "live_execution_enabled",
+        "configuration_hash",
+        "specification_sha256",
+        "migration_head",
+        "component_versions",
+        "freeze_hash"
+      ],
+      "title": "ConfigurationFreeze",
+      "type": "object"
+    },
+    "DeploymentEvidenceReport": {
+      "additionalProperties": false,
+      "properties": {
+        "blockers": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Blockers",
+          "type": "array"
+        },
+        "configuration_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Configuration Hash",
+          "type": "string"
+        },
+        "evidence_hashes": {
+          "items": {
+            "maxItems": 2,
+            "minItems": 2,
+            "prefixItems": [
+              {
+                "type": "string"
+              },
+              {
+                "pattern": "^[0-9a-f]{64}$",
+                "type": "string"
+              }
+            ],
+            "type": "array"
+          },
+          "title": "Evidence Hashes",
+          "type": "array"
+        },
+        "generated_at": {
+          "format": "date-time",
+          "title": "Generated At",
+          "type": "string"
+        },
+        "live_deployment_ready": {
+          "const": false,
+          "default": false,
+          "title": "Live Deployment Ready",
+          "type": "boolean"
+        },
+        "migration_head": {
+          "const": "0009_phase9_release",
+          "title": "Migration Head",
+          "type": "string"
+        },
+        "paper_deployment_ready": {
+          "title": "Paper Deployment Ready",
+          "type": "boolean"
+        },
+        "paper_ledger_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Paper Ledger Hash",
+          "type": "string"
+        },
+        "paper_ledger_id": {
+          "maxLength": 64,
+          "minLength": 8,
+          "title": "Paper Ledger Id",
+          "type": "string"
+        },
+        "release_version": {
+          "const": "1.0.2",
+          "title": "Release Version",
+          "type": "string"
+        },
+        "report_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Report Hash",
+          "type": "string"
+        },
+        "report_id": {
+          "maxLength": 64,
+          "minLength": 8,
+          "title": "Report Id",
+          "type": "string"
+        },
+        "request_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Request Hash",
+          "type": "string"
+        },
+        "schema_count": {
+          "exclusiveMinimum": 0,
+          "title": "Schema Count",
+          "type": "integer"
+        },
+        "secret_findings": {
+          "minimum": 0,
+          "title": "Secret Findings",
+          "type": "integer"
+        },
+        "specification_version": {
+          "const": "6.3",
+          "title": "Specification Version",
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/$defs/DeploymentStatus"
+        },
+        "tests_collected": {
+          "exclusiveMinimum": 0,
+          "title": "Tests Collected",
+          "type": "integer"
+        },
+        "tests_passed": {
+          "minimum": 0,
+          "title": "Tests Passed",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "report_id",
+        "generated_at",
+        "status",
+        "paper_deployment_ready",
+        "blockers",
+        "release_version",
+        "specification_version",
+        "migration_head",
+        "configuration_hash",
+        "paper_ledger_id",
+        "paper_ledger_hash",
+        "tests_collected",
+        "tests_passed",
+        "schema_count",
+        "secret_findings",
+        "evidence_hashes",
+        "request_hash",
+        "report_hash"
+      ],
+      "title": "DeploymentEvidenceReport",
+      "type": "object"
+    },
+    "DeploymentStatus": {
+      "enum": [
+        "incomplete",
+        "paper_ready"
+      ],
+      "title": "DeploymentStatus",
+      "type": "string"
+    },
+    "EvidenceManifest": {
+      "additionalProperties": false,
+      "properties": {
+        "artifacts": {
+          "items": {
+            "$ref": "#/$defs/ArtifactEvidence"
+          },
+          "title": "Artifacts",
+          "type": "array"
+        },
+        "generated_at": {
+          "format": "date-time",
+          "title": "Generated At",
+          "type": "string"
+        },
+        "manifest_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Manifest Hash",
+          "type": "string"
+        }
+      },
+      "required": [
+        "generated_at",
+        "artifacts",
+        "manifest_hash"
+      ],
+      "title": "EvidenceManifest",
+      "type": "object"
+    },
+    "FindingStatus": {
+      "enum": [
+        "open",
+        "resolved"
+      ],
+      "title": "FindingStatus",
+      "type": "string"
+    },
+    "PaperAcceptanceLedger": {
+      "additionalProperties": false,
+      "properties": {
+        "blockers": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Blockers",
+          "type": "array"
+        },
+        "clean_session_count": {
+          "minimum": 0,
+          "title": "Clean Session Count",
+          "type": "integer"
+        },
+        "clean_session_rate": {
+          "anyOf": [
+            {
+              "maximum": 1.0,
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            }
+          ],
+          "title": "Clean Session Rate"
+        },
+        "configuration_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Configuration Hash",
+          "type": "string"
+        },
+        "filled_order_count": {
+          "minimum": 0,
+          "title": "Filled Order Count",
+          "type": "integer"
+        },
+        "generated_at": {
+          "format": "date-time",
+          "title": "Generated At",
+          "type": "string"
+        },
+        "ledger_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Ledger Hash",
+          "type": "string"
+        },
+        "ledger_id": {
+          "maxLength": 64,
+          "minLength": 8,
+          "title": "Ledger Id",
+          "type": "string"
+        },
+        "live_ready": {
+          "const": false,
+          "default": false,
+          "title": "Live Ready",
+          "type": "boolean"
+        },
+        "paper_ready": {
+          "title": "Paper Ready",
+          "type": "boolean"
+        },
+        "performance": {
+          "$ref": "#/$defs/AggregatePerformance"
+        },
+        "policy": {
+          "$ref": "#/$defs/AnalyticsPolicy"
+        },
+        "request_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Request Hash",
+          "type": "string"
+        },
+        "session_count": {
+          "minimum": 0,
+          "title": "Session Count",
+          "type": "integer"
+        },
+        "sessions": {
+          "items": {
+            "$ref": "#/$defs/SessionAcceptance"
+          },
+          "title": "Sessions",
+          "type": "array"
+        },
+        "status": {
+          "$ref": "#/$defs/AcceptanceStatus"
+        }
+      },
+      "required": [
+        "ledger_id",
+        "generated_at",
+        "status",
+        "paper_ready",
+        "session_count",
+        "clean_session_count",
+        "filled_order_count",
+        "clean_session_rate",
+        "sessions",
+        "performance",
+        "blockers",
+        "policy",
+        "configuration_hash",
+        "request_hash",
+        "ledger_hash"
+      ],
+      "title": "PaperAcceptanceLedger",
+      "type": "object"
+    },
+    "ProductionCandidatePolicy": {
+      "additionalProperties": false,
+      "properties": {
+        "allow_live_capital_certification": {
+          "const": false,
+          "default": false,
+          "title": "Allow Live Capital Certification",
+          "type": "boolean"
+        },
+        "expected_migration_head": {
+          "const": "0009_phase9_release",
+          "default": "0009_phase9_release",
+          "title": "Expected Migration Head",
+          "type": "string"
+        },
+        "maximum_open_critical_findings": {
+          "const": 0,
+          "default": 0,
+          "title": "Maximum Open Critical Findings",
+          "type": "integer"
+        },
+        "maximum_open_high_findings": {
+          "const": 0,
+          "default": 0,
+          "title": "Maximum Open High Findings",
+          "type": "integer"
+        },
+        "maximum_open_medium_findings": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Maximum Open Medium Findings",
+          "type": "integer"
+        },
+        "minimum_schema_count": {
+          "default": 47,
+          "minimum": 1,
+          "title": "Minimum Schema Count",
+          "type": "integer"
+        },
+        "minimum_tests_collected": {
+          "default": 250,
+          "minimum": 1,
+          "title": "Minimum Tests Collected",
+          "type": "integer"
+        },
+        "mode": {
+          "const": "paper",
+          "default": "paper",
+          "title": "Mode",
+          "type": "string"
+        },
+        "policy_version": {
+          "const": "production_candidate_policy_v1",
+          "default": "production_candidate_policy_v1",
+          "title": "Policy Version",
+          "type": "string"
+        },
+        "release_version": {
+          "const": "1.0.2",
+          "default": "1.0.2",
+          "title": "Release Version",
+          "type": "string"
+        },
+        "require_clean_install": {
+          "const": true,
+          "default": true,
+          "title": "Require Clean Install",
+          "type": "boolean"
+        },
+        "require_deployment_evidence": {
+          "const": true,
+          "default": true,
+          "title": "Require Deployment Evidence",
+          "type": "boolean"
+        },
+        "require_extracted_source_test": {
+          "const": true,
+          "default": true,
+          "title": "Require Extracted Source Test",
+          "type": "boolean"
+        },
+        "require_independent_review": {
+          "const": true,
+          "default": true,
+          "title": "Require Independent Review",
+          "type": "boolean"
+        },
+        "require_paper_ledger": {
+          "const": true,
+          "default": true,
+          "title": "Require Paper Ledger",
+          "type": "boolean"
+        },
+        "require_python_compile": {
+          "const": true,
+          "default": true,
+          "title": "Require Python Compile",
+          "type": "boolean"
+        },
+        "require_rollback_validation": {
+          "const": true,
+          "default": true,
+          "title": "Require Rollback Validation",
+          "type": "boolean"
+        },
+        "require_wheel_smoke_test": {
+          "const": true,
+          "default": true,
+          "title": "Require Wheel Smoke Test",
+          "type": "boolean"
+        },
+        "require_zero_secret_findings": {
+          "const": true,
+          "default": true,
+          "title": "Require Zero Secret Findings",
+          "type": "boolean"
+        },
+        "required_approval_roles": {
+          "default": [
+            "engineering",
+            "independent_review",
+            "operations",
+            "risk",
+            "security"
+          ],
+          "items": {
+            "$ref": "#/$defs/ApprovalRole"
+          },
+          "title": "Required Approval Roles",
+          "type": "array"
+        },
+        "specification_version": {
+          "const": "6.3",
+          "default": "6.3",
+          "title": "Specification Version",
+          "type": "string"
+        }
+      },
+      "title": "ProductionCandidatePolicy",
+      "type": "object"
+    },
+    "ReviewFinding": {
+      "additionalProperties": false,
+      "properties": {
+        "category": {
+          "maxLength": 64,
+          "minLength": 2,
+          "title": "Category",
+          "type": "string"
+        },
+        "evidence_refs": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Evidence Refs",
+          "type": "array"
+        },
+        "finding_id": {
+          "maxLength": 96,
+          "minLength": 8,
+          "title": "Finding Id",
+          "type": "string"
+        },
+        "owner": {
+          "maxLength": 128,
+          "minLength": 2,
+          "title": "Owner",
+          "type": "string"
+        },
+        "severity": {
+          "$ref": "#/$defs/ReviewSeverity"
+        },
+        "status": {
+          "$ref": "#/$defs/FindingStatus"
+        },
+        "title": {
+          "maxLength": 240,
+          "minLength": 4,
+          "title": "Title",
+          "type": "string"
+        }
+      },
+      "required": [
+        "finding_id",
+        "severity",
+        "status",
+        "category",
+        "title",
+        "owner"
+      ],
+      "title": "ReviewFinding",
+      "type": "object"
+    },
+    "ReviewSeverity": {
+      "enum": [
+        "info",
+        "low",
+        "medium",
+        "high",
+        "critical"
+      ],
+      "title": "ReviewSeverity",
+      "type": "string"
+    },
+    "RollbackEvidence": {
+      "additionalProperties": false,
+      "properties": {
+        "backup_restore_verified": {
+          "title": "Backup Restore Verified",
+          "type": "boolean"
+        },
+        "database_forward_recovery_verified": {
+          "title": "Database Forward Recovery Verified",
+          "type": "boolean"
+        },
+        "emergency_flatten_verified": {
+          "title": "Emergency Flatten Verified",
+          "type": "boolean"
+        },
+        "evidence_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Evidence Hash",
+          "type": "string"
+        },
+        "previous_source_archive_available": {
+          "title": "Previous Source Archive Available",
+          "type": "boolean"
+        },
+        "previous_wheel_available": {
+          "title": "Previous Wheel Available",
+          "type": "boolean"
+        },
+        "rollback_plan_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Rollback Plan Sha256",
+          "type": "string"
+        },
+        "tested_at": {
+          "format": "date-time",
+          "title": "Tested At",
+          "type": "string"
+        }
+      },
+      "required": [
+        "tested_at",
+        "backup_restore_verified",
+        "previous_wheel_available",
+        "previous_source_archive_available",
+        "emergency_flatten_verified",
+        "database_forward_recovery_verified",
+        "rollback_plan_sha256",
+        "evidence_hash"
+      ],
+      "title": "RollbackEvidence",
+      "type": "object"
+    },
+    "SessionAcceptance": {
+      "additionalProperties": false,
+      "properties": {
+        "analytics_id": {
+          "maxLength": 64,
+          "minLength": 8,
+          "title": "Analytics Id",
+          "type": "string"
+        },
+        "clean": {
+          "title": "Clean",
+          "type": "boolean"
+        },
+        "reasons": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Reasons",
+          "type": "array"
+        },
+        "replay_id": {
+          "anyOf": [
+            {
+              "maxLength": 64,
+              "minLength": 8,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Replay Id"
+        },
+        "session_id": {
+          "maxLength": 64,
+          "minLength": 8,
+          "title": "Session Id",
+          "type": "string"
+        },
+        "trading_date": {
+          "format": "date",
+          "title": "Trading Date",
+          "type": "string"
+        }
+      },
+      "required": [
+        "session_id",
+        "trading_date",
+        "clean",
+        "reasons",
+        "analytics_id",
+        "replay_id"
+      ],
+      "title": "SessionAcceptance",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "approvals": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/ApprovalAttestation"
+      },
+      "title": "Approvals",
+      "type": "array"
+    },
+    "build_attestation": {
+      "$ref": "#/$defs/BuildAttestation"
+    },
+    "configuration_freeze": {
+      "$ref": "#/$defs/ConfigurationFreeze"
+    },
+    "deployment_evidence": {
+      "$ref": "#/$defs/DeploymentEvidenceReport"
+    },
+    "evidence_manifest": {
+      "$ref": "#/$defs/EvidenceManifest"
+    },
+    "findings": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/ReviewFinding"
+      },
+      "title": "Findings",
+      "type": "array"
+    },
+    "generated_at": {
+      "format": "date-time",
+      "title": "Generated At",
+      "type": "string"
+    },
+    "independent_review_complete": {
+      "title": "Independent Review Complete",
+      "type": "boolean"
+    },
+    "paper_ledger": {
+      "$ref": "#/$defs/PaperAcceptanceLedger"
+    },
+    "policy": {
+      "$ref": "#/$defs/ProductionCandidatePolicy",
+      "default": {
+        "allow_live_capital_certification": false,
+        "expected_migration_head": "0009_phase9_release",
+        "maximum_open_critical_findings": 0,
+        "maximum_open_high_findings": 0,
+        "maximum_open_medium_findings": 0,
+        "minimum_schema_count": 47,
+        "minimum_tests_collected": 250,
+        "mode": "paper",
+        "policy_version": "production_candidate_policy_v1",
+        "release_version": "1.0.2",
+        "require_clean_install": true,
+        "require_deployment_evidence": true,
+        "require_extracted_source_test": true,
+        "require_independent_review": true,
+        "require_paper_ledger": true,
+        "require_python_compile": true,
+        "require_rollback_validation": true,
+        "require_wheel_smoke_test": true,
+        "require_zero_secret_findings": true,
+        "required_approval_roles": [
+          "engineering",
+          "independent_review",
+          "operations",
+          "risk",
+          "security"
+        ],
+        "specification_version": "6.3"
+      }
+    },
+    "rollback_evidence": {
+      "$ref": "#/$defs/RollbackEvidence"
+    }
+  },
+  "required": [
+    "generated_at",
+    "evidence_manifest",
+    "build_attestation",
+    "configuration_freeze",
+    "paper_ledger",
+    "deployment_evidence",
+    "rollback_evidence",
+    "independent_review_complete"
+  ],
+  "title": "ProductionCandidateRequest",
+  "type": "object"
+}

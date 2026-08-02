@@ -1,0 +1,268 @@
+{
+  "$defs": {
+    "BorrowStatus": {
+      "enum": [
+        "easy",
+        "hard_to_borrow",
+        "unknown"
+      ],
+      "title": "BorrowStatus",
+      "type": "string"
+    },
+    "ChartStructure": {
+      "enum": [
+        "blue_sky",
+        "clean_short_term",
+        "moderate_room",
+        "capped"
+      ],
+      "title": "ChartStructure",
+      "type": "string"
+    },
+    "DisqualifierFlag": {
+      "enum": [
+        "paid_promotion",
+        "reverse_split_only",
+        "unconfirmed_rumor",
+        "non_operating_promotion",
+        "other_disqualifying_catalyst"
+      ],
+      "title": "DisqualifierFlag",
+      "type": "string"
+    },
+    "LiquidityMetrics": {
+      "additionalProperties": false,
+      "properties": {
+        "borrow_status": {
+          "$ref": "#/$defs/BorrowStatus"
+        },
+        "float_shares": {
+          "exclusiveMinimum": 0,
+          "title": "Float Shares",
+          "type": "integer"
+        },
+        "gap_pct": {
+          "title": "Gap Pct",
+          "type": "number"
+        },
+        "premarket_volume": {
+          "minimum": 0,
+          "title": "Premarket Volume",
+          "type": "integer"
+        },
+        "rvol_time_matched": {
+          "minimum": 0,
+          "title": "Rvol Time Matched",
+          "type": "number"
+        },
+        "volume_profile": {
+          "$ref": "#/$defs/VolumeProfile"
+        }
+      },
+      "required": [
+        "gap_pct",
+        "premarket_volume",
+        "rvol_time_matched",
+        "float_shares",
+        "volume_profile",
+        "borrow_status"
+      ],
+      "title": "LiquidityMetrics",
+      "type": "object"
+    },
+    "MarketStatus": {
+      "enum": [
+        "normal",
+        "limit_up_down_active",
+        "circuit_breaker_halt"
+      ],
+      "title": "MarketStatus",
+      "type": "string"
+    },
+    "NewsContext": {
+      "additionalProperties": false,
+      "properties": {
+        "catalyst_age_hours": {
+          "minimum": 0,
+          "title": "Catalyst Age Hours",
+          "type": "number"
+        },
+        "catalyst_text": {
+          "maxLength": 4000,
+          "minLength": 1,
+          "title": "Catalyst Text",
+          "type": "string"
+        },
+        "corroborated": {
+          "title": "Corroborated",
+          "type": "boolean"
+        },
+        "disqualifier_flags": {
+          "items": {
+            "$ref": "#/$defs/DisqualifierFlag"
+          },
+          "maxItems": 5,
+          "title": "Disqualifier Flags",
+          "type": "array"
+        },
+        "source_name": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Source Name",
+          "type": "string"
+        },
+        "source_timestamp": {
+          "title": "Source Timestamp",
+          "type": "string"
+        },
+        "source_type": {
+          "$ref": "#/$defs/SourceType"
+        }
+      },
+      "required": [
+        "catalyst_text",
+        "source_type",
+        "source_name",
+        "source_timestamp",
+        "catalyst_age_hours",
+        "corroborated",
+        "disqualifier_flags"
+      ],
+      "title": "NewsContext",
+      "type": "object"
+    },
+    "SourceType": {
+      "enum": [
+        "primary",
+        "secondary",
+        "unconfirmed"
+      ],
+      "title": "SourceType",
+      "type": "string"
+    },
+    "TechnicalContext": {
+      "additionalProperties": false,
+      "properties": {
+        "atr_value": {
+          "exclusiveMinimum": 0,
+          "title": "Atr Value",
+          "type": "number"
+        },
+        "chart_structure": {
+          "$ref": "#/$defs/ChartStructure"
+        },
+        "current_price": {
+          "exclusiveMinimum": 0,
+          "title": "Current Price",
+          "type": "number"
+        },
+        "distance_from_vwap_atr": {
+          "title": "Distance From Vwap Atr",
+          "type": "number"
+        },
+        "distance_to_resistance_atr": {
+          "minimum": 0,
+          "title": "Distance To Resistance Atr",
+          "type": "number"
+        },
+        "premarket_low": {
+          "exclusiveMinimum": 0,
+          "title": "Premarket Low",
+          "type": "number"
+        }
+      },
+      "required": [
+        "distance_to_resistance_atr",
+        "distance_from_vwap_atr",
+        "chart_structure",
+        "current_price",
+        "atr_value",
+        "premarket_low"
+      ],
+      "title": "TechnicalContext",
+      "type": "object"
+    },
+    "TickerInput": {
+      "additionalProperties": false,
+      "properties": {
+        "halted": {
+          "title": "Halted",
+          "type": "boolean"
+        },
+        "liquidity_metrics": {
+          "$ref": "#/$defs/LiquidityMetrics"
+        },
+        "news_context": {
+          "$ref": "#/$defs/NewsContext"
+        },
+        "technical_context": {
+          "$ref": "#/$defs/TechnicalContext"
+        },
+        "ticker": {
+          "pattern": "^[A-Z0-9](?:[A-Z0-9.-]{0,13}[A-Z0-9])?$",
+          "title": "Ticker",
+          "type": "string"
+        }
+      },
+      "required": [
+        "ticker",
+        "halted",
+        "news_context",
+        "liquidity_metrics",
+        "technical_context"
+      ],
+      "title": "TickerInput",
+      "type": "object"
+    },
+    "VolumeProfile": {
+      "enum": [
+        "clean",
+        "spiky"
+      ],
+      "title": "VolumeProfile",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "catalyst_freshness_threshold_hours": {
+      "exclusiveMinimum": 0,
+      "title": "Catalyst Freshness Threshold Hours",
+      "type": "number"
+    },
+    "evaluation_timestamp": {
+      "title": "Evaluation Timestamp",
+      "type": "string"
+    },
+    "market_status": {
+      "$ref": "#/$defs/MarketStatus"
+    },
+    "payload_age_seconds": {
+      "minimum": 0,
+      "title": "Payload Age Seconds",
+      "type": "integer"
+    },
+    "payload_timestamp": {
+      "title": "Payload Timestamp",
+      "type": "string"
+    },
+    "tickers": {
+      "items": {
+        "$ref": "#/$defs/TickerInput"
+      },
+      "maxItems": 25,
+      "title": "Tickers",
+      "type": "array"
+    }
+  },
+  "required": [
+    "evaluation_timestamp",
+    "payload_timestamp",
+    "payload_age_seconds",
+    "catalyst_freshness_threshold_hours",
+    "market_status",
+    "tickers"
+  ],
+  "title": "DaybreakInput",
+  "type": "object"
+}

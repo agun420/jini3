@@ -1,0 +1,11 @@
+[Unit]
+Description=Start Project Daybreak recorder on weekdays
+
+[Timer]
+OnCalendar=Mon..Fri *-*-* 03:55:00 America/New_York
+Persistent=true
+Unit=daybreak-recorder.service
+AccuracySec=1s
+
+[Install]
+WantedBy=timers.target

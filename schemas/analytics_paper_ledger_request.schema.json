@@ -1,0 +1,685 @@
+{
+  "$defs": {
+    "AnalyticsPolicy": {
+      "additionalProperties": false,
+      "properties": {
+        "allow_live_certification": {
+          "const": false,
+          "default": false,
+          "title": "Allow Live Certification",
+          "type": "boolean"
+        },
+        "maximum_duplicate_orders": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Maximum Duplicate Orders",
+          "type": "integer"
+        },
+        "maximum_invariant_violations": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Maximum Invariant Violations",
+          "type": "integer"
+        },
+        "maximum_late_primary_responses": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Maximum Late Primary Responses",
+          "type": "integer"
+        },
+        "maximum_unresolved_reconciliations": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Maximum Unresolved Reconciliations",
+          "type": "integer"
+        },
+        "minimum_clean_session_rate": {
+          "anyOf": [
+            {
+              "maximum": 1.0,
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            }
+          ],
+          "default": "1",
+          "title": "Minimum Clean Session Rate"
+        },
+        "minimum_filled_orders": {
+          "default": 50,
+          "maximum": 10000,
+          "minimum": 1,
+          "title": "Minimum Filled Orders",
+          "type": "integer"
+        },
+        "minimum_sessions": {
+          "default": 30,
+          "maximum": 365,
+          "minimum": 1,
+          "title": "Minimum Sessions",
+          "type": "integer"
+        },
+        "mode": {
+          "const": "paper",
+          "default": "paper",
+          "title": "Mode",
+          "type": "string"
+        },
+        "performance_is_acceptance_gate": {
+          "const": false,
+          "default": false,
+          "title": "Performance Is Acceptance Gate",
+          "type": "boolean"
+        },
+        "policy_version": {
+          "const": "analytics_policy_v1",
+          "default": "analytics_policy_v1",
+          "title": "Policy Version",
+          "type": "string"
+        },
+        "require_all_positions_flat": {
+          "const": true,
+          "default": true,
+          "title": "Require All Positions Flat",
+          "type": "boolean"
+        },
+        "require_complete_replay": {
+          "const": true,
+          "default": true,
+          "title": "Require Complete Replay",
+          "type": "boolean"
+        },
+        "require_restore_validation": {
+          "const": true,
+          "default": true,
+          "title": "Require Restore Validation",
+          "type": "boolean"
+        },
+        "require_target_acceptance": {
+          "const": true,
+          "default": true,
+          "title": "Require Target Acceptance",
+          "type": "boolean"
+        },
+        "required_drill_count": {
+          "default": 7,
+          "maximum": 32,
+          "minimum": 0,
+          "title": "Required Drill Count",
+          "type": "integer"
+        }
+      },
+      "title": "AnalyticsPolicy",
+      "type": "object"
+    },
+    "DrillType": {
+      "enum": [
+        "database_disconnect",
+        "market_data_disconnect",
+        "trade_update_disconnect",
+        "broker_timeout",
+        "clock_skew",
+        "process_restart",
+        "disk_pressure"
+      ],
+      "title": "DrillType",
+      "type": "string"
+    },
+    "ExitReason": {
+      "enum": [
+        "target",
+        "stop",
+        "time_exit",
+        "kill_switch",
+        "manual_safety",
+        "broker_reconciliation"
+      ],
+      "title": "ExitReason",
+      "type": "string"
+    },
+    "FullSessionReplayReport": {
+      "additionalProperties": false,
+      "properties": {
+        "actual_raw_event_count": {
+          "minimum": 0,
+          "title": "Actual Raw Event Count",
+          "type": "integer"
+        },
+        "complete": {
+          "title": "Complete",
+          "type": "boolean"
+        },
+        "components": {
+          "items": {
+            "$ref": "#/$defs/ReplayComponentEvidence"
+          },
+          "title": "Components",
+          "type": "array"
+        },
+        "errors": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Errors",
+          "type": "array"
+        },
+        "event_ordering_verified": {
+          "title": "Event Ordering Verified",
+          "type": "boolean"
+        },
+        "expected_raw_event_count": {
+          "minimum": 0,
+          "title": "Expected Raw Event Count",
+          "type": "integer"
+        },
+        "passed": {
+          "title": "Passed",
+          "type": "boolean"
+        },
+        "point_in_time_integrity_verified": {
+          "title": "Point In Time Integrity Verified",
+          "type": "boolean"
+        },
+        "replay_id": {
+          "maxLength": 64,
+          "minLength": 8,
+          "title": "Replay Id",
+          "type": "string"
+        },
+        "replayed_at": {
+          "format": "date-time",
+          "title": "Replayed At",
+          "type": "string"
+        },
+        "report_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Report Hash",
+          "type": "string"
+        },
+        "request_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Request Hash",
+          "type": "string"
+        },
+        "session_id": {
+          "maxLength": 64,
+          "minLength": 8,
+          "title": "Session Id",
+          "type": "string"
+        },
+        "trading_date": {
+          "format": "date",
+          "title": "Trading Date",
+          "type": "string"
+        }
+      },
+      "required": [
+        "replay_id",
+        "session_id",
+        "trading_date",
+        "replayed_at",
+        "complete",
+        "passed",
+        "expected_raw_event_count",
+        "actual_raw_event_count",
+        "event_ordering_verified",
+        "point_in_time_integrity_verified",
+        "components",
+        "errors",
+        "request_hash",
+        "report_hash"
+      ],
+      "title": "FullSessionReplayReport",
+      "type": "object"
+    },
+    "ReplayComponent": {
+      "enum": [
+        "recorder",
+        "features",
+        "evaluator",
+        "risk",
+        "execution",
+        "orchestration"
+      ],
+      "title": "ReplayComponent",
+      "type": "string"
+    },
+    "ReplayComponentEvidence": {
+      "additionalProperties": false,
+      "properties": {
+        "actual_hash": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Actual Hash"
+        },
+        "component": {
+          "$ref": "#/$defs/ReplayComponent"
+        },
+        "errors": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Errors",
+          "type": "array"
+        },
+        "evidence_count": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Evidence Count",
+          "type": "integer"
+        },
+        "expected_hash": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Expected Hash"
+        },
+        "verified": {
+          "title": "Verified",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "component",
+        "verified"
+      ],
+      "title": "ReplayComponentEvidence",
+      "type": "object"
+    },
+    "SessionEvidence": {
+      "additionalProperties": false,
+      "properties": {
+        "all_positions_flat": {
+          "title": "All Positions Flat",
+          "type": "boolean"
+        },
+        "approved_setup_count": {
+          "maximum": 3,
+          "minimum": 0,
+          "title": "Approved Setup Count",
+          "type": "integer"
+        },
+        "configuration_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Configuration Hash",
+          "type": "string"
+        },
+        "duplicate_order_count": {
+          "minimum": 0,
+          "title": "Duplicate Order Count",
+          "type": "integer"
+        },
+        "evaluator_run_count": {
+          "minimum": 0,
+          "title": "Evaluator Run Count",
+          "type": "integer"
+        },
+        "excluded_ticker_count": {
+          "minimum": 0,
+          "title": "Excluded Ticker Count",
+          "type": "integer"
+        },
+        "full_session_recorded": {
+          "title": "Full Session Recorded",
+          "type": "boolean"
+        },
+        "generated_at": {
+          "format": "date-time",
+          "title": "Generated At",
+          "type": "string"
+        },
+        "invariant_violations": {
+          "minimum": 0,
+          "title": "Invariant Violations",
+          "type": "integer"
+        },
+        "kill_switch_activation_count": {
+          "minimum": 0,
+          "title": "Kill Switch Activation Count",
+          "type": "integer"
+        },
+        "late_primary_response_count": {
+          "minimum": 0,
+          "title": "Late Primary Response Count",
+          "type": "integer"
+        },
+        "orders_filled": {
+          "minimum": 0,
+          "title": "Orders Filled",
+          "type": "integer"
+        },
+        "orders_submitted": {
+          "minimum": 0,
+          "title": "Orders Submitted",
+          "type": "integer"
+        },
+        "qualified_not_selected_count": {
+          "minimum": 0,
+          "title": "Qualified Not Selected Count",
+          "type": "integer"
+        },
+        "raw_event_count": {
+          "minimum": 0,
+          "title": "Raw Event Count",
+          "type": "integer"
+        },
+        "session_id": {
+          "maxLength": 64,
+          "minLength": 8,
+          "title": "Session Id",
+          "type": "string"
+        },
+        "trades": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/TradeOutcome"
+          },
+          "title": "Trades",
+          "type": "array"
+        },
+        "trading_date": {
+          "format": "date",
+          "title": "Trading Date",
+          "type": "string"
+        },
+        "unresolved_reconciliations": {
+          "minimum": 0,
+          "title": "Unresolved Reconciliations",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "session_id",
+        "trading_date",
+        "generated_at",
+        "configuration_hash",
+        "full_session_recorded",
+        "raw_event_count",
+        "evaluator_run_count",
+        "approved_setup_count",
+        "qualified_not_selected_count",
+        "excluded_ticker_count",
+        "orders_submitted",
+        "orders_filled",
+        "invariant_violations",
+        "unresolved_reconciliations",
+        "duplicate_order_count",
+        "late_primary_response_count",
+        "all_positions_flat",
+        "kill_switch_activation_count"
+      ],
+      "title": "SessionEvidence",
+      "type": "object"
+    },
+    "TradeOutcome": {
+      "additionalProperties": false,
+      "properties": {
+        "average_entry_price": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0.0,
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            }
+          ],
+          "title": "Average Entry Price"
+        },
+        "average_exit_price": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0.0,
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            }
+          ],
+          "title": "Average Exit Price"
+        },
+        "chart_structure": {
+          "enum": [
+            "blue_sky",
+            "clean_short_term",
+            "moderate_room"
+          ],
+          "title": "Chart Structure",
+          "type": "string"
+        },
+        "entry_timestamp": {
+          "format": "date-time",
+          "title": "Entry Timestamp",
+          "type": "string"
+        },
+        "exit_reason": {
+          "$ref": "#/$defs/ExitReason"
+        },
+        "exit_timestamp": {
+          "format": "date-time",
+          "title": "Exit Timestamp",
+          "type": "string"
+        },
+        "fees": {
+          "anyOf": [
+            {
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            }
+          ],
+          "default": "0",
+          "title": "Fees"
+        },
+        "final_rank": {
+          "maximum": 3,
+          "minimum": 1,
+          "title": "Final Rank",
+          "type": "integer"
+        },
+        "planned_entry_price": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0.0,
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            }
+          ],
+          "title": "Planned Entry Price"
+        },
+        "planned_stop_price": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0.0,
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            }
+          ],
+          "title": "Planned Stop Price"
+        },
+        "planned_target_price": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0.0,
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            }
+          ],
+          "title": "Planned Target Price"
+        },
+        "quantity": {
+          "exclusiveMinimum": 0,
+          "title": "Quantity",
+          "type": "integer"
+        },
+        "risk_flags": {
+          "default": [],
+          "items": {
+            "enum": [
+              "parabolic_vwap_extension",
+              "hard_to_borrow",
+              "unknown_borrow",
+              "low_float",
+              "spiky_volume",
+              "secondary_source"
+            ],
+            "type": "string"
+          },
+          "title": "Risk Flags",
+          "type": "array"
+        },
+        "session_id": {
+          "maxLength": 64,
+          "minLength": 8,
+          "title": "Session Id",
+          "type": "string"
+        },
+        "source_type": {
+          "enum": [
+            "primary",
+            "secondary"
+          ],
+          "title": "Source Type",
+          "type": "string"
+        },
+        "ticker": {
+          "pattern": "^[A-Z0-9](?:[A-Z0-9.-]{0,13}[A-Z0-9])?$",
+          "title": "Ticker",
+          "type": "string"
+        },
+        "trade_id": {
+          "maxLength": 64,
+          "minLength": 8,
+          "title": "Trade Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "trade_id",
+        "session_id",
+        "ticker",
+        "final_rank",
+        "quantity",
+        "entry_timestamp",
+        "exit_timestamp",
+        "planned_entry_price",
+        "average_entry_price",
+        "planned_stop_price",
+        "planned_target_price",
+        "average_exit_price",
+        "source_type",
+        "chart_structure",
+        "exit_reason"
+      ],
+      "title": "TradeOutcome",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "configuration_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Configuration Hash",
+      "type": "string"
+    },
+    "generated_at": {
+      "format": "date-time",
+      "title": "Generated At",
+      "type": "string"
+    },
+    "passed_drills": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/DrillType"
+      },
+      "title": "Passed Drills",
+      "type": "array"
+    },
+    "policy": {
+      "$ref": "#/$defs/AnalyticsPolicy",
+      "default": {
+        "allow_live_certification": false,
+        "maximum_duplicate_orders": 0,
+        "maximum_invariant_violations": 0,
+        "maximum_late_primary_responses": 0,
+        "maximum_unresolved_reconciliations": 0,
+        "minimum_clean_session_rate": "1",
+        "minimum_filled_orders": 50,
+        "minimum_sessions": 30,
+        "mode": "paper",
+        "performance_is_acceptance_gate": false,
+        "policy_version": "analytics_policy_v1",
+        "require_all_positions_flat": true,
+        "require_complete_replay": true,
+        "require_restore_validation": true,
+        "require_target_acceptance": true,
+        "required_drill_count": 7
+      }
+    },
+    "replay_reports": {
+      "items": {
+        "$ref": "#/$defs/FullSessionReplayReport"
+      },
+      "title": "Replay Reports",
+      "type": "array"
+    },
+    "restore_validation_verified": {
+      "title": "Restore Validation Verified",
+      "type": "boolean"
+    },
+    "sessions": {
+      "items": {
+        "$ref": "#/$defs/SessionEvidence"
+      },
+      "title": "Sessions",
+      "type": "array"
+    },
+    "target_acceptance_verified": {
+      "title": "Target Acceptance Verified",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "generated_at",
+    "sessions",
+    "replay_reports",
+    "target_acceptance_verified",
+    "restore_validation_verified",
+    "configuration_hash"
+  ],
+  "title": "PaperAcceptanceRequest",
+  "type": "object"
+}

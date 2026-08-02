@@ -1,0 +1,1 @@
+{"approved_setups":[],"excluded_tickers":[],"execution_timestamp":null,"market_status":"normal","payload_timestamp_used":"2026-07-31T13:22:59Z","qualified_not_selected":[],"run_blockers":[],"run_status":"schema_failure","schema_failures":[{"field":"evaluation_timestamp","reason":"Required field is missing.","scope":"payload","ticker":null}]}

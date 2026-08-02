@@ -1,0 +1,82 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "configuration_hash_matches": {
+      "title": "Configuration Hash Matches",
+      "type": "boolean"
+    },
+    "database_consistent": {
+      "title": "Database Consistent",
+      "type": "boolean"
+    },
+    "kill_switch_active": {
+      "title": "Kill Switch Active",
+      "type": "boolean"
+    },
+    "leadership_lease_active": {
+      "title": "Leadership Lease Active",
+      "type": "boolean"
+    },
+    "managed_position_count": {
+      "minimum": 0,
+      "title": "Managed Position Count",
+      "type": "integer"
+    },
+    "now": {
+      "format": "date-time",
+      "title": "Now",
+      "type": "string"
+    },
+    "open_daybreak_order_count": {
+      "minimum": 0,
+      "title": "Open Daybreak Order Count",
+      "type": "integer"
+    },
+    "previous_outcome": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Previous Outcome"
+    },
+    "recorder_checkpoint_available": {
+      "title": "Recorder Checkpoint Available",
+      "type": "boolean"
+    },
+    "session_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Session Id"
+    },
+    "trading_date": {
+      "format": "date",
+      "title": "Trading Date",
+      "type": "string"
+    }
+  },
+  "required": [
+    "trading_date",
+    "kill_switch_active",
+    "managed_position_count",
+    "open_daybreak_order_count",
+    "recorder_checkpoint_available",
+    "database_consistent",
+    "leadership_lease_active",
+    "configuration_hash_matches",
+    "now"
+  ],
+  "title": "RestartState",
+  "type": "object"
+}

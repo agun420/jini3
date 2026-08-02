@@ -1,0 +1,106 @@
+{
+  "$defs": {
+    "RecorderSource": {
+      "enum": [
+        "alpaca_sip",
+        "alpaca_news",
+        "alpaca_trading",
+        "sec_edgar",
+        "system"
+      ],
+      "title": "RecorderSource",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "channel": {
+      "maxLength": 64,
+      "minLength": 1,
+      "title": "Channel",
+      "type": "string"
+    },
+    "connection_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Connection Id"
+    },
+    "error_message": {
+      "maxLength": 4096,
+      "minLength": 1,
+      "title": "Error Message",
+      "type": "string"
+    },
+    "error_type": {
+      "maxLength": 128,
+      "minLength": 1,
+      "title": "Error Type",
+      "type": "string"
+    },
+    "failure_id": {
+      "format": "uuid",
+      "title": "Failure Id",
+      "type": "string"
+    },
+    "ingest_session_id": {
+      "format": "uuid",
+      "title": "Ingest Session Id",
+      "type": "string"
+    },
+    "raw_payload": {
+      "anyOf": [
+        {},
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Raw Payload"
+    },
+    "raw_payload_sha256": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Raw Payload Sha256"
+    },
+    "received_at": {
+      "format": "date-time",
+      "title": "Received At",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "raw_ingest_failure_v1",
+      "default": "raw_ingest_failure_v1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "source": {
+      "$ref": "#/$defs/RecorderSource"
+    }
+  },
+  "required": [
+    "ingest_session_id",
+    "source",
+    "channel",
+    "received_at",
+    "error_type",
+    "error_message"
+  ],
+  "title": "RawIngestFailure",
+  "type": "object"
+}

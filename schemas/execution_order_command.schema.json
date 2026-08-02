@@ -1,0 +1,181 @@
+{
+  "$defs": {
+    "OrderClass": {
+      "enum": [
+        "bracket",
+        "simple"
+      ],
+      "title": "OrderClass",
+      "type": "string"
+    },
+    "OrderSide": {
+      "enum": [
+        "buy",
+        "sell"
+      ],
+      "title": "OrderSide",
+      "type": "string"
+    },
+    "OrderType": {
+      "enum": [
+        "limit",
+        "stop"
+      ],
+      "title": "OrderType",
+      "type": "string"
+    },
+    "TimeInForce": {
+      "enum": [
+        "day"
+      ],
+      "title": "TimeInForce",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "client_order_id": {
+      "maxLength": 48,
+      "minLength": 1,
+      "title": "Client Order Id",
+      "type": "string"
+    },
+    "command_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Command Hash",
+      "type": "string"
+    },
+    "command_id": {
+      "maxLength": 64,
+      "minLength": 8,
+      "title": "Command Id",
+      "type": "string"
+    },
+    "execution_id": {
+      "title": "Execution Id",
+      "type": "string"
+    },
+    "extended_hours": {
+      "const": false,
+      "default": false,
+      "title": "Extended Hours",
+      "type": "boolean"
+    },
+    "limit_price": {
+      "anyOf": [
+        {
+          "exclusiveMinimum": 0.0,
+          "type": "number"
+        },
+        {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,20}|(?=[\\d.]{1,31}0*$)\\d{0,20}\\.\\d{0,10}0*$)",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Limit Price"
+    },
+    "order_class": {
+      "$ref": "#/$defs/OrderClass"
+    },
+    "order_type": {
+      "$ref": "#/$defs/OrderType"
+    },
+    "parent_client_order_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Parent Client Order Id"
+    },
+    "quantity": {
+      "exclusiveMinimum": 0,
+      "title": "Quantity",
+      "type": "integer"
+    },
+    "side": {
+      "$ref": "#/$defs/OrderSide"
+    },
+    "stop_loss_stop_price": {
+      "anyOf": [
+        {
+          "exclusiveMinimum": 0.0,
+          "type": "number"
+        },
+        {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,20}|(?=[\\d.]{1,31}0*$)\\d{0,20}\\.\\d{0,10}0*$)",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Stop Loss Stop Price"
+    },
+    "stop_price": {
+      "anyOf": [
+        {
+          "exclusiveMinimum": 0.0,
+          "type": "number"
+        },
+        {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,20}|(?=[\\d.]{1,31}0*$)\\d{0,20}\\.\\d{0,10}0*$)",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Stop Price"
+    },
+    "symbol": {
+      "pattern": "^[A-Z0-9](?:[A-Z0-9.-]{0,13}[A-Z0-9])?$",
+      "title": "Symbol",
+      "type": "string"
+    },
+    "take_profit_limit_price": {
+      "anyOf": [
+        {
+          "exclusiveMinimum": 0.0,
+          "type": "number"
+        },
+        {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,20}|(?=[\\d.]{1,31}0*$)\\d{0,20}\\.\\d{0,10}0*$)",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Take Profit Limit Price"
+    },
+    "time_in_force": {
+      "$ref": "#/$defs/TimeInForce"
+    }
+  },
+  "required": [
+    "command_id",
+    "execution_id",
+    "client_order_id",
+    "symbol",
+    "quantity",
+    "side",
+    "order_type",
+    "time_in_force",
+    "order_class",
+    "command_hash"
+  ],
+  "title": "BrokerOrderCommand",
+  "type": "object"
+}

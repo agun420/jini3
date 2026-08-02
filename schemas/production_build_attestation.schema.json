@@ -1,0 +1,113 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "attestation_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Attestation Hash",
+      "type": "string"
+    },
+    "clean_install_passed": {
+      "title": "Clean Install Passed",
+      "type": "boolean"
+    },
+    "extracted_source_test_passed": {
+      "title": "Extracted Source Test Passed",
+      "type": "boolean"
+    },
+    "generated_at": {
+      "format": "date-time",
+      "title": "Generated At",
+      "type": "string"
+    },
+    "migration_head": {
+      "const": "0009_phase9_release",
+      "title": "Migration Head",
+      "type": "string"
+    },
+    "migrations_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Migrations Sha256",
+      "type": "string"
+    },
+    "python_compile_passed": {
+      "title": "Python Compile Passed",
+      "type": "boolean"
+    },
+    "release_version": {
+      "const": "1.0.2",
+      "title": "Release Version",
+      "type": "string"
+    },
+    "schema_count": {
+      "exclusiveMinimum": 0,
+      "title": "Schema Count",
+      "type": "integer"
+    },
+    "schemas_bundle_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Schemas Bundle Sha256",
+      "type": "string"
+    },
+    "secret_findings": {
+      "minimum": 0,
+      "title": "Secret Findings",
+      "type": "integer"
+    },
+    "source_archive_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Source Archive Sha256",
+      "type": "string"
+    },
+    "specification_version": {
+      "const": "6.3",
+      "title": "Specification Version",
+      "type": "string"
+    },
+    "tests_collected": {
+      "exclusiveMinimum": 0,
+      "title": "Tests Collected",
+      "type": "integer"
+    },
+    "tests_passed": {
+      "minimum": 0,
+      "title": "Tests Passed",
+      "type": "integer"
+    },
+    "verification_report_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Verification Report Sha256",
+      "type": "string"
+    },
+    "wheel_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Wheel Sha256",
+      "type": "string"
+    },
+    "wheel_smoke_test_passed": {
+      "title": "Wheel Smoke Test Passed",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "generated_at",
+    "release_version",
+    "specification_version",
+    "migration_head",
+    "tests_collected",
+    "tests_passed",
+    "schema_count",
+    "secret_findings",
+    "clean_install_passed",
+    "extracted_source_test_passed",
+    "python_compile_passed",
+    "wheel_smoke_test_passed",
+    "source_archive_sha256",
+    "wheel_sha256",
+    "migrations_sha256",
+    "schemas_bundle_sha256",
+    "verification_report_sha256",
+    "attestation_hash"
+  ],
+  "title": "BuildAttestation",
+  "type": "object"
+}

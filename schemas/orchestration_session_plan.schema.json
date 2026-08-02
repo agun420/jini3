@@ -1,0 +1,222 @@
+{
+  "$defs": {
+    "OrchestrationPolicy": {
+      "additionalProperties": false,
+      "properties": {
+        "alert_dedup_window_seconds": {
+          "default": 300,
+          "maximum": 3600,
+          "minimum": 0,
+          "title": "Alert Dedup Window Seconds",
+          "type": "integer"
+        },
+        "allow_live_execution": {
+          "const": false,
+          "default": false,
+          "title": "Allow Live Execution",
+          "type": "boolean"
+        },
+        "eligibility_lock_time_et": {
+          "default": "09:29:30",
+          "format": "time",
+          "title": "Eligibility Lock Time Et",
+          "type": "string"
+        },
+        "evaluator_cutoff_time_et": {
+          "default": "09:26:30",
+          "format": "time",
+          "title": "Evaluator Cutoff Time Et",
+          "type": "string"
+        },
+        "feature_snapshot_time_et": {
+          "default": "09:23:00",
+          "format": "time",
+          "title": "Feature Snapshot Time Et",
+          "type": "string"
+        },
+        "feature_window_start_time_et": {
+          "default": "04:00:00",
+          "format": "time",
+          "title": "Feature Window Start Time Et",
+          "type": "string"
+        },
+        "final_flatten_deadline_et": {
+          "default": "15:55:00",
+          "format": "time",
+          "title": "Final Flatten Deadline Et",
+          "type": "string"
+        },
+        "flatten_poll_interval_seconds": {
+          "default": 1.0,
+          "exclusiveMinimum": 0,
+          "maximum": 30,
+          "title": "Flatten Poll Interval Seconds",
+          "type": "number"
+        },
+        "flatten_verification_timeout_seconds": {
+          "default": 300.0,
+          "exclusiveMinimum": 0,
+          "maximum": 600,
+          "title": "Flatten Verification Timeout Seconds",
+          "type": "number"
+        },
+        "leadership_renew_interval_seconds": {
+          "default": 10,
+          "maximum": 60,
+          "minimum": 1,
+          "title": "Leadership Renew Interval Seconds",
+          "type": "integer"
+        },
+        "leadership_ttl_seconds": {
+          "default": 30,
+          "maximum": 300,
+          "minimum": 5,
+          "title": "Leadership Ttl Seconds",
+          "type": "integer"
+        },
+        "mandatory_flatten_time_et": {
+          "default": "15:50:00",
+          "format": "time",
+          "title": "Mandatory Flatten Time Et",
+          "type": "string"
+        },
+        "max_clock_skew_ms": {
+          "default": 250,
+          "exclusiveMinimum": 0,
+          "maximum": 5000,
+          "title": "Max Clock Skew Ms",
+          "type": "integer"
+        },
+        "mode": {
+          "const": "paper",
+          "default": "paper",
+          "title": "Mode",
+          "type": "string"
+        },
+        "new_entry_cutoff_time_et": {
+          "default": "09:31:30",
+          "format": "time",
+          "title": "New Entry Cutoff Time Et",
+          "type": "string"
+        },
+        "policy_version": {
+          "const": "session_orchestration_policy_v1",
+          "default": "session_orchestration_policy_v1",
+          "title": "Policy Version",
+          "type": "string"
+        },
+        "recorder_warmup_time_et": {
+          "default": "03:55:00",
+          "format": "time",
+          "title": "Recorder Warmup Time Et",
+          "type": "string"
+        },
+        "regular_session_open_time_et": {
+          "default": "09:30:00",
+          "format": "time",
+          "title": "Regular Session Open Time Et",
+          "type": "string"
+        },
+        "timezone": {
+          "const": "America/New_York",
+          "default": "America/New_York",
+          "title": "Timezone",
+          "type": "string"
+        }
+      },
+      "title": "OrchestrationPolicy",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "configuration_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Configuration Hash",
+      "type": "string"
+    },
+    "eligibility_lock_at": {
+      "format": "date-time",
+      "title": "Eligibility Lock At",
+      "type": "string"
+    },
+    "evaluator_cutoff_at": {
+      "format": "date-time",
+      "title": "Evaluator Cutoff At",
+      "type": "string"
+    },
+    "feature_snapshot_at": {
+      "format": "date-time",
+      "title": "Feature Snapshot At",
+      "type": "string"
+    },
+    "feature_window_start_at": {
+      "format": "date-time",
+      "title": "Feature Window Start At",
+      "type": "string"
+    },
+    "final_flatten_deadline_at": {
+      "format": "date-time",
+      "title": "Final Flatten Deadline At",
+      "type": "string"
+    },
+    "mandatory_flatten_at": {
+      "format": "date-time",
+      "title": "Mandatory Flatten At",
+      "type": "string"
+    },
+    "new_entry_cutoff_at": {
+      "format": "date-time",
+      "title": "New Entry Cutoff At",
+      "type": "string"
+    },
+    "policy": {
+      "$ref": "#/$defs/OrchestrationPolicy"
+    },
+    "recorder_warmup_at": {
+      "format": "date-time",
+      "title": "Recorder Warmup At",
+      "type": "string"
+    },
+    "regular_session_open_at": {
+      "format": "date-time",
+      "title": "Regular Session Open At",
+      "type": "string"
+    },
+    "run_id": {
+      "maxLength": 128,
+      "minLength": 1,
+      "title": "Run Id",
+      "type": "string"
+    },
+    "session_id": {
+      "maxLength": 64,
+      "minLength": 8,
+      "title": "Session Id",
+      "type": "string"
+    },
+    "trading_date": {
+      "format": "date",
+      "title": "Trading Date",
+      "type": "string"
+    }
+  },
+  "required": [
+    "session_id",
+    "run_id",
+    "trading_date",
+    "recorder_warmup_at",
+    "feature_window_start_at",
+    "feature_snapshot_at",
+    "evaluator_cutoff_at",
+    "eligibility_lock_at",
+    "regular_session_open_at",
+    "new_entry_cutoff_at",
+    "mandatory_flatten_at",
+    "final_flatten_deadline_at",
+    "policy",
+    "configuration_hash"
+  ],
+  "title": "SessionPlan",
+  "type": "object"
+}

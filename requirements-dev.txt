@@ -1,0 +1,1 @@
+-e .[recorder,evaluator,test,dev]

@@ -1,0 +1,63 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "allow_live_execution": {
+      "const": false,
+      "default": false,
+      "title": "Allow Live Execution",
+      "type": "boolean"
+    },
+    "cancel_unfilled_after_seconds": {
+      "default": 10,
+      "exclusiveMinimum": 0,
+      "maximum": 120,
+      "title": "Cancel Unfilled After Seconds",
+      "type": "integer"
+    },
+    "max_request_age_ms": {
+      "default": 2000,
+      "exclusiveMinimum": 0,
+      "maximum": 30000,
+      "title": "Max Request Age Ms",
+      "type": "integer"
+    },
+    "mode": {
+      "const": "paper",
+      "default": "paper",
+      "title": "Mode",
+      "type": "string"
+    },
+    "paper_base_url": {
+      "const": "https://paper-api.alpaca.markets",
+      "default": "https://paper-api.alpaca.markets",
+      "title": "Paper Base Url",
+      "type": "string"
+    },
+    "partial_fill_protection_enabled": {
+      "default": true,
+      "title": "Partial Fill Protection Enabled",
+      "type": "boolean"
+    },
+    "policy_version": {
+      "const": "alpaca_execution_policy_v1",
+      "default": "alpaca_execution_policy_v1",
+      "title": "Policy Version",
+      "type": "string"
+    },
+    "protective_stop_time_in_force": {
+      "const": "day",
+      "default": "day",
+      "title": "Protective Stop Time In Force",
+      "type": "string"
+    },
+    "request_timeout_seconds": {
+      "default": 5.0,
+      "exclusiveMinimum": 0,
+      "maximum": 30,
+      "title": "Request Timeout Seconds",
+      "type": "number"
+    }
+  },
+  "title": "ExecutionPolicy",
+  "type": "object"
+}
