@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Daybreak Command Center</title>
+  <meta name="description" content="Read-only paper-trading dashboard for Project Daybreak." />
+  <meta name="robots" content="noindex" />
+  <link rel="stylesheet" href="./assets/styles.css" />
+</head>
+<body>
+  <div class="viz-root">
+    <header class="topbar">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <span class="brand-name">Daybreak Command Center</span>
+      </div>
+      <nav class="tabs" role="tablist" aria-label="Dashboard views">
+        <button class="tab is-active" type="button" role="tab" data-view="overview" aria-selected="true">Overview</button>
+        <button class="tab" type="button" role="tab" data-view="trading" aria-selected="false">Trading</button>
+        <button class="tab" type="button" role="tab" data-view="performance" aria-selected="false">Performance</button>
+        <button class="tab" type="button" role="tab" data-view="system" aria-selected="false">System</button>
+      </nav>
+      <div class="source-controls">
+        <span id="source-label" class="source-label">Loading…</span>
+        <label class="file-button">
+          Load private snapshot
+          <input id="private-file-input" type="file" accept="application/json" />
+        </label>
+        <button id="reset-source-button" class="ghost-button" type="button" hidden>Return to demo data</button>
+      </div>
+    </header>
+
+    <main id="app">
+      <section id="view-overview" class="view" data-view="overview"></section>
+      <section id="view-trading" class="view" data-view="trading" hidden></section>
+      <section id="view-performance" class="view" data-view="performance" hidden></section>
+      <section id="view-system" class="view" data-view="system" hidden></section>
+    </main>
+
+    <footer class="foot">
+      <p>
+        Informational only. This dashboard cannot place orders, reset a kill switch, change risk
+        limits, connect to a broker, or enable live capital. A private snapshot loaded above stays
+        in this browser tab's memory only and is never uploaded or retained by the page.
+      </p>
+    </footer>
+  </div>
+
+  <script type="module" src="./assets/app.mjs"></script>
+</body>
+</html>

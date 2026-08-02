@@ -14,12 +14,17 @@ from pydantic import BaseModel, ConfigDict, Field, SecretStr, field_validator, m
 
 from .canonical import sha256_hex
 
+# Local-only development fallback, never a deployment credential.
+_DEFAULT_DATABASE_URL = (
+    "postgresql+psycopg://daybreak:daybreak@localhost:5432/daybreak"  # pragma: allowlist secret
+)
+
 
 class RecorderSettings(BaseModel):
     model_config = ConfigDict(strict=True, extra="forbid", frozen=True)
 
     environment: str = "development"
-    database_url: str = "postgresql+psycopg://daybreak:daybreak@localhost:5432/daybreak"
+    database_url: str = _DEFAULT_DATABASE_URL
 
     alpaca_api_key: SecretStr | None = None
     alpaca_secret_key: SecretStr | None = None
@@ -180,10 +185,7 @@ class RecorderSettings(BaseModel):
 
         values: dict[str, Any] = {
             "environment": env.get("DAYBREAK_ENVIRONMENT", "development"),
-            "database_url": env.get(
-                "DAYBREAK_DATABASE_URL",
-                "postgresql+psycopg://daybreak:daybreak@localhost:5432/daybreak",
-            ),
+            "database_url": env.get("DAYBREAK_DATABASE_URL", _DEFAULT_DATABASE_URL),
             "alpaca_api_key": SecretStr(env["ALPACA_API_KEY"])
             if env.get("ALPACA_API_KEY")
             else None,

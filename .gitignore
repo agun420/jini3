@@ -1,4 +1,45 @@
+# Python
+.venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Builds and release binaries
+build/
+dist/
+release-artifacts/
+artifacts/*.whl
+artifacts/*.zip
+artifacts/*.tar.gz
+*.whl
+*.zip
+*.sha256
+
+# Runtime state
+state/*
+!state/.gitkeep
+
+# Secrets and local configuration
+.env
+.env.*
+!.env.example
+config/daybreak.toml
+config/daybreak.paper.toml
+*.pem
+*.key
+
+# Editors / OS
 .DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Dashboard — never commit a private snapshot
 dashboard/data/private*.json
 dashboard/data/local*.json
 *.log

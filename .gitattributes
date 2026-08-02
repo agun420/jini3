@@ -1,4 +1,13 @@
 * text=auto eol=lf
-*.json text
-*.mjs text
-*.svg text
+*.bat text eol=crlf
+*.cmd text eol=crlf
+*.ps1 text eol=crlf
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.pdf binary
+*.docx binary
+*.whl binary
+*.zip binary

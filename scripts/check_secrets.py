@@ -33,7 +33,7 @@ def main() -> int:
             "scan",
             *SCAN_PATHS,
             "--exclude-files",
-            r".*\.example$",
+            r".*\.example(\.[^.]+)?$",
         ),
         cwd=ROOT,
         check=True,
