@@ -1,15 +1,10 @@
-# Security and privacy
+# Security Policy
 
-The Daybreak Command Center is a read-only static site. It intentionally contains no broker client, order action, credential store, remote analytics, third-party script, or live-capital control.
-
-## Publishing rules
-
-- Treat every file below `dashboard/` as public.
-- Keep `dashboard/data/dashboard.json` marked `public_safe: true`.
-- Never commit credentials, private account identifiers, exact private balances, exact private positions, or order identifiers.
-- Keep `environment` set to `paper` and `live_capital_eligible` set to `false`.
-- Review every data change before publishing it.
-
-The validator rejects known credential-shaped keys, external runtime assets, inline scripts, inline event handlers, dynamic code execution, path escapes, and a snapshot that is not public-safe and paper-only. It cannot determine whether arbitrary business text is confidential, so human review remains required.
-
-Report a suspected exposure by making the Pages site unavailable, rotating affected credentials, removing the data from Git history, and following the incident process for the source trading platform.
+- Store Alpaca, OpenAI, database, and vendor credentials only in environment variables or an external secret manager.
+- Never commit `.env` files.
+- Use a dedicated Alpaca paper account for Daybreak; do not share its positions with another strategy or manual trading.
+- Treat all broker timeouts as indeterminate until reconciled.
+- Live execution is unavailable in v1.0.2. Do not weaken endpoint, environment, or `live_execution_enabled` guards.
+- Treat fencing tokens as mandatory write preconditions in every concrete downstream hook.
+- Authenticate human approvers outside the JSON evidence record; reviewer IDs alone are not digital signatures.
+- Report suspected credential exposure by rotating the credential immediately before investigating logs.
