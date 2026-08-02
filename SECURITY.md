@@ -17,12 +17,18 @@ order action, credential store, remote analytics, or third-party script — see 
 - Treat every file below `dashboard/` as public; GitHub Pages is public even when the source
   repository is private.
 - Keep `dashboard/data/dashboard.json` fictional and marked `public_safe: true`, `environment:
-  "paper"`, and `live_capital_eligible: false`.
+  "paper"`, and `safety.live_capital_eligible: false`.
 - Never commit a real account snapshot, credential, exact private balance, exact private position,
   or broker order identifier under `dashboard/data/`.
-- `scripts/validate_dashboard.py` rejects credential-shaped JSON keys, inline scripts, inline event
-  handlers, external runtime assets, dynamic code execution, path escapes, and a committed snapshot
-  that is not public-safe and paper-only. It cannot judge whether arbitrary business text is
+- `index.html` ships a strict Content-Security-Policy (`default-src 'self'`; no inline
+  scripts/styles/handlers; no third-party origin anywhere), and `app.mjs` renders every element with
+  `createElement`/`textContent` — never `innerHTML` — so a malicious or malformed snapshot (published
+  or privately loaded) cannot inject markup or execute script.
+- `scripts/validate_dashboard.py` enforces the CSP, the no-inline/no-`innerHTML`/no-`eval` rules
+  above, rejects credential-shaped JSON keys anywhere in the snapshot tree, external runtime assets,
+  path escapes, and a committed snapshot that is not public-safe and paper-only against
+  `dashboard/data/dashboard.schema.json`. It cannot judge whether arbitrary business text is
   confidential, so human review remains required before publishing new demo data.
-- The page's "Load private snapshot" control reads a local JSON file with `FileReader` entirely in
-  browser memory; it is never uploaded, persisted, or sent to any endpoint by the page itself.
+- The page's "Load private snapshot" control (click or drag-and-drop) reads a local JSON file with
+  `FileReader` entirely in browser memory; it is never uploaded, persisted, or sent to any endpoint
+  by the page itself.

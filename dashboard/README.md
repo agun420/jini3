@@ -3,26 +3,36 @@
 A read-only GitHub Pages dashboard for Project Daybreak. It tracks the paper-trading operating
 picture across four views:
 
-- **Overview** — session state, market status, account curve, risk budget, positions, and alerts.
-- **Trading** — ranked setups, managed positions, broker orders.
-- **Performance** — trade history, exit-reason breakdown, and rank attribution.
-- **System** — all nine service layers, fail-closed safety controls, qualification progress, and
-  release evidence.
+- **Overview** — session state, market status, account curve, risk gauge, today's setup board,
+  system pulse, qualification progress, and the alert desk.
+- **Trading** — searchable/filterable ranked setups with a decision-detail dialog, managed
+  positions, and the broker order ledger.
+- **Performance** — equity-and-drawdown chart, win/loss/breakeven distribution, daily P&L, outcome
+  attribution, and trade history.
+- **System** — all nine service layers, fail-closed safety interlocks, qualification evidence, and
+  release/build evidence.
 
 It has no third-party runtime dependencies, trackers, fonts, analytics, or order controls — static
-HTML, CSS, a JavaScript module pair, and JSON. It cannot place an order, reset the kill switch,
-change a risk limit, or connect to a broker.
+HTML, CSS, two JavaScript modules, an SVG favicon, and JSON. `index.html` ships a strict
+Content-Security-Policy (`default-src 'self'`, no inline scripts/styles/handlers), and
+`app.mjs` builds every DOM node with `createElement`/`textContent` — never `innerHTML` — so
+snapshot data can't inject markup. It cannot place an order, reset the kill switch, change a risk
+limit, or connect to a broker.
 
 ## Data
 
-`data/dashboard.json` is fictional, public-safe demonstration data (see `meta.note` in the file
-itself). It ships with the repository and is what GitHub Pages serves by default.
+`data/dashboard.json` (validated against `data/dashboard.schema.json`) is fictional, public-safe
+demonstration data (`data_mode: "demo"`, `environment: "paper"`, `live_capital_eligible: false`) —
+see its `generated_at`/`data_mode` fields. It ships with the repository and is what GitHub Pages
+serves by default; the page re-fetches it every 30 seconds and shows a freshness chip (fresh /
+aging / stale) so a stale publish is visible at a glance.
 
 To look at your own paper-session evidence without publishing it anywhere, open the deployed page
-and select **Load private snapshot**, then pick a JSON file shaped like `data/dashboard.json`. The
-file is read with `FileReader` and kept in that browser tab's memory only — the page has no upload
-path, so nothing leaves your machine. Never commit a private snapshot; `dashboard/data/private*.json`
-and `dashboard/data/local*.json` are gitignored as a backstop.
+and select **Load private snapshot** (or drag a JSON file onto the page), picking a file shaped
+like `data/dashboard.json`. The file is read with `FileReader` and kept in that browser tab's
+memory only — the page has no upload path, so nothing leaves your machine. Never commit a private
+snapshot; `dashboard/data/private*.json` and `dashboard/data/local*.json` are gitignored as a
+backstop.
 
 ## Local verification
 
@@ -35,11 +45,12 @@ node --check dashboard/assets/app.mjs
 node --test tests/dashboard/*.test.mjs
 ```
 
-`validate_dashboard.py` rejects credential-shaped JSON keys, inline `<script>` bodies, inline event
-handlers, references to external `http(s)` assets, dynamic code execution (`eval`, `new Function`),
-and any local reference that would escape `dashboard/`. It also requires every committed snapshot
-under `dashboard/data/` to declare `environment: "paper"`, `live_capital_eligible: false`, and
-`public_safe: true`.
+`validate_dashboard.py` checks the HTML (required CSP directives, no inline scripts/styles/event
+handlers, no duplicate ids, every local asset reference resolves inside `dashboard/`), the JSON
+snapshot and its schema (required top-level keys, `environment: "paper"`, `public_safe: true`,
+`live_capital_eligible: false`, no credential-shaped keys anywhere in the tree), and the JS/CSS
+assets (no external `http(s)` URLs, no `eval`/`new Function`, no `innerHTML`, `data.mjs` performs
+no network requests, the favicon SVG parses, every asset stays under 1&nbsp;MB).
 
 ## Local preview
 

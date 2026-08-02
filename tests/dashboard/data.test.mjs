@@ -1,186 +1,123 @@
-import { test } from "node:test";
 import assert from "node:assert/strict";
-import { readFile } from "node:fs/promises";
-import { fileURLToPath } from "node:url";
+import test from "node:test";
 
 import {
-  normalizeSnapshot,
-  SnapshotError,
-  isPublicSafe,
-  computeRiskUsage,
-  computeDailyLossUsage,
-  sortSetups,
-  filterSetupsByStatus,
-  groupExitReasons,
-  summarizeTrades,
-  equityCurveBounds,
-  equityCurveToPath,
-  worstSystemStatus,
-  formatCurrency,
+  clamp,
+  formatAge,
+  formatMoney,
   formatPercent,
-  formatCompactNumber,
+  formatSignedMoney,
+  freshnessState,
+  normalizeSnapshot,
+  outcomeCounts,
+  qualificationProgress,
+  riskUtilization,
+  statusTone,
+  truncateHash,
 } from "../../dashboard/assets/data.mjs";
 
-const DASHBOARD_JSON_URL = new URL("../../dashboard/data/dashboard.json", import.meta.url);
-
-async function loadDemoSnapshot() {
-  const text = await readFile(fileURLToPath(DASHBOARD_JSON_URL), "utf8");
-  return JSON.parse(text);
+function rawSnapshot(overrides = {}) {
+  return {
+    schema_version: "1.0",
+    generated_at: "2026-08-02T14:00:00Z",
+    data_mode: "published",
+    environment: "paper",
+    public_safe: true,
+    ...overrides,
+  };
 }
 
-test("normalizeSnapshot accepts the shipped demo snapshot", async () => {
-  const raw = await loadDemoSnapshot();
-  const normalized = normalizeSnapshot(raw);
-  assert.equal(normalized, raw);
+test("normalizes a minimal valid snapshot with fail-closed defaults", () => {
+  const value = normalizeSnapshot(rawSnapshot());
+  assert.equal(value.safety.paper_only, true);
+  assert.equal(value.safety.live_capital_eligible, false);
+  assert.equal(value.safety.entries_enabled, false);
+  assert.equal(value.system.timezone, "America/New_York");
+  assert.deepEqual(value.signals, []);
 });
 
-test("normalizeSnapshot rejects a non-object", () => {
-  assert.throws(() => normalizeSnapshot(null), SnapshotError);
-  assert.throws(() => normalizeSnapshot([1, 2, 3]), SnapshotError);
-  assert.throws(() => normalizeSnapshot("nope"), SnapshotError);
-});
-
-test("normalizeSnapshot rejects a missing top-level section", () => {
-  assert.throws(() => normalizeSnapshot({ meta: {} }), /missing required section/);
-});
-
-test("normalizeSnapshot rejects a non-boolean live_capital_eligible", () => {
-  const bad = {
-    meta: { environment: "paper", live_capital_eligible: "false" },
-    session: {},
-    account: { equity_curve: [] },
-    risk: {},
-    positions: [],
-    setups: [],
-    orders: [],
-    performance: {},
-    system: {},
-  };
-  assert.throws(() => normalizeSnapshot(bad), /live_capital_eligible/);
-});
-
-test("isPublicSafe requires public_safe, paper environment, and ineligible live capital", async () => {
-  const raw = await loadDemoSnapshot();
-  assert.equal(isPublicSafe(raw), true);
-  assert.equal(isPublicSafe({ meta: { public_safe: true, environment: "live", live_capital_eligible: false } }), false);
-  assert.equal(isPublicSafe({ meta: { public_safe: true, environment: "paper", live_capital_eligible: true } }), false);
-  assert.equal(isPublicSafe({ meta: { public_safe: false, environment: "paper", live_capital_eligible: false } }), false);
-});
-
-test("computeRiskUsage derives remaining budget and ratio", () => {
-  const usage = computeRiskUsage({ max_open_risk_pct: 2, current_open_risk_pct: 0.5 });
-  assert.equal(usage.remainingPct, 1.5);
-  assert.equal(usage.ratio, 0.25);
-});
-
-test("computeRiskUsage clamps ratio at 1 when current exceeds max", () => {
-  const usage = computeRiskUsage({ max_open_risk_pct: 2, current_open_risk_pct: 5 });
-  assert.equal(usage.ratio, 1);
-  assert.equal(usage.remainingPct, 0);
-});
-
-test("computeDailyLossUsage handles a zero max without dividing by zero", () => {
-  const usage = computeDailyLossUsage({ max_daily_loss_pct: 0, current_daily_loss_pct: 0 });
-  assert.equal(usage.ratio, 0);
-});
-
-test("sortSetups orders by rank without mutating the input", () => {
-  const setups = [
-    { rank: 3, ticker: "C" },
-    { rank: 1, ticker: "A" },
-    { rank: 2, ticker: "B" },
-  ];
-  const sorted = sortSetups(setups);
-  assert.deepEqual(
-    sorted.map((s) => s.ticker),
-    ["A", "B", "C"],
+test("normalizes numeric strings and status spelling", () => {
+  const value = normalizeSnapshot(
+    rawSnapshot({
+      account: { equity: "50000.25", open_risk: "125", open_risk_limit: "500" },
+      system: { phase: "Regular Session", freshness_threshold_seconds: "60" },
+    }),
   );
-  assert.equal(setups[0].ticker, "C", "original array must not be mutated");
+  assert.equal(value.account.equity, 50000.25);
+  assert.equal(value.system.phase, "regular_session");
+  assert.equal(value.system.freshness_threshold_seconds, 60);
 });
 
-test("filterSetupsByStatus filters by exact status", () => {
-  const setups = [
-    { ticker: "A", status: "approved" },
-    { ticker: "B", status: "qualified_not_selected" },
-    { ticker: "C", status: "approved" },
-  ];
-  assert.deepEqual(
-    filterSetupsByStatus(setups, "approved").map((s) => s.ticker),
-    ["A", "C"],
+test("rejects unsupported schema versions", () => {
+  assert.throws(() => normalizeSnapshot(rawSnapshot({ schema_version: "2.0" })), /Unsupported/);
+});
+
+test("rejects a malformed timestamp", () => {
+  assert.throws(() => normalizeSnapshot(rawSnapshot({ generated_at: "yesterday" })), /generated_at/);
+});
+
+test("rejects non-object snapshots", () => {
+  assert.throws(() => normalizeSnapshot([]), /JSON object/);
+});
+
+test("demo snapshots never claim freshness", () => {
+  const snapshot = normalizeSnapshot(rawSnapshot({ data_mode: "demo" }));
+  assert.deepEqual(freshnessState(snapshot, Date.parse("2026-08-02T14:00:10Z")), {
+    status: "demo",
+    ageSeconds: null,
+    label: "Sample data",
+  });
+});
+
+test("freshness uses fresh, aging, and stale thresholds", () => {
+  const snapshot = normalizeSnapshot(
+    rawSnapshot({ system: { freshness_threshold_seconds: 30 } }),
   );
+  assert.equal(freshnessState(snapshot, Date.parse("2026-08-02T14:00:20Z")).status, "fresh");
+  assert.equal(freshnessState(snapshot, Date.parse("2026-08-02T14:01:00Z")).status, "aging");
+  assert.equal(freshnessState(snapshot, Date.parse("2026-08-02T14:02:00Z")).status, "stale");
 });
 
-test("groupExitReasons counts and computes percentages", () => {
-  const trades = [
-    { exit_reason: "target" },
-    { exit_reason: "target" },
-    { exit_reason: "stop" },
-    { exit_reason: "stop" },
-  ];
-  const grouped = groupExitReasons(trades);
-  assert.deepEqual(grouped, [
-    { reason: "target", count: 2, pct: 50 },
-    { reason: "stop", count: 2, pct: 50 },
+test("formatters preserve sign and missing-value semantics", () => {
+  assert.equal(formatMoney(null), "—");
+  assert.equal(formatSignedMoney(12.5), "+$12.50");
+  assert.equal(formatSignedMoney(-12.5), "−$12.50");
+  assert.equal(formatPercent(0.125), "12.5%");
+  assert.equal(formatAge(90), "1m ago");
+});
+
+test("qualification progress is target weighted and clamped", () => {
+  const progress = qualificationProgress([
+    { current: 15, target: 30 },
+    { current: 50, target: 50 },
   ]);
+  assert.equal(progress, 65 / 80);
+  assert.equal(qualificationProgress([{ current: 3, target: 1 }]), 1);
 });
 
-test("groupExitReasons handles an empty trade list", () => {
-  assert.deepEqual(groupExitReasons([]), []);
+test("risk utilization handles missing limits", () => {
+  assert.equal(riskUtilization({ open_risk: 125, open_risk_limit: 500 }), 0.25);
+  assert.equal(riskUtilization({ open_risk: 125, open_risk_limit: 0 }), null);
+  assert.equal(riskUtilization({ open_risk: null, open_risk_limit: 500 }), null);
 });
 
-test("summarizeTrades computes win rate and totals", () => {
-  const trades = [
-    { pnl: 100, r_multiple: 1 },
-    { pnl: -50, r_multiple: -0.5 },
-    { pnl: 25, r_multiple: 0.25 },
-  ];
-  const summary = summarizeTrades(trades);
-  assert.equal(summary.totalTrades, 3);
-  assert.equal(summary.wins, 2);
-  assert.equal(summary.losses, 1);
-  assert.equal(summary.winRatePct, 66.7);
-  assert.equal(summary.totalPnl, 75);
+test("outcome counts derive from trade P&L when summary counts are absent", () => {
+  assert.deepEqual(
+    outcomeCounts({}, [{ net_pnl: 10 }, { net_pnl: -4 }, { net_pnl: 0 }]),
+    { wins: 1, losses: 1, breakeven: 1, total: 3 },
+  );
 });
 
-test("equityCurveBounds finds the min and max across points", () => {
-  const bounds = equityCurveBounds([{ equity: 10 }, { equity: 4 }, { equity: 7 }]);
-  assert.deepEqual(bounds, { min: 4, max: 10 });
+test("status tones remain deterministic", () => {
+  assert.equal(statusTone("healthy"), "positive");
+  assert.equal(statusTone("incomplete"), "warning");
+  assert.equal(statusTone("failed"), "danger");
+  assert.equal(statusTone("submitted"), "blue");
+  assert.equal(statusTone("custom"), "neutral");
 });
 
-test("equityCurveBounds handles an empty series", () => {
-  assert.deepEqual(equityCurveBounds([]), { min: 0, max: 0 });
-});
-
-test("equityCurveToPath produces an SVG path string starting with M", () => {
-  const path = equityCurveToPath([{ equity: 1 }, { equity: 2 }, { equity: 1.5 }], 100, 50);
-  assert.match(path, /^M/);
-  assert.equal(path.split(" ").length, 3);
-});
-
-test("equityCurveToPath returns an empty string for no points", () => {
-  assert.equal(equityCurveToPath([], 100, 50), "");
-});
-
-test("worstSystemStatus prefers the most severe status present", () => {
-  const layers = [{ status: "good" }, { status: "warning" }, { status: "good" }];
-  assert.equal(worstSystemStatus(layers), "warning");
-});
-
-test("worstSystemStatus defaults to good for an empty layer list", () => {
-  assert.equal(worstSystemStatus([]), "good");
-});
-
-test("formatCurrency formats negative values with a leading minus", () => {
-  assert.equal(formatCurrency(1234.5), "$1,234.50");
-  assert.equal(formatCurrency(-42), "-$42.00");
-});
-
-test("formatPercent signs positive values and rounds to the given precision", () => {
-  assert.equal(formatPercent(1.856), "+1.86%");
-  assert.equal(formatPercent(-0.5, 1), "-0.5%");
-  assert.equal(formatPercent(0), "0.00%");
-});
-
-test("formatCompactNumber compacts large magnitudes", () => {
-  assert.equal(formatCompactNumber(1500), "1.5K");
+test("utility functions clamp values and truncate hashes", () => {
+  assert.equal(clamp(4), 1);
+  assert.equal(clamp(-1), 0);
+  assert.equal(truncateHash("abcdefghij", 3), "abc…hij");
 });
