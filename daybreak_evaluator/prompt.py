@@ -9,7 +9,9 @@ from daybreak_contracts.input_models import DaybreakInput
 from daybreak_contracts.serialization import canonical_json_bytes
 
 _RESOURCE_NAME = "resources/Project_Daybreak_v6.3_Final.md"
-EXPECTED_SPEC_SHA256 = "0872a5c3e168d4698819b2a4470d02566173a61caeecd4bacaa401e5f6a0fbf2"
+EXPECTED_SPEC_SHA256 = (
+    "0872a5c3e168d4698819b2a4470d02566173a61caeecd4bacaa401e5f6a0fbf2"  # pragma: allowlist secret
+)
 
 
 class PromptBundle:
