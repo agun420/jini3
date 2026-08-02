@@ -8,11 +8,13 @@ import sys
 from collections.abc import Callable, Sequence
 from datetime import UTC, date, datetime, time
 from pathlib import Path
+from typing import Any
 from uuid import uuid4
 from zoneinfo import ZoneInfo
 
 from daybreak import SPEC_VERSION, __version__
 from daybreak.core.hashing import canonical_sha256
+from daybreak.dashboard_snapshot import DashboardSnapshotSources, build_dashboard_snapshot
 from daybreak_analytics.acceptance import (
     build_deployment_evidence_report,
     build_paper_acceptance_ledger,
@@ -25,6 +27,7 @@ from daybreak_analytics.models import (
     PaperAcceptanceRequest,
     SessionEvidence,
 )
+from daybreak_analytics.persistence import PostgresAnalyticsRepository
 from daybreak_analytics.replay import build_full_session_replay_report
 from daybreak_analytics.schema import (
     analytics_policy_schema,
@@ -50,7 +53,7 @@ from daybreak_evaluator.service import EvaluatorService
 from daybreak_evaluator.transport import OpenAIResponsesTransport
 from daybreak_execution.alpaca import AlpacaPaperBroker
 from daybreak_execution.canonical import canonical_json_text as execution_canonical_json_text
-from daybreak_execution.models import ExecutionRequest
+from daybreak_execution.models import BrokerOrderSnapshot, BrokerPositionSnapshot, ExecutionRequest
 from daybreak_execution.order_builder import build_entry_command
 from daybreak_execution.persistence import (
     ExecutionRepository,
@@ -88,6 +91,7 @@ from daybreak_operations.models import (
     RestoreValidation,
 )
 from daybreak_operations.observability import build_observability_snapshot
+from daybreak_operations.persistence import PostgresOperationsRepository
 from daybreak_operations.recovery import build_recovery_plan
 from daybreak_operations.schema import (
     backup_manifest_schema,
@@ -126,6 +130,7 @@ from daybreak_release.canonical import canonical_json_text as release_canonical_
 from daybreak_release.evidence import build_evidence_manifest
 from daybreak_release.freeze import build_configuration_freeze
 from daybreak_release.models import ProductionCandidateRequest
+from daybreak_release.persistence import PostgresReleaseRepository
 from daybreak_release.review import review_production_candidate
 from daybreak_release.schema import (
     approval_attestation_schema,
@@ -142,6 +147,7 @@ from daybreak_release.schema import (
 from daybreak_risk.canonical import canonical_json_text as risk_canonical_json_text
 from daybreak_risk.engine import size_approved_batch, size_position
 from daybreak_risk.models import BatchSizingRequest, SizingRequest
+from daybreak_risk.persistence import PostgresRiskRepository
 from daybreak_risk.schema import (
     batch_sizing_request_schema,
     batch_sizing_result_schema,
@@ -443,6 +449,26 @@ def _parser() -> argparse.ArgumentParser:
     emergency_flatten.add_argument("--config", default="config/daybreak.example.toml")
     emergency_flatten.add_argument("--confirm-paper", action="store_true")
     emergency_flatten.add_argument("--output", "-o")
+
+    dashboard_snapshot = sub.add_parser(
+        "dashboard-snapshot",
+        help=(
+            "Export a private dashboard.schema.json-shaped snapshot of real system state. "
+            "Never commit the output; load it via the dashboard's 'Load private snapshot' control."
+        ),
+    )
+    dashboard_snapshot.add_argument("session_id")
+    dashboard_snapshot.add_argument("trading_date", help="Exchange date in YYYY-MM-DD")
+    dashboard_snapshot.add_argument("--config", default="config/daybreak.example.toml")
+    dashboard_snapshot.add_argument(
+        "--run-id", help="Evaluator run_id to look up signals for; defaults to session_id"
+    )
+    dashboard_snapshot.add_argument(
+        "--include-broker",
+        action="store_true",
+        help="Also fetch live positions/orders/account from Alpaca paper trading",
+    )
+    dashboard_snapshot.add_argument("--output", "-o", required=True)
     return parser
 
 
@@ -1020,6 +1046,100 @@ def main(argv: Sequence[str] | None = None) -> int:
             else:
                 sys.stdout.write(rendered)
             return 0 if flatten_result.complete else 8
+
+        if args.command == "dashboard-snapshot":
+            settings = load_settings(args.config)
+            trading_date_value = date.fromisoformat(args.trading_date)
+            run_id = args.run_id or args.session_id
+            if not settings.database.enabled:
+                raise ConfigurationError(
+                    "database.enabled must be true to export a dashboard snapshot"
+                )
+            dsn = os.environ.get(settings.database.dsn_env)
+            if not dsn:
+                raise ConfigurationError(
+                    f"Database enabled but {settings.database.dsn_env} is missing"
+                )
+            snapshot_orchestration_repository = PostgresOrchestrationRepository(dsn)
+            snapshot_risk_repository = PostgresRiskRepository(dsn)
+            snapshot_evaluator_repository = PostgresEvaluatorRepository(dsn)
+            snapshot_analytics_repository = PostgresAnalyticsRepository(dsn)
+            snapshot_operations_repository = PostgresOperationsRepository(dsn)
+            snapshot_release_repository = PostgresReleaseRepository(dsn)
+
+            candidate_report = snapshot_release_repository.get_latest_candidate_report()
+            build_attestation = (
+                snapshot_release_repository.get_build_attestation(
+                    candidate_report.build_attestation_hash
+                )
+                if candidate_report is not None
+                else None
+            )
+
+            positions: tuple[BrokerPositionSnapshot, ...] = ()
+            orders: tuple[BrokerOrderSnapshot, ...] = ()
+            account: dict[str, Any] = {}
+            market_status_normal: bool | None = None
+            if args.include_broker:
+                api_key = os.environ.get(settings.execution.api_key_env)
+                secret_key = os.environ.get(settings.execution.secret_key_env)
+                if not api_key or not secret_key:
+                    raise ConfigurationError(
+                        "missing Alpaca paper credentials for --include-broker"
+                    )
+                snapshot_broker = AlpacaPaperBroker(
+                    api_key=api_key,
+                    secret_key=secret_key,
+                    base_url=settings.execution.base_url,
+                    timeout_seconds=settings.execution.request_timeout_seconds,
+                )
+                snapshot_operations = AlpacaPaperOperations(
+                    api_key=api_key,
+                    secret_key=secret_key,
+                    base_url=settings.execution.base_url,
+                    timeout_seconds=settings.execution.request_timeout_seconds,
+                )
+                try:
+                    positions = snapshot_broker.list_positions()
+                    orders = snapshot_broker.list_orders(status="all")
+                    account = snapshot_operations.get_account()
+                    market_status_normal = bool(snapshot_operations.get_clock().get("is_open"))
+                finally:
+                    snapshot_broker.close()
+                    snapshot_operations.close()
+
+            sources = DashboardSnapshotSources(
+                session_id=args.session_id,
+                trading_date=trading_date_value,
+                kill_switch=snapshot_orchestration_repository.get_latest_kill_switch(
+                    args.session_id
+                ),
+                phases=snapshot_orchestration_repository.list_phases(args.session_id),
+                alerts=snapshot_orchestration_repository.list_alerts(args.session_id),
+                decisions=snapshot_risk_repository.list_decisions(trading_date_value),
+                run_result=snapshot_evaluator_repository.get_result(run_id),
+                session_performance=snapshot_analytics_repository.get_session_performance(
+                    args.session_id
+                ),
+                paper_ledger=snapshot_analytics_repository.get_latest_paper_ledger(),
+                observability=snapshot_operations_repository.get_latest_observability(),
+                candidate_report=candidate_report,
+                build_attestation=build_attestation,
+                positions=positions,
+                orders=orders,
+                account=account,
+                market_status_normal=market_status_normal,
+            )
+            dashboard_payload = build_dashboard_snapshot(sources)
+            rendered = json.dumps(dashboard_payload, ensure_ascii=False, sort_keys=True) + "\n"
+            Path(args.output).write_text(rendered, encoding="utf-8")
+            print(
+                f"daybreak: wrote a private dashboard snapshot to {args.output}. "
+                "It may contain real account data: never commit it, and load it only via "
+                "the dashboard's 'Load private snapshot' control.",
+                file=sys.stderr,
+            )
+            return 0
 
         if args.command == "acceptance-check":
             settings = load_settings(args.config)

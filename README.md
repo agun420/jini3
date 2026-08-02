@@ -117,9 +117,11 @@ Exit code `0` from `production-review` means only that the supplied paper-releas
 Trading, Performance, and System views over a JSON snapshot, including a searchable setup ledger
 with decision-detail dialogs, a risk gauge, an equity/drawdown chart, and a live freshness
 indicator. It has no broker client, order controls, or third-party runtime dependencies, ships a
-strict Content-Security-Policy, and ships with fictional public-safe demo data. See
-`dashboard/README.md` for local preview, verification, and publishing instructions, and the
-"Dashboard" section of `SECURITY.md` for its public-data boundary.
+strict Content-Security-Policy, and ships with fictional public-safe demo data. Real system state
+can be exported for local-only viewing with `daybreak dashboard-snapshot` (never committed; loaded
+via the page's **Load private snapshot** control). See `dashboard/README.md` for local preview,
+verification, publishing, and private-snapshot instructions, and the "Dashboard" section of
+`SECURITY.md` for its public-data boundary.
 
 ## Qualification boundary
 

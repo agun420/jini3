@@ -120,6 +120,13 @@ async def test_primary_and_shadow_valid() -> None:
     assert result.comparison.exact_output_match is True
     assert result.executable_candidate_output is not None
     assert len(repo.attempts) == 2
+    # evaluate_primary persists the result before the shadow attempt runs, so the
+    # stored record never carries shadow_attempts/comparison — only the returned
+    # in-memory result does. See evaluate_with_shadow's docstring: it is a
+    # research helper and must never be used on the timed authorization path.
+    stored = repo.get_result(result.run_id)
+    assert stored == result.model_copy(update={"shadow_attempts": (), "comparison": None})
+    assert repo.get_result("no-such-run") is None
 
 
 @pytest.mark.asyncio

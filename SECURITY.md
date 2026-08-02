@@ -32,3 +32,7 @@ order action, credential store, remote analytics, or third-party script — see 
 - The page's "Load private snapshot" control (click or drag-and-drop) reads a local JSON file with
   `FileReader` entirely in browser memory; it is never uploaded, persisted, or sent to any endpoint
   by the page itself.
+- `daybreak dashboard-snapshot` (`daybreak/dashboard_snapshot.py`) generates a real, private
+  snapshot file for that control from Postgres and (optionally, with `--include-broker`) live
+  Alpaca paper account data. It only ever writes a local file for manual loading — it never
+  publishes, uploads, or touches anything under the deployed `dashboard/data/` tree.

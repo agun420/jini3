@@ -11,6 +11,7 @@ class EvaluatorRepository(Protocol):
     def save_attempt(self, attempt: EvaluationAttempt) -> None: ...
     def save_comparison(self, run_id: str, comparison: ShadowComparison) -> None: ...
     def save_result(self, result: EvaluationRunResult) -> None: ...
+    def get_result(self, run_id: str) -> EvaluationRunResult | None: ...
 
 
 class NullEvaluatorRepository:
@@ -24,6 +25,9 @@ class NullEvaluatorRepository:
         return None
 
     def save_result(self, result: EvaluationRunResult) -> None:
+        return None
+
+    def get_result(self, run_id: str) -> EvaluationRunResult | None:
         return None
 
 
@@ -57,6 +61,9 @@ class MemoryEvaluatorRepository:
         if existing is not None and existing != result:
             raise RuntimeError("evaluator result identity collision")
         self.results.setdefault(result.run_id, result)
+
+    def get_result(self, run_id: str) -> EvaluationRunResult | None:
+        return self.results.get(run_id)
 
 
 class PostgresEvaluatorRepository:
@@ -163,3 +170,12 @@ class PostgresEvaluatorRepository:
                     json.dumps(result.model_dump(mode="json"), ensure_ascii=False),
                 ),
             )
+
+    def get_result(self, run_id: str) -> EvaluationRunResult | None:
+        with self._connect() as conn, conn.cursor() as cur:
+            cur.execute(
+                "SELECT result_json FROM evaluator_results WHERE run_id=%s",
+                (run_id,),
+            )
+            row = cur.fetchone()
+        return None if row is None else EvaluationRunResult.model_validate(row[0])

@@ -18,6 +18,8 @@ class AnalyticsRepository(Protocol):
     def save_replay_report(self, value: FullSessionReplayReport) -> None: ...
     def save_paper_ledger(self, value: PaperAcceptanceLedger) -> None: ...
     def save_deployment_report(self, value: DeploymentEvidenceReport) -> None: ...
+    def get_session_performance(self, session_id: str) -> SessionPerformance | None: ...
+    def get_latest_paper_ledger(self) -> PaperAcceptanceLedger | None: ...
 
 
 class MemoryAnalyticsRepository:
@@ -38,6 +40,17 @@ class MemoryAnalyticsRepository:
 
     def save_deployment_report(self, value: DeploymentEvidenceReport) -> None:
         self.deployment_reports.setdefault(value.report_id, value)
+
+    def get_session_performance(self, session_id: str) -> SessionPerformance | None:
+        for value in self.session_performance.values():
+            if value.session_id == session_id:
+                return value
+        return None
+
+    def get_latest_paper_ledger(self) -> PaperAcceptanceLedger | None:
+        if not self.paper_ledgers:
+            return None
+        return max(self.paper_ledgers.values(), key=lambda item: item.generated_at)
 
 
 class PostgresAnalyticsRepository:
@@ -74,3 +87,29 @@ class PostgresAnalyticsRepository:
 
     def save_deployment_report(self, value: DeploymentEvidenceReport) -> None:
         self._insert("analytics_deployment_evidence", "report_id", value.report_id, value)
+
+    def get_session_performance(self, session_id: str) -> SessionPerformance | None:
+        import psycopg
+
+        normalized = self.dsn.replace("postgresql+psycopg://", "postgresql://")
+        with psycopg.connect(normalized) as connection, connection.cursor() as cursor:
+            cursor.execute(
+                "SELECT payload FROM analytics_session_performance "
+                "WHERE payload->>'session_id' = %s "
+                "ORDER BY payload->>'trading_date' DESC LIMIT 1",
+                (session_id,),
+            )
+            row = cursor.fetchone()
+        return None if row is None else SessionPerformance.model_validate(row[0])
+
+    def get_latest_paper_ledger(self) -> PaperAcceptanceLedger | None:
+        import psycopg
+
+        normalized = self.dsn.replace("postgresql+psycopg://", "postgresql://")
+        with psycopg.connect(normalized) as connection, connection.cursor() as cursor:
+            cursor.execute(
+                "SELECT payload FROM analytics_paper_acceptance_ledgers "
+                "ORDER BY payload->>'generated_at' DESC LIMIT 1"
+            )
+            row = cursor.fetchone()
+        return None if row is None else PaperAcceptanceLedger.model_validate(row[0])
