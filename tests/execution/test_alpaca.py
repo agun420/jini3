@@ -118,3 +118,70 @@ def test_success_with_malformed_json_is_an_ambiguous_transport_failure():
         broker.get_order_by_client_order_id("ambiguous")
     assert exc.value.transient is True
     broker.close()
+
+
+def test_list_positions_returns_every_open_position():
+    rows = [
+        {"symbol": "AAAA", "qty": "100", "avg_entry_price": "10.50"},
+        {"symbol": "BBBB", "qty": "-50", "avg_entry_price": "20.00"},
+    ]
+
+    def handler(req: httpx.Request):
+        assert req.url.path == "/v2/positions"
+        return httpx.Response(200, json=rows)
+
+    broker = AlpacaPaperBroker(api_key="x", secret_key="y", transport=httpx.MockTransport(handler))
+    positions = broker.list_positions()
+    assert [item.symbol for item in positions] == ["AAAA", "BBBB"]
+    assert positions[1].quantity == 50  # magnitude only, matching get_position's abs()
+    broker.close()
+
+
+def test_list_positions_empty_body_is_empty_list():
+    broker = AlpacaPaperBroker(
+        api_key="x",
+        secret_key="y",
+        transport=httpx.MockTransport(lambda req: httpx.Response(204)),
+    )
+    assert broker.list_positions() == ()
+    broker.close()
+
+
+def test_list_positions_rejects_a_non_array_response():
+    broker = AlpacaPaperBroker(
+        api_key="x",
+        secret_key="y",
+        transport=httpx.MockTransport(lambda req: httpx.Response(200, json={"not": "a list"})),
+    )
+    with pytest.raises(BrokerTransportError):
+        broker.list_positions()
+    broker.close()
+
+
+def test_list_orders_normalizes_every_row_and_passes_status_filter():
+    command = build_entry_command(execution_request(), now=execution_request().requested_at)
+    seen = {}
+
+    def handler(req: httpx.Request):
+        seen["query"] = dict(req.url.params)
+        return httpx.Response(200, json=[_order_json(command)])
+
+    broker = AlpacaPaperBroker(api_key="x", secret_key="y", transport=httpx.MockTransport(handler))
+    orders = broker.list_orders(status="all")
+    assert seen["query"]["status"] == "all"
+    assert seen["query"]["nested"] == "true"
+    assert len(orders) == 1
+    assert orders[0].client_order_id == command.client_order_id
+    broker.close()
+
+
+def test_list_orders_invalid_row_raises_transient_transport_error():
+    broker = AlpacaPaperBroker(
+        api_key="x",
+        secret_key="y",
+        transport=httpx.MockTransport(lambda req: httpx.Response(200, json=[{"id": "only-id"}])),
+    )
+    with pytest.raises(BrokerTransportError) as exc:
+        broker.list_orders()
+    assert exc.value.transient is True
+    broker.close()

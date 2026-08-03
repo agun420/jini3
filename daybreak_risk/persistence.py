@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+from datetime import date
 from typing import Any, Protocol
 
 from .canonical import canonical_sha256
@@ -11,6 +12,8 @@ class RiskRepository(Protocol):
     def save_request(self, request: SizingRequest) -> None: ...
     def save_decision(self, decision: RiskDecision) -> None: ...
     def reserve(self, decision: RiskDecision) -> None: ...
+    def list_decisions(self, trading_date: date) -> tuple[RiskDecision, ...]: ...
+    def list_reservations(self, trading_date: date) -> tuple[RiskReservation, ...]: ...
 
 
 class NullRiskRepository:
@@ -22,6 +25,12 @@ class NullRiskRepository:
 
     def reserve(self, decision: RiskDecision) -> None:
         return None
+
+    def list_decisions(self, trading_date: date) -> tuple[RiskDecision, ...]:
+        return ()
+
+    def list_reservations(self, trading_date: date) -> tuple[RiskReservation, ...]:
+        return ()
 
 
 class MemoryRiskRepository:
@@ -56,6 +65,14 @@ class MemoryRiskRepository:
         ):
             raise RuntimeError("duplicate client_order_id reservation")
         self.reservations[decision.reservation.reservation_id] = decision.reservation
+
+    def list_decisions(self, trading_date: date) -> tuple[RiskDecision, ...]:
+        matches = [item for item in self.decisions.values() if item.trading_date == trading_date]
+        return tuple(sorted(matches, key=lambda item: (item.ticker, item.decision_id)))
+
+    def list_reservations(self, trading_date: date) -> tuple[RiskReservation, ...]:
+        matches = [item for item in self.reservations.values() if item.trading_date == trading_date]
+        return tuple(sorted(matches, key=lambda item: (item.ticker, item.reservation_id)))
 
 
 class PostgresRiskRepository:
@@ -201,3 +218,23 @@ class PostgresRiskRepository:
             existing = cur.fetchone()
             if existing is None or existing[0] != decision.decision_hash:
                 raise RuntimeError("risk decision identity collision")
+
+    def list_decisions(self, trading_date: date) -> tuple[RiskDecision, ...]:
+        with self._connect() as conn, conn.cursor() as cur:
+            cur.execute(
+                "SELECT decision_json FROM risk_sizing_decisions "
+                "WHERE trading_date=%s ORDER BY ticker",
+                (trading_date,),
+            )
+            rows = cur.fetchall()
+        return tuple(RiskDecision.model_validate(row[0]) for row in rows)
+
+    def list_reservations(self, trading_date: date) -> tuple[RiskReservation, ...]:
+        with self._connect() as conn, conn.cursor() as cur:
+            cur.execute(
+                "SELECT reservation_json FROM risk_reservations "
+                "WHERE trading_date=%s ORDER BY ticker",
+                (trading_date,),
+            )
+            rows = cur.fetchall()
+        return tuple(RiskReservation.model_validate(row[0]) for row in rows)

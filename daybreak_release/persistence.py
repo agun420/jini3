@@ -18,6 +18,8 @@ class ReleaseRepository(Protocol):
     def save_build_attestation(self, value: BuildAttestation) -> None: ...
     def save_configuration_freeze(self, value: ConfigurationFreeze) -> None: ...
     def save_candidate_report(self, value: ProductionCandidateReport) -> None: ...
+    def get_latest_candidate_report(self) -> ProductionCandidateReport | None: ...
+    def get_build_attestation(self, attestation_hash: str) -> BuildAttestation | None: ...
 
 
 class MemoryReleaseRepository:
@@ -38,6 +40,14 @@ class MemoryReleaseRepository:
 
     def save_candidate_report(self, value: ProductionCandidateReport) -> None:
         self.candidate_reports.setdefault(value.report_id, value)
+
+    def get_latest_candidate_report(self) -> ProductionCandidateReport | None:
+        if not self.candidate_reports:
+            return None
+        return max(self.candidate_reports.values(), key=lambda item: item.generated_at)
+
+    def get_build_attestation(self, attestation_hash: str) -> BuildAttestation | None:
+        return self.build_attestations.get(attestation_hash)
 
 
 class PostgresReleaseRepository:
@@ -76,3 +86,28 @@ class PostgresReleaseRepository:
 
     def save_candidate_report(self, value: ProductionCandidateReport) -> None:
         self._insert("release_candidate_reports", "report_id", value.report_id, value)
+
+    def get_latest_candidate_report(self) -> ProductionCandidateReport | None:
+        import psycopg
+
+        normalized = self.dsn.replace("postgresql+psycopg://", "postgresql://")
+        with psycopg.connect(normalized) as connection, connection.cursor() as cursor:
+            cursor.execute(
+                "SELECT payload FROM release_candidate_reports "
+                "ORDER BY payload->>'generated_at' DESC LIMIT 1"
+            )
+            row = cursor.fetchone()
+        return None if row is None else ProductionCandidateReport.model_validate(row[0])
+
+    def get_build_attestation(self, attestation_hash: str) -> BuildAttestation | None:
+        import psycopg
+
+        normalized = self.dsn.replace("postgresql+psycopg://", "postgresql://")
+        with psycopg.connect(normalized) as connection, connection.cursor() as cursor:
+            cursor.execute(
+                "SELECT payload FROM release_build_attestations "
+                "WHERE payload->>'attestation_hash' = %s",
+                (attestation_hash,),
+            )
+            row = cursor.fetchone()
+        return None if row is None else BuildAttestation.model_validate(row[0])

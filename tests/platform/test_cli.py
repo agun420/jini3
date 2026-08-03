@@ -63,3 +63,50 @@ def test_execution_schema_cli(tmp_path: Path) -> None:
     assert main(["execution-schema", "result", "--output", str(output)]) == 0
     payload = json.loads(output.read_text(encoding="utf-8"))
     assert payload["title"] == "ExecutionResult"
+
+
+def test_dashboard_snapshot_requires_database_enabled(tmp_path: Path, capsys) -> None:
+    output = tmp_path / "snapshot.json"
+    assert (
+        main(
+            [
+                "dashboard-snapshot",
+                "session-1",
+                "2026-08-02",
+                "--config",
+                "config/daybreak.example.toml",
+                "--output",
+                str(output),
+            ]
+        )
+        == 2
+    )
+    assert "database.enabled must be true" in capsys.readouterr().err
+    assert not output.exists()
+
+
+def test_dashboard_snapshot_requires_database_dsn(tmp_path: Path, monkeypatch, capsys) -> None:
+    monkeypatch.delenv("DAYBREAK_DATABASE_URL", raising=False)
+    config = tmp_path / "settings.toml"
+    original = Path("config/daybreak.example.toml").read_text(encoding="utf-8")
+    config.write_text(
+        original.replace("enabled = false\ndsn_env", "enabled = true\ndsn_env"),
+        encoding="utf-8",
+    )
+    output = tmp_path / "snapshot.json"
+    assert (
+        main(
+            [
+                "dashboard-snapshot",
+                "session-1",
+                "2026-08-02",
+                "--config",
+                str(config),
+                "--output",
+                str(output),
+            ]
+        )
+        == 2
+    )
+    assert "DAYBREAK_DATABASE_URL is missing" in capsys.readouterr().err
+    assert not output.exists()

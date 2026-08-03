@@ -12,8 +12,9 @@ ROOT = Path(__file__).resolve().parents[2]
 
 
 class FakeCursor:
-    def __init__(self):
+    def __init__(self, fetchone_result=None):
         self.calls = []
+        self._fetchone_result = fetchone_result
 
     def __enter__(self):
         return self
@@ -24,10 +25,13 @@ class FakeCursor:
     def execute(self, sql, params):
         self.calls.append((sql, params))
 
+    def fetchone(self):
+        return self._fetchone_result
+
 
 class FakeConnection:
-    def __init__(self):
-        self.cursor_obj = FakeCursor()
+    def __init__(self, fetchone_result=None):
+        self.cursor_obj = FakeCursor(fetchone_result)
 
     def __enter__(self):
         return self
@@ -62,6 +66,17 @@ def test_save_request_matches_append_only_migration(monkeypatch) -> None:
     assert "request_json" in sql
     assert "status" not in sql.split("VALUES", 1)[0]
     assert len(params) == 6
+
+
+def test_get_result_queries_by_run_id_and_returns_none_when_missing(monkeypatch) -> None:
+    connection = FakeConnection(fetchone_result=None)
+    repository = PostgresEvaluatorRepository("unused")
+    monkeypatch.setattr(repository, "_connect", lambda: connection)
+    assert repository.get_result("run-db") is None
+    sql, params = connection.cursor_obj.calls[0]
+    assert "evaluator_results" in sql
+    assert "result_json" in sql
+    assert params == ("run-db",)
 
 
 def test_sqlalchemy_style_psycopg_dsn_is_normalized() -> None:

@@ -219,3 +219,63 @@ class AlpacaPaperBroker:
             observed_at=observed,
             raw_response_hash=canonical_sha256(data),
         )
+
+    def _request_list(self, method: str, path: str, **kwargs: Any) -> list[dict[str, Any]]:
+        try:
+            response = self._client.request(method, path, **kwargs)
+        except (httpx.TimeoutException, httpx.NetworkError) as exc:
+            raise BrokerTransportError(str(exc), transient=True) from exc
+        if response.status_code == 404:
+            raise BrokerNotFound(path)
+        if response.is_error:
+            transient = response.status_code in {408, 409, 425, 429} or response.status_code >= 500
+            raise BrokerTransportError(
+                f"Alpaca returned HTTP {response.status_code}",
+                transient=transient,
+                status_code=response.status_code,
+                response_body=response.text[:2000],
+            )
+        if response.status_code == 204 or not response.content:
+            return []
+        try:
+            data = response.json()
+        except ValueError as exc:
+            raise BrokerTransportError(
+                "Alpaca response was not valid JSON",
+                transient=True,
+                status_code=response.status_code,
+                response_body=response.text[:2000],
+            ) from exc
+        if not isinstance(data, list) or not all(isinstance(item, dict) for item in data):
+            raise BrokerTransportError(
+                "Alpaca response was not a JSON array of objects", transient=False
+            )
+        return data
+
+    def list_positions(self) -> tuple[BrokerPositionSnapshot, ...]:
+        rows = self._request_list("GET", "/v2/positions")
+        observed = datetime.now(UTC)
+        try:
+            return tuple(
+                BrokerPositionSnapshot(
+                    symbol=str(row["symbol"]),
+                    quantity=abs(Decimal(str(row.get("qty", "0")))),
+                    average_entry_price=_decimal(row.get("avg_entry_price")),
+                    observed_at=observed,
+                    raw_response_hash=canonical_sha256(row),
+                )
+                for row in rows
+            )
+        except (KeyError, TypeError, ValueError) as exc:
+            raise BrokerTransportError(
+                "Alpaca returned an invalid position payload", transient=True
+            ) from exc
+
+    def list_orders(self, *, status: str = "open") -> tuple[BrokerOrderSnapshot, ...]:
+        rows = self._request_list("GET", "/v2/orders", params={"status": status, "nested": "true"})
+        try:
+            return tuple(normalize_order(row) for row in rows)
+        except (KeyError, TypeError, ValueError) as exc:
+            raise BrokerTransportError(
+                "Alpaca returned an invalid order payload", transient=True
+            ) from exc

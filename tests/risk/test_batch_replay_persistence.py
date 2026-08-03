@@ -10,7 +10,7 @@ from daybreak_risk.models import BatchSizingRequest
 from daybreak_risk.persistence import MemoryRiskRepository
 from daybreak_risk.replay import verify_risk_replay
 
-from .helpers import sizing_request
+from .helpers import approved_setup, sizing_request
 
 
 def test_batch_reserves_capacity_in_rank_order() -> None:
@@ -80,6 +80,34 @@ def test_risk_service_persists_request_decision_and_reservation() -> None:
     assert decision.decision_id in repository.decisions
     assert decision.reservation is not None
     assert decision.reservation.reservation_id in repository.reservations
+
+
+def test_list_decisions_and_reservations_filter_by_trading_date() -> None:
+    repository = MemoryRiskRepository()
+    request = sizing_request()
+    decision = size_position(request)
+    repository.save_request(request)
+    repository.reserve(decision)
+
+    other_day_request = sizing_request(
+        setup=approved_setup().model_copy(update={"ticker": "BBBB"})
+    ).model_copy(
+        update={
+            "request_id": "request-2",
+            "trading_date": request.trading_date.replace(day=request.trading_date.day + 1),
+        }
+    )
+    other_decision = size_position(other_day_request)
+    repository.save_request(other_day_request)
+    repository.reserve(other_decision)
+
+    same_day = repository.list_decisions(request.trading_date)
+    assert [item.decision_id for item in same_day] == [decision.decision_id]
+    reservations = repository.list_reservations(request.trading_date)
+    assert decision.reservation is not None
+    assert [item.reservation_id for item in reservations] == [decision.reservation.reservation_id]
+
+    assert repository.list_decisions(other_day_request.trading_date) != same_day
 
 
 def test_batch_rejects_mixed_runs() -> None:

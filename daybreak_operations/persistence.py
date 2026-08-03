@@ -22,6 +22,7 @@ class OperationsRepository(Protocol):
     def save_restore(self, value: RestoreValidation) -> None: ...
     def save_drill(self, value: DrillResult) -> None: ...
     def save_acceptance(self, value: TargetAcceptanceReport) -> None: ...
+    def get_latest_observability(self) -> ObservabilitySnapshot | None: ...
 
 
 class MemoryOperationsRepository:
@@ -50,6 +51,11 @@ class MemoryOperationsRepository:
 
     def save_acceptance(self, value: TargetAcceptanceReport) -> None:
         self.acceptance.setdefault(value.report_id, value)
+
+    def get_latest_observability(self) -> ObservabilitySnapshot | None:
+        if not self.observability:
+            return None
+        return max(self.observability.values(), key=lambda item: item.observed_at)
 
 
 class PostgresOperationsRepository:
@@ -91,3 +97,14 @@ class PostgresOperationsRepository:
 
     def save_acceptance(self, value: TargetAcceptanceReport) -> None:
         self._insert("operations_acceptance_reports", "report_id", value.report_id, value)
+
+    def get_latest_observability(self) -> ObservabilitySnapshot | None:
+        import psycopg
+
+        with psycopg.connect(self.dsn) as connection, connection.cursor() as cursor:
+            cursor.execute(
+                "SELECT payload FROM operations_observability_snapshots "
+                "ORDER BY payload->>'observed_at' DESC LIMIT 1"
+            )
+            row = cursor.fetchone()
+        return None if row is None else ObservabilitySnapshot.model_validate(row[0])

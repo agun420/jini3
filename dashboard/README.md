@@ -34,6 +34,30 @@ memory only — the page has no upload path, so nothing leaves your machine. Nev
 snapshot; `dashboard/data/private*.json` and `dashboard/data/local*.json` are gitignored as a
 backstop.
 
+### Generating a real private snapshot
+
+The `daybreak dashboard-snapshot` CLI command builds a snapshot file from the actual system —
+Postgres-backed session, risk, evaluator, analytics, operations, and release state, plus (with
+`--include-broker`) live Alpaca paper positions, orders, and account data:
+
+```bash
+export DAYBREAK_DATABASE_URL=postgresql://...
+export APCA_API_KEY_ID=...       # only needed with --include-broker
+export APCA_API_SECRET_KEY=...   # only needed with --include-broker
+daybreak dashboard-snapshot <session_id> <trading_date> \
+    --include-broker \
+    --output dashboard/data/private.json
+```
+
+`database.enabled` must be `true` in the config passed via `--config` (default
+`config/daybreak.example.toml`). Coverage is intentionally honest, not complete: several
+Daybreak packages are append-only event stores with no "current state" read path, so fields
+without a real source (the equity curve, per-layer service health, several release-evidence
+metrics) are emitted as null or empty rather than fabricated — see
+`daybreak/dashboard_snapshot.py` for the exact mapping and its documented gaps. The output is
+written outside the dashboard's published tree by convention (`dashboard/data/private*.json` is
+gitignored) — load it through **Load private snapshot**, never commit it.
+
 ## Local verification
 
 Requires Python 3.12+ and Node.js 22+:
