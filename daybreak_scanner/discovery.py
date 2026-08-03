@@ -10,18 +10,23 @@ from __future__ import annotations
 from collections.abc import Mapping, Sequence
 from decimal import Decimal
 
-from .models import ActiveStock, CandidateQualification, MarketMover, ScannerPolicy
+from .models import CandidateQualification, MarketMover, ScannerPolicy
 from .rvol import relative_volume
 
 
 def qualify_candidates(
     gainers: Sequence[MarketMover],
-    actives: Sequence[ActiveStock],
+    volume_by_ticker: Mapping[str, int],
     *,
     policy: ScannerPolicy | None = None,
     average_volume_by_ticker: Mapping[str, Decimal] | None = None,
 ) -> tuple[CandidateQualification, ...]:
     """Apply gap/volume/RVOL thresholds to today's gainers.
+
+    `volume_by_ticker` should come from a per-symbol source (e.g. Alpaca's
+    snapshot endpoint) scoped to exactly these gainers — not a market-wide
+    most-actives ranking, which a legitimate lower-float catalyst gainer would
+    rarely appear in even when comfortably past the volume floor.
 
     `average_volume_by_ticker` is optional: without it (e.g. no historical bars
     were fetched), the RVOL check is skipped entirely rather than treated as a
@@ -29,7 +34,6 @@ def qualify_candidates(
     """
     policy = policy or ScannerPolicy()
     average_volume_by_ticker = average_volume_by_ticker or {}
-    volume_by_ticker = {item.ticker: item.volume for item in actives}
     results: list[CandidateQualification] = []
     for mover in gainers:
         reasons: list[str] = []
@@ -39,7 +43,7 @@ def qualify_candidates(
                 f"percent_change {mover.percent_change} below gap_min_pct {policy.gap_min_pct}"
             )
         if volume is None:
-            reasons.append("ticker not present in the most-actives volume snapshot")
+            reasons.append("ticker had no current-session volume in the snapshot response")
         elif volume < policy.premarket_volume_min:
             reasons.append(
                 f"volume {volume} below premarket_volume_min {policy.premarket_volume_min}"

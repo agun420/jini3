@@ -259,3 +259,63 @@ def test_get_daily_bars_malformed_row_raises_transient_transport_error():
         client.get_daily_bars(["AAAA"], start=date(2026, 7, 1), end=date(2026, 7, 1))
     assert exc.value.transient is True
     client.close()
+
+
+def test_get_current_volumes_reads_daily_bar_volume_per_symbol():
+    seen = {}
+
+    def handler(req: httpx.Request):
+        seen["path"] = req.url.path
+        seen["symbols"] = dict(req.url.params)["symbols"]
+        return httpx.Response(
+            200,
+            json={
+                "AAAA": {
+                    "dailyBar": {
+                        "t": "2026-08-03T04:00:00Z",
+                        "o": 1,
+                        "h": 2,
+                        "l": 1,
+                        "c": 2,
+                        "v": 750_000,
+                    },
+                    "latestTrade": {"p": 2.0},
+                },
+                "BBBB": {"dailyBar": None},
+            },
+        )
+
+    client = AlpacaMarketDataClient(
+        api_key="k", secret_key="s", transport=httpx.MockTransport(handler)
+    )
+    volumes = client.get_current_volumes(["AAAA", "BBBB"])
+    assert seen["path"] == "/v2/stocks/snapshots"
+    assert seen["symbols"] == "AAAA,BBBB"
+    assert volumes == {"AAAA": 750_000}
+    client.close()
+
+
+def test_get_current_volumes_empty_symbols_makes_no_request():
+    client = AlpacaMarketDataClient(
+        api_key="k",
+        secret_key="s",
+        transport=httpx.MockTransport(
+            lambda req: (_ for _ in ()).throw(AssertionError("should not be called"))
+        ),
+    )
+    assert client.get_current_volumes([]) == {}
+    client.close()
+
+
+def test_get_current_volumes_invalid_volume_raises_transient_transport_error():
+    client = AlpacaMarketDataClient(
+        api_key="k",
+        secret_key="s",
+        transport=httpx.MockTransport(
+            lambda req: httpx.Response(200, json={"AAAA": {"dailyBar": {"v": "not-a-number"}}})
+        ),
+    )
+    with pytest.raises(ScannerTransportError) as exc:
+        client.get_current_volumes(["AAAA"])
+    assert exc.value.transient is True
+    client.close()

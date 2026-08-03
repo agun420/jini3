@@ -99,6 +99,13 @@ class AlpacaMarketDataClient:
             ) from exc
 
     def get_most_actives(self, *, top: int = 50, by: str = "volume") -> tuple[ActiveStock, ...]:
+        """Global top-N most-active tickers by volume/trade count.
+
+        Not used for per-candidate volume qualification: this is a market-wide
+        ranking dominated by mega-cap/high-liquidity names, so a legitimate
+        catalyst small-cap gainer clearing the scanner's volume floor will
+        almost never appear here. Use `get_current_volumes` for that instead.
+        """
         data = self._request(
             "GET", "/v1beta1/screener/stocks/most-actives", params={"top": top, "by": by}
         )
@@ -120,6 +127,33 @@ class AlpacaMarketDataClient:
             raise ScannerTransportError(
                 "Alpaca most-actives response contained an invalid row", transient=True
             ) from exc
+
+    def get_current_volumes(self, symbols: Sequence[str]) -> dict[str, int]:
+        """Today's cumulative volume for exactly the requested symbols.
+
+        Scoped per-symbol via Alpaca's snapshot endpoint, unlike a most-actives
+        cross-reference (a global top-N ranking a lower-float catalyst gainer
+        would rarely make even when comfortably past the scanner's volume
+        floor). A symbol absent from the result had no daily bar yet (e.g. no
+        trades) and is treated by the caller as zero/unknown volume.
+        """
+        if not symbols:
+            return {}
+        data = self._request("GET", "/v2/stocks/snapshots", params={"symbols": ",".join(symbols)})
+        volumes: dict[str, int] = {}
+        for symbol, snapshot in data.items():
+            if not isinstance(snapshot, dict):
+                continue
+            daily_bar = snapshot.get("dailyBar")
+            if not isinstance(daily_bar, dict) or "v" not in daily_bar:
+                continue
+            try:
+                volumes[str(symbol)] = int(daily_bar["v"])
+            except (TypeError, ValueError) as exc:
+                raise ScannerTransportError(
+                    f"Alpaca snapshot for {symbol!r} had an invalid volume", transient=True
+                ) from exc
+        return volumes
 
     def get_daily_bars(
         self, symbols: Sequence[str], *, start: date, end: date

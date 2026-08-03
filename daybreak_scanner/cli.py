@@ -47,12 +47,30 @@ def _run_scan(args: argparse.Namespace) -> int:
     client = AlpacaMarketDataClient(api_key=api_key, secret_key=secret_key)
     try:
         gainers = client.get_gainers(top=args.top)
-        actives = client.get_most_actives(top=args.top)
-        bars_by_symbol = client.get_daily_bars(
-            [item.ticker for item in gainers],
-            start=trading_date - timedelta(days=args.rvol_lookback_days),
-            end=trading_date - timedelta(days=1),
-        )
+        tickers = [item.ticker for item in gainers]
+        try:
+            volume_by_ticker = client.get_current_volumes(tickers)
+        except ScannerError as exc:
+            # Per-ticker current volume is a hard qualification input (unlike
+            # RVOL below): without it every candidate would look "absent" and
+            # falsely disqualify, so a fetch failure here is fatal.
+            print(f"daybreak-scanner: {exc}", file=sys.stderr)
+            return 3
+        try:
+            bars_by_symbol = client.get_daily_bars(
+                tickers,
+                start=trading_date - timedelta(days=args.rvol_lookback_days),
+                end=trading_date - timedelta(days=1),
+            )
+        except ScannerError as exc:
+            # RVOL is an optional, coarser check (qualify_candidates skips it
+            # when no baseline is supplied), so degrade gracefully instead of
+            # discarding an otherwise-valid day's scan.
+            print(
+                f"daybreak-scanner: historical bars unavailable, skipping RVOL: {exc}",
+                file=sys.stderr,
+            )
+            bars_by_symbol = {}
     except ScannerError as exc:
         print(f"daybreak-scanner: {exc}", file=sys.stderr)
         return 3
@@ -67,7 +85,10 @@ def _run_scan(args: argparse.Namespace) -> int:
             average_volume_by_ticker[symbol] = average
 
     candidates = qualify_candidates(
-        gainers, actives, policy=policy, average_volume_by_ticker=average_volume_by_ticker
+        gainers,
+        volume_by_ticker,
+        policy=policy,
+        average_volume_by_ticker=average_volume_by_ticker,
     )
     qualifying = qualifying_tickers(candidates, limit=policy.max_candidates)
 
