@@ -131,9 +131,12 @@ fixed ticker list), computes a mechanical ATR-based entry/stop/target for each
 qualifying candidate, and tracks the real win/loss/return outcome against
 subsequent price data — a running scorecard, not a trade. It deliberately bypasses
 `daybreak_features`/`daybreak_evaluator` (which need float data from a vendor
-nobody has credentials for) rather than fabricate that input. See
-`docs/OPERATIONS.md`'s "Scanner" section for the `daybreak-scanner scan`/
-`check-outcomes` commands and their systemd timers, and
+nobody has credentials for) rather than fabricate that input.
+`daybreak-scanner dashboard-snapshot` exports its signals and scorecard to the
+same private-snapshot dashboard described above, clearly labeled so it can never
+be mistaken for the audited system's real paper-trading output. See
+`docs/OPERATIONS.md`'s "Scanner" section for the `scan`/`check-outcomes`/
+`dashboard-snapshot` commands and their systemd timers, and
 `docs/audit/Project_Daybreak_Scanner_Mode_Audit_2026-08-03.md` for what this mode
 does and doesn't do and its open effectiveness findings.
 

@@ -90,6 +90,35 @@ through 16:45 America/New_York; firings before the day's scan has produced a
 signals file exit non-zero with a logged "no signals file" message — harmless,
 but visible in `journalctl`/`systemctl status` as a failed run.
 
+### Viewing it on the dashboard
+
+`daybreak-scanner dashboard-snapshot` reads the local files above (no Alpaca
+credentials needed — it never makes a network call) and writes a private,
+`dashboard.schema.json`-shaped snapshot: the most recent day's signals (ranked,
+each tagged `win`/`loss`/`expired`/`pending`) in the Trading view, and the
+cumulative scorecard (win rate, trade counts, session count) in the Performance
+view. Genuinely-unavailable fields — technical grade, catalyst thesis, dollar
+P&L, position sizing — render as empty/null rather than fabricated, and
+`system.name` says "mechanical, no evaluator, no orders" so it can never be
+mistaken for the audited system's real paper-trading output.
+
+```bash
+daybreak-scanner dashboard-snapshot \
+  --scanner-dir /var/lib/daybreak/scanner \
+  --outcomes-dir /var/lib/daybreak/scanner/outcomes \
+  --output dashboard/data/private.json
+```
+
+Load the resulting file through the dashboard's **Load private snapshot**
+control (never commit it — see the "Dashboard" section of `SECURITY.md`).
+Verified by hand with Playwright against the real dashboard UI: no console
+errors, no leaked literal `"undefined"` text. One known cosmetic gap from that
+check — the Trading view's Approved/Qualified/Excluded/Average-score summary
+cards only recognize the evaluator's own status taxonomy, so they read 0 for
+scanner-mode signals even though the setup ledger table below them is
+populated; the setup ledger table itself, the detail dialog, and the
+Performance view all render correctly.
+
 See `docs/audit/Project_Daybreak_Scanner_Mode_Audit_2026-08-03.md` for what this
 mode deliberately does and doesn't do (no float data, no LLM evaluator, no paper
 or live order submission — a mechanical backtest-style signal, not the audited
