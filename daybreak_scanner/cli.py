@@ -10,6 +10,7 @@ from pathlib import Path
 from zoneinfo import ZoneInfo
 
 from .alpaca_data import AlpacaMarketDataClient
+from .dashboard_export import build_scanner_dashboard_snapshot
 from .discovery import qualify_candidates, qualifying_tickers
 from .errors import ScannerError
 from .models import ScannerPolicy, Signal, SignalOutcome
@@ -52,6 +53,23 @@ def _parser() -> argparse.ArgumentParser:
         "--trading-date",
         help="Exchange date in YYYY-MM-DD; defaults to today (America/New_York)",
     )
+
+    snapshot = sub.add_parser(
+        "dashboard-snapshot",
+        help=(
+            "Export a private dashboard.schema.json-shaped snapshot of scanner state "
+            "(latest day's signals + the cumulative scorecard). Never commit the output."
+        ),
+    )
+    snapshot.add_argument(
+        "--scanner-dir", required=True, help="Directory 'scan' writes candidates-/signals- to"
+    )
+    snapshot.add_argument(
+        "--outcomes-dir",
+        required=True,
+        help="Directory 'check-outcomes' writes outcomes-*.json/scorecard.json to",
+    )
+    snapshot.add_argument("--output", required=True)
     return parser
 
 
@@ -244,10 +262,30 @@ def _run_check_outcomes(args: argparse.Namespace) -> int:
     return 0
 
 
+def _run_dashboard_snapshot(args: argparse.Namespace) -> int:
+    snapshot = build_scanner_dashboard_snapshot(
+        scanner_dir=Path(args.scanner_dir), outcomes_dir=Path(args.outcomes_dir)
+    )
+    output_path = Path(args.output)
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    output_path.write_text(
+        json.dumps(snapshot, ensure_ascii=False, sort_keys=True, indent=2), encoding="utf-8"
+    )
+    print(
+        f"daybreak-scanner: wrote a private dashboard snapshot to {output_path}. "
+        "It may contain real ticker/price data: never commit it, and load it only via "
+        "the dashboard's 'Load private snapshot' control.",
+        file=sys.stderr,
+    )
+    return 0
+
+
 def main(argv: Sequence[str] | None = None) -> int:
     args = _parser().parse_args(argv)
     if args.command == "scan":
         return _run_scan(args)
     if args.command == "check-outcomes":
         return _run_check_outcomes(args)
+    if args.command == "dashboard-snapshot":
+        return _run_dashboard_snapshot(args)
     return 64

@@ -299,3 +299,34 @@ def test_check_outcomes_is_idempotent_and_skips_already_resolved_signals(
     payload = json.loads((outcomes_dir / "outcomes-2026-08-03.json").read_text(encoding="utf-8"))
     assert len(payload["outcomes"]) == 1
     assert payload["outcomes"][0]["outcome"] == "win"
+
+
+def test_dashboard_snapshot_needs_no_credentials_and_writes_a_private_file(
+    tmp_path: Path, monkeypatch, capsys
+) -> None:
+    monkeypatch.delenv("APCA_API_KEY_ID", raising=False)
+    monkeypatch.delenv("APCA_API_SECRET_KEY", raising=False)
+    scanner_dir = tmp_path / "scanner"
+    outcomes_dir = tmp_path / "outcomes"
+    scanner_dir.mkdir()
+    outcomes_dir.mkdir()
+    output_path = tmp_path / "private.json"
+
+    assert (
+        main(
+            [
+                "dashboard-snapshot",
+                "--scanner-dir",
+                str(scanner_dir),
+                "--outcomes-dir",
+                str(outcomes_dir),
+                "--output",
+                str(output_path),
+            ]
+        )
+        == 0
+    )
+    assert "never commit it" in capsys.readouterr().err
+    payload = json.loads(output_path.read_text(encoding="utf-8"))
+    assert payload["public_safe"] is False
+    assert payload["signals"] == []
