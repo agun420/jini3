@@ -1,0 +1,11 @@
+[Unit]
+Description=Periodically resolve Project Daybreak scanner signals during the trading day
+
+[Timer]
+OnCalendar=Mon..Fri *-*-* 09..16:0/15:00 America/New_York
+Persistent=true
+Unit=daybreak-scanner-check-outcomes.service
+AccuracySec=1s
+
+[Install]
+WantedBy=timers.target

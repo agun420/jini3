@@ -1,9 +1,10 @@
 from __future__ import annotations
 
+from datetime import UTC, date, datetime
 from decimal import Decimal
-from typing import Annotated
+from typing import Annotated, Literal
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from daybreak_contracts.types import CanonicalTicker
 
@@ -58,3 +59,67 @@ class CandidateQualification(StrictFrozenModel):
     relative_volume: Decimal | None = None
     qualifies: bool
     disqualification_reasons: tuple[str, ...] = ()
+
+
+class Signal(StrictFrozenModel):
+    """A mechanical entry/stop/target for one qualifying candidate.
+
+    Uses Project Daybreak's own fixed risk rule (stop = entry - 1x ATR,
+    target = entry + 2x ATR, from daybreak_risk's TradeParameters multiples)
+    computed straight from real historical bars -- no float data, no LLM
+    evaluator, no conviction score. This is a mechanical backtest/paper
+    signal, not the audited system's own risk-sized, catalyst-scored setup.
+    """
+
+    ticker: CanonicalTicker
+    trading_date: date
+    generated_at: datetime
+    entry_price: Money
+    atr_value: Money
+    stop_price: Money
+    target_price: Money
+    percent_change: Decimal
+    relative_volume: Decimal | None = None
+
+    @field_validator("generated_at")
+    @classmethod
+    def _utc(cls, value: datetime) -> datetime:
+        if value.tzinfo is None or value.utcoffset() != UTC.utcoffset(value):
+            raise ValueError("generated_at must be timezone-aware UTC")
+        return value
+
+
+class MinuteBar(StrictFrozenModel):
+    """One intraday minute bar, used only to resolve a Signal's outcome."""
+
+    timestamp: datetime
+    open: Money
+    high: Money
+    low: Money
+    close: Money
+    volume: Annotated[int, Field(ge=0)]
+
+    @field_validator("timestamp")
+    @classmethod
+    def _utc(cls, value: datetime) -> datetime:
+        if value.tzinfo is None or value.utcoffset() != UTC.utcoffset(value):
+            raise ValueError("timestamp must be timezone-aware UTC")
+        return value
+
+
+class SignalOutcome(StrictFrozenModel):
+    """The realized result of one Signal, from real subsequent price data."""
+
+    ticker: CanonicalTicker
+    trading_date: date
+    resolved_at: datetime
+    outcome: Literal["win", "loss", "expired"]
+    exit_price: Money
+    return_pct: Decimal
+
+    @field_validator("resolved_at")
+    @classmethod
+    def _utc(cls, value: datetime) -> datetime:
+        if value.tzinfo is None or value.utcoffset() != UTC.utcoffset(value):
+            raise ValueError("resolved_at must be timezone-aware UTC")
+        return value

@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import UTC, date, datetime
 from decimal import Decimal
 
 import httpx
@@ -317,5 +317,130 @@ def test_get_current_volumes_invalid_volume_raises_transient_transport_error():
     )
     with pytest.raises(ScannerTransportError) as exc:
         client.get_current_volumes(["AAAA"])
+    assert exc.value.transient is True
+    client.close()
+
+
+def test_get_minute_bars_parses_intraday_bars():
+    seen = {}
+
+    def handler(req: httpx.Request):
+        seen["params"] = dict(req.url.params)
+        return httpx.Response(
+            200,
+            json={
+                "bars": {
+                    "AAAA": [
+                        {
+                            "t": "2026-08-03T13:35:00Z",
+                            "o": 20.0,
+                            "h": 20.5,
+                            "l": 19.9,
+                            "c": 20.2,
+                            "v": 5_000,
+                        }
+                    ]
+                },
+                "next_page_token": None,
+            },
+        )
+
+    client = AlpacaMarketDataClient(
+        api_key="k", secret_key="s", transport=httpx.MockTransport(handler)
+    )
+    bars = client.get_minute_bars(
+        "AAAA",
+        start=datetime(2026, 8, 3, 13, 35, tzinfo=UTC),
+        end=datetime(2026, 8, 3, 20, 0, tzinfo=UTC),
+    )
+    assert seen["params"]["symbols"] == "AAAA"
+    assert seen["params"]["timeframe"] == "1Min"
+    assert len(bars) == 1
+    assert bars[0].timestamp == datetime(2026, 8, 3, 13, 35, tzinfo=UTC)
+    assert bars[0].close == Decimal("20.2")
+    client.close()
+
+
+def test_get_minute_bars_follows_pagination():
+    calls = []
+
+    def handler(req: httpx.Request):
+        token = dict(req.url.params).get("page_token")
+        calls.append(token)
+        if token is None:
+            return httpx.Response(
+                200,
+                json={
+                    "bars": {
+                        "AAAA": [
+                            {
+                                "t": "2026-08-03T13:35:00Z",
+                                "o": 1,
+                                "h": 2,
+                                "l": 1,
+                                "c": 2,
+                                "v": 10,
+                            }
+                        ]
+                    },
+                    "next_page_token": "page-2",
+                },
+            )
+        return httpx.Response(
+            200,
+            json={
+                "bars": {
+                    "AAAA": [{"t": "2026-08-03T13:36:00Z", "o": 2, "h": 3, "l": 2, "c": 3, "v": 20}]
+                },
+                "next_page_token": None,
+            },
+        )
+
+    client = AlpacaMarketDataClient(
+        api_key="k", secret_key="s", transport=httpx.MockTransport(handler)
+    )
+    bars = client.get_minute_bars(
+        "AAAA",
+        start=datetime(2026, 8, 3, 13, 35, tzinfo=UTC),
+        end=datetime(2026, 8, 3, 20, 0, tzinfo=UTC),
+    )
+    assert calls == [None, "page-2"]
+    assert len(bars) == 2
+    client.close()
+
+
+def test_get_minute_bars_missing_symbol_is_empty():
+    client = AlpacaMarketDataClient(
+        api_key="k",
+        secret_key="s",
+        transport=httpx.MockTransport(
+            lambda req: httpx.Response(200, json={"bars": {}, "next_page_token": None})
+        ),
+    )
+    bars = client.get_minute_bars(
+        "AAAA",
+        start=datetime(2026, 8, 3, 13, 35, tzinfo=UTC),
+        end=datetime(2026, 8, 3, 20, 0, tzinfo=UTC),
+    )
+    assert bars == ()
+    client.close()
+
+
+def test_get_minute_bars_malformed_row_raises_transient_transport_error():
+    client = AlpacaMarketDataClient(
+        api_key="k",
+        secret_key="s",
+        transport=httpx.MockTransport(
+            lambda req: httpx.Response(
+                200, json={"bars": {"AAAA": [{"t": "2026-08-03T13:35:00Z"}]}}
+            )
+        ),
+    )
+    with pytest.raises(ScannerTransportError) as exc:
+        client.get_minute_bars(
+            "AAAA",
+            start=datetime(2026, 8, 3, 13, 35, tzinfo=UTC),
+            end=datetime(2026, 8, 3, 20, 0, tzinfo=UTC),
+        )
     assert exc.value.transient is True
     client.close()

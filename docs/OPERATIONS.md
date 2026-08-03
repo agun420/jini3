@@ -50,39 +50,59 @@ systemctl list-timers daybreak-recorder.timer
 journalctl -u daybreak-recorder.service -f
 ```
 
-## Scanner (dynamic candidate discovery)
+## Scanner (dynamic candidate discovery, signals, and outcome tracking)
 
-`daybreak-scanner scan` reads Alpaca's market-data screener (gainers, most-actives,
-historical bars) and writes a dated `candidates-YYYY-MM-DD.json` file listing every
-scanned ticker with its qualification verdict. It needs only `APCA_API_KEY_ID`/
+`daybreak-scanner scan` reads Alpaca's market-data screener (gainers, current
+per-ticker volume, historical bars) and writes two dated files: `candidates-
+YYYY-MM-DD.json` (every scanned ticker with its qualification verdict) and
+`signals-YYYY-MM-DD.json` (an ATR-based entry/stop/target for every qualifying
+candidate — stop = entry - 1x ATR, target = entry + 2x ATR, the same fixed rule
+`daybreak_risk` always uses, computed here straight from real historical bars with
+no evaluator or float-data dependency). It needs only `APCA_API_KEY_ID`/
 `APCA_API_SECRET_KEY` — the same credentials as paper trading, against Alpaca's
 separate `data.alpaca.markets` host.
+
+`daybreak-scanner check-outcomes` resolves each day's signals against real
+subsequent minute-bar prices: whichever of the stop or target is touched first
+(chronologically) decides win/loss; a signal that touches neither by the 16:00
+America/New_York session close is finalized as `expired` at the closing price.
+It writes `outcomes-YYYY-MM-DD.json` and updates a cumulative `scorecard.json`
+(total signals, win rate, average return) recomputed from every outcomes file on
+disk. It's idempotent — a signal already resolved in `outcomes-YYYY-MM-DD.json`
+is never re-fetched or re-decided.
 
 ```bash
 sudo cp deploy/systemd/daybreak-scanner.service /etc/systemd/system/
 sudo cp deploy/systemd/daybreak-scanner.timer /etc/systemd/system/
+sudo cp deploy/systemd/daybreak-scanner-check-outcomes.service /etc/systemd/system/
+sudo cp deploy/systemd/daybreak-scanner-check-outcomes.timer /etc/systemd/system/
 sudo systemctl daemon-reload
 sudo systemctl enable --now daybreak-scanner.timer
+sudo systemctl enable --now daybreak-scanner-check-outcomes.timer
 ```
 
-The timer fires once per weekday at 09:35 America/New_York — five minutes after the
-regular session opens. This is deliberate: Alpaca's movers/gainers endpoint documents
-that its leaderboard resets at market open and shows the *previous* session's movers
-until then, so a premarket run risks scanning stale data.
+`daybreak-scanner.timer` fires once per weekday at 09:35 America/New_York — five
+minutes after the regular session opens. This is deliberate: Alpaca's movers/gainers
+endpoint documents that its leaderboard resets at market open and shows the
+*previous* session's movers until then, so a premarket run risks scanning stale
+data. `daybreak-scanner-check-outcomes.timer` fires every 15 minutes from 09:00
+through 16:45 America/New_York; firings before the day's scan has produced a
+signals file exit non-zero with a logged "no signals file" message — harmless,
+but visible in `journalctl`/`systemctl status` as a failed run.
 
-**This automates today's scanner capability only** — dynamic candidate discovery with
-gap%/volume/RVOL qualification. It does not run the evaluator, size a trade, or track
-an outcome: the feature-context bridge, evaluator wiring, and win/loss outcome tracker
-are follow-up work (see `daybreak_scanner`'s module docstrings). Until those exist,
-`candidates-YYYY-MM-DD.json` is the end of the automated pipeline — a qualified
-watchlist, not a trade signal.
+See `docs/audit/Project_Daybreak_Scanner_Mode_Audit_2026-08-03.md` for what this
+mode deliberately does and doesn't do (no float data, no LLM evaluator, no paper
+or live order submission — a mechanical backtest-style signal, not the audited
+system's own risk-sized, catalyst-scored setup) and for open effectiveness
+findings (scan timing, single-scan-per-day coverage, no halt-status check).
 
 Check:
 
 ```bash
-systemctl list-timers daybreak-scanner.timer
-journalctl -u daybreak-scanner.service -f
+systemctl list-timers daybreak-scanner.timer daybreak-scanner-check-outcomes.timer
+journalctl -u daybreak-scanner.service -u daybreak-scanner-check-outcomes.service -f
 ls /var/lib/daybreak/scanner/
+cat /var/lib/daybreak/scanner/outcomes/scorecard.json
 ```
 
 ## Preflight checks
