@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import Sequence
-from datetime import date
+from datetime import UTC, date, datetime
 from decimal import Decimal
 from typing import Any
 
@@ -10,7 +10,7 @@ import httpx
 from daybreak_features.models import DailyBar
 
 from .errors import ScannerTransportError
-from .models import ActiveStock, MarketMover
+from .models import ActiveStock, MarketMover, MinuteBar
 
 DATA_BASE_URL = "https://data.alpaca.markets"
 
@@ -205,6 +205,56 @@ class AlpacaMarketDataClient:
                 )
                 for symbol, rows in raw_bars.items()
             }
+        except (KeyError, TypeError, ValueError) as exc:
+            raise ScannerTransportError(
+                "Alpaca bars response contained an invalid row", transient=True
+            ) from exc
+
+    def get_minute_bars(
+        self, symbol: str, *, start: datetime, end: datetime
+    ) -> tuple[MinuteBar, ...]:
+        """Minute bars for one symbol over one window, used only to resolve a
+        Signal's outcome against real subsequent price action."""
+        raw_bars: list[dict[str, Any]] = []
+        page_token: str | None = None
+        while True:
+            params: dict[str, Any] = {
+                "symbols": symbol,
+                "timeframe": "1Min",
+                "start": start.astimezone(UTC).isoformat(),
+                "end": end.astimezone(UTC).isoformat(),
+                "adjustment": "split",
+                "limit": 10_000,
+            }
+            if page_token is not None:
+                params["page_token"] = page_token
+            data = self._request("GET", "/v2/stocks/bars", params=params)
+            bars_by_symbol = data.get("bars")
+            if not isinstance(bars_by_symbol, dict):
+                raise ScannerTransportError(
+                    "Alpaca bars response was missing a 'bars' object", transient=False
+                )
+            rows = bars_by_symbol.get(symbol, [])
+            if not isinstance(rows, list):
+                raise ScannerTransportError(
+                    f"Alpaca bars response for {symbol!r} was not a list", transient=False
+                )
+            raw_bars.extend(rows)
+            page_token = data.get("next_page_token")
+            if not page_token:
+                break
+        try:
+            return tuple(
+                MinuteBar(
+                    timestamp=datetime.fromisoformat(str(row["t"]).replace("Z", "+00:00")),
+                    open=Decimal(str(row["o"])),
+                    high=Decimal(str(row["h"])),
+                    low=Decimal(str(row["l"])),
+                    close=Decimal(str(row["c"])),
+                    volume=int(row["v"]),
+                )
+                for row in raw_bars
+            )
         except (KeyError, TypeError, ValueError) as exc:
             raise ScannerTransportError(
                 "Alpaca bars response contained an invalid row", transient=True

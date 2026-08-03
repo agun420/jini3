@@ -123,6 +123,20 @@ via the page's **Load private snapshot** control). See `dashboard/README.md` for
 verification, publishing, and private-snapshot instructions, and the "Dashboard" section of
 `SECURITY.md` for its public-data boundary.
 
+## Scanner mode
+
+`daybreak_scanner` is a separate, self-contained mode that never submits a paper or
+live order: it dynamically discovers a watchlist from Alpaca's market movers (no
+fixed ticker list), computes a mechanical ATR-based entry/stop/target for each
+qualifying candidate, and tracks the real win/loss/return outcome against
+subsequent price data — a running scorecard, not a trade. It deliberately bypasses
+`daybreak_features`/`daybreak_evaluator` (which need float data from a vendor
+nobody has credentials for) rather than fabricate that input. See
+`docs/OPERATIONS.md`'s "Scanner" section for the `daybreak-scanner scan`/
+`check-outcomes` commands and their systemd timers, and
+`docs/audit/Project_Daybreak_Scanner_Mode_Audit_2026-08-03.md` for what this mode
+does and doesn't do and its open effectiveness findings.
+
 ## Qualification boundary
 
 The repository is offline-verified software, not proof of target-environment readiness. No automated test in this package contacts Alpaca, OpenAI, SEC, or a production PostgreSQL instance. Paper qualification still requires the target-VM campaign: 30 complete sessions, at least 50 fully reconciled paper fills, authenticated paper-account and database checks, replay hashes, restore validation, NTP evidence, required failure drills, and final human approvals over the exact v1.0.2 evidence package.
