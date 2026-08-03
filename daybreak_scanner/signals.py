@@ -11,6 +11,7 @@ from __future__ import annotations
 
 from collections.abc import Mapping, Sequence
 from datetime import UTC, date, datetime
+from decimal import Decimal
 
 from daybreak_features.models import DailyBar
 
@@ -24,14 +25,20 @@ def build_signals(
     *,
     trading_date: date,
     generated_at: datetime | None = None,
+    forecast_trend_by_ticker: Mapping[str, Decimal] | None = None,
 ) -> tuple[Signal, ...]:
     """One Signal per qualifying candidate with enough bar history for an ATR value.
 
     A qualifying candidate whose ATR can't be computed (insufficient bar
     history) is silently omitted rather than given a fabricated stop/target --
     callers that need to know why should compare against `candidates` directly.
+
+    `forecast_trend_by_ticker` is optional and purely informational (see
+    daybreak_scanner.forecast): it never affects which candidates get a
+    Signal or what that Signal's entry/stop/target are.
     """
     now = (generated_at or datetime.now(UTC)).astimezone(UTC)
+    forecast_trend_by_ticker = forecast_trend_by_ticker or {}
     signals: list[Signal] = []
     for candidate in candidates:
         if not candidate.qualifies:
@@ -51,6 +58,7 @@ def build_signals(
                 target_price=entry_price + (atr * 2),
                 percent_change=candidate.percent_change,
                 relative_volume=candidate.relative_volume,
+                forecast_trend_pct=forecast_trend_by_ticker.get(candidate.ticker),
             )
         )
     return tuple(signals)

@@ -90,6 +90,35 @@ through 16:45 America/New_York; firings before the day's scan has produced a
 signals file exit non-zero with a logged "no signals file" message — harmless,
 but visible in `journalctl`/`systemctl status` as a failed run.
 
+### Optional: TimesFM trend forecast
+
+`daybreak-scanner scan --with-forecast` additionally feeds each qualifying
+candidate's daily closes (already-fetched, no new API calls) to Google's
+[TimesFM](https://github.com/google-research/timesfm) and records the
+forecasted short-horizon trend on the `Signal` as `forecast_trend_pct`. This
+is purely informational: it never affects which candidates qualify or what
+the mechanical entry/stop/target are (`daybreak_scanner/signals.py`'s fixed
+1x/2x ATR rule is unchanged), and a forecast failure only skips the field —
+it never fails the scan.
+
+This needs the opt-in `forecast` extra (`pip install '.[forecast]'`, pulling
+in `timesfm[torch]`) and, on first use, downloads the pretrained checkpoint
+from Hugging Face Hub. **Neither of those was reachable from this project's
+own development sandbox** (its network policy blocks both Hugging Face Hub
+and the lean CPU-only PyTorch wheel index), so `TimesFMForecaster` in
+`daybreak_scanner/forecast.py` is written from the published API surface but
+has not been exercised against the real model or real weights. Verify it
+actually works the first time you run `--with-forecast` on this VM (which
+has normal internet access): check for a `forecast unavailable` line in
+stderr, and if absent, confirm `forecast_trend_pct` is populated (not `null`)
+in the day's `signals-YYYY-MM-DD.json`. If it fails, the scan itself is
+unaffected — only that field stays empty.
+
+```bash
+sudo -u daybreak /opt/project-daybreak/.venv/bin/pip install '.[forecast]'
+# then add --with-forecast to daybreak-scanner.service's ExecStart line
+```
+
 ### Viewing it on the dashboard
 
 `daybreak-scanner dashboard-snapshot` reads the local files above (no Alpaca

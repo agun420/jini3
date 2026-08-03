@@ -330,3 +330,22 @@ def test_dashboard_snapshot_needs_no_credentials_and_writes_a_private_file(
     payload = json.loads(output_path.read_text(encoding="utf-8"))
     assert payload["public_safe"] is False
     assert payload["signals"] == []
+
+
+def test_scan_with_forecast_degrades_gracefully_when_timesfm_is_not_installed(
+    tmp_path: Path, monkeypatch, capsys
+) -> None:
+    # timesfm is an opt-in extra (pip install '.[forecast]') never installed
+    # in this project's own dev/CI environment, so this exercises the real
+    # graceful-degradation path rather than a simulated failure.
+    monkeypatch.setenv("APCA_API_KEY_ID", "key")
+    monkeypatch.setenv("APCA_API_SECRET_KEY", "secret")
+    monkeypatch.setattr("daybreak_scanner.cli.AlpacaMarketDataClient", _FakeClient)
+
+    assert main(["scan", "--output-dir", str(tmp_path), "--with-forecast"]) == 0
+    assert "forecast unavailable" in capsys.readouterr().err
+
+    signals_file = next(tmp_path.glob("signals-*.json"))
+    payload = json.loads(signals_file.read_text(encoding="utf-8"))
+    assert len(payload["signals"]) == 1
+    assert payload["signals"][0]["forecast_trend_pct"] is None

@@ -80,6 +80,7 @@ class Signal(StrictFrozenModel):
     target_price: Money
     percent_change: Decimal
     relative_volume: Decimal | None = None
+    forecast_trend_pct: Decimal | None = None
 
     @field_validator("generated_at")
     @classmethod

@@ -13,6 +13,13 @@ from .alpaca_data import AlpacaMarketDataClient
 from .dashboard_export import build_scanner_dashboard_snapshot
 from .discovery import qualify_candidates, qualifying_tickers
 from .errors import ScannerError
+from .forecast import (
+    DEFAULT_HORIZON,
+    ForecastError,
+    TimesFMForecaster,
+    daily_closes_by_ticker,
+    trend_pct,
+)
 from .models import ScannerPolicy, Signal, SignalOutcome
 from .outcomes import expire_at_close, resolve_outcome
 from .rvol import average_daily_volume
@@ -42,6 +49,16 @@ def _parser() -> argparse.ArgumentParser:
         help="Calendar days of historical bars to fetch for the RVOL/ATR baseline",
     )
     scan.add_argument("--output-dir", required=True)
+    scan.add_argument(
+        "--with-forecast",
+        action="store_true",
+        help=(
+            "Also compute a TimesFM short-horizon trend forecast per qualifying candidate "
+            "(informational only; requires pip install '.[forecast]'). Unverified against "
+            "the real model in this project's own CI/dev environment -- see "
+            "daybreak_scanner/forecast.py."
+        ),
+    )
 
     check = sub.add_parser(
         "check-outcomes",
@@ -130,8 +147,36 @@ def _run_scan(args: argparse.Namespace) -> int:
     )
     qualifying = qualifying_tickers(candidates, limit=policy.max_candidates)
     generated_at = datetime.now(UTC)
+
+    forecast_trend_by_ticker = {}
+    if args.with_forecast:
+        qualifying_bars = {
+            ticker: bars for ticker, bars in bars_by_symbol.items() if ticker in qualifying
+        }
+        closes_by_ticker = daily_closes_by_ticker(qualifying_bars)
+        try:
+            point_forecast_by_ticker = TimesFMForecaster().forecast(
+                closes_by_ticker, horizon=DEFAULT_HORIZON
+            )
+            forecast_trend_by_ticker = {
+                ticker: trend
+                for ticker, forecast_values in point_forecast_by_ticker.items()
+                if (trend := trend_pct(closes_by_ticker[ticker], forecast_values)) is not None
+            }
+        except ForecastError as exc:
+            # Purely informational (see daybreak_scanner.forecast): a failure here
+            # never invalidates the mechanical signals already computed above.
+            print(
+                f"daybreak-scanner: forecast unavailable, continuing without it: {exc}",
+                file=sys.stderr,
+            )
+
     signals = build_signals(
-        candidates, bars_by_symbol, trading_date=trading_date, generated_at=generated_at
+        candidates,
+        bars_by_symbol,
+        trading_date=trading_date,
+        generated_at=generated_at,
+        forecast_trend_by_ticker=forecast_trend_by_ticker,
     )
 
     output_dir = Path(args.output_dir)
