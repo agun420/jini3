@@ -46,6 +46,7 @@ dev = [
 [project.scripts]
 daybreak = "daybreak.cli:main"
 daybreak-recorder = "daybreak_recorder.cli:main"
+daybreak-scanner = "daybreak_scanner.cli:main"
 
 [tool.setuptools.packages.find]
 include = ["daybreak*", "daybreak_contracts*", "daybreak_recorder*", "daybreak_evaluator*"]

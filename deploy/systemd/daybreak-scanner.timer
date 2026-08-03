@@ -1,0 +1,11 @@
+[Unit]
+Description=Run the Project Daybreak scanner shortly after the regular session opens on weekdays
+
+[Timer]
+OnCalendar=Mon..Fri *-*-* 09:35:00 America/New_York
+Persistent=true
+Unit=daybreak-scanner.service
+AccuracySec=1s
+
+[Install]
+WantedBy=timers.target

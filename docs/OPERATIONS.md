@@ -50,6 +50,41 @@ systemctl list-timers daybreak-recorder.timer
 journalctl -u daybreak-recorder.service -f
 ```
 
+## Scanner (dynamic candidate discovery)
+
+`daybreak-scanner scan` reads Alpaca's market-data screener (gainers, most-actives,
+historical bars) and writes a dated `candidates-YYYY-MM-DD.json` file listing every
+scanned ticker with its qualification verdict. It needs only `APCA_API_KEY_ID`/
+`APCA_API_SECRET_KEY` — the same credentials as paper trading, against Alpaca's
+separate `data.alpaca.markets` host.
+
+```bash
+sudo cp deploy/systemd/daybreak-scanner.service /etc/systemd/system/
+sudo cp deploy/systemd/daybreak-scanner.timer /etc/systemd/system/
+sudo systemctl daemon-reload
+sudo systemctl enable --now daybreak-scanner.timer
+```
+
+The timer fires once per weekday at 09:35 America/New_York — five minutes after the
+regular session opens. This is deliberate: Alpaca's movers/gainers endpoint documents
+that its leaderboard resets at market open and shows the *previous* session's movers
+until then, so a premarket run risks scanning stale data.
+
+**This automates today's scanner capability only** — dynamic candidate discovery with
+gap%/volume/RVOL qualification. It does not run the evaluator, size a trade, or track
+an outcome: the feature-context bridge, evaluator wiring, and win/loss outcome tracker
+are follow-up work (see `daybreak_scanner`'s module docstrings). Until those exist,
+`candidates-YYYY-MM-DD.json` is the end of the automated pipeline — a qualified
+watchlist, not a trade signal.
+
+Check:
+
+```bash
+systemctl list-timers daybreak-scanner.timer
+journalctl -u daybreak-scanner.service -f
+ls /var/lib/daybreak/scanner/
+```
+
 ## Preflight checks
 
 Before enabling the timer:

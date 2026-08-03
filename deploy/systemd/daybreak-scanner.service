@@ -1,0 +1,27 @@
+[Unit]
+Description=Project Daybreak dynamic candidate scanner
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=daybreak
+Group=daybreak
+WorkingDirectory=/opt/project-daybreak
+EnvironmentFile=/etc/daybreak/daybreak.env
+Environment=TZ=America/New_York
+ExecStart=/opt/project-daybreak/.venv/bin/daybreak-scanner scan --output-dir /var/lib/daybreak/scanner
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictSUIDSGID=true
+LockPersonality=true
+PrivateDevices=true
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+SystemCallArchitectures=native
+UMask=0077
+ReadWritePaths=/var/lib/daybreak /var/log/daybreak
