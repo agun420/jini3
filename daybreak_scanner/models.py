@@ -38,6 +38,8 @@ class ScannerPolicy(StrictFrozenModel):
 
     gap_min_pct: Decimal = Decimal("4.0")
     premarket_volume_min: Annotated[int, Field(ge=0)] = 500_000
+    rvol_min: Decimal = Decimal("5.0")
+    rvol_lookback_sessions: Annotated[int, Field(ge=1)] = 20
     max_candidates: Annotated[int, Field(ge=1, le=25)] = 20
 
 
@@ -53,5 +55,6 @@ class CandidateQualification(StrictFrozenModel):
     percent_change: Decimal
     price: Money
     volume: Annotated[int, Field(ge=0)]
+    relative_volume: Decimal | None = None
     qualifies: bool
     disqualification_reasons: tuple[str, ...] = ()

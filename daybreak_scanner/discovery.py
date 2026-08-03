@@ -7,9 +7,11 @@ losers/shorts — a short-side "candidate" could never become a real setup.
 
 from __future__ import annotations
 
-from collections.abc import Sequence
+from collections.abc import Mapping, Sequence
+from decimal import Decimal
 
 from .models import ActiveStock, CandidateQualification, MarketMover, ScannerPolicy
+from .rvol import relative_volume
 
 
 def qualify_candidates(
@@ -17,8 +19,16 @@ def qualify_candidates(
     actives: Sequence[ActiveStock],
     *,
     policy: ScannerPolicy | None = None,
+    average_volume_by_ticker: Mapping[str, Decimal] | None = None,
 ) -> tuple[CandidateQualification, ...]:
+    """Apply gap/volume/RVOL thresholds to today's gainers.
+
+    `average_volume_by_ticker` is optional: without it (e.g. no historical bars
+    were fetched), the RVOL check is skipped entirely rather than treated as a
+    failure — coarser but honest about what wasn't actually checked.
+    """
     policy = policy or ScannerPolicy()
+    average_volume_by_ticker = average_volume_by_ticker or {}
     volume_by_ticker = {item.ticker: item.volume for item in actives}
     results: list[CandidateQualification] = []
     for mover in gainers:
@@ -34,12 +44,18 @@ def qualify_candidates(
             reasons.append(
                 f"volume {volume} below premarket_volume_min {policy.premarket_volume_min}"
             )
+        rvol: Decimal | None = None
+        if volume is not None and mover.ticker in average_volume_by_ticker:
+            rvol = relative_volume(volume, average_volume_by_ticker[mover.ticker])
+            if rvol is not None and rvol < policy.rvol_min:
+                reasons.append(f"relative_volume {rvol} below rvol_min {policy.rvol_min}")
         results.append(
             CandidateQualification(
                 ticker=mover.ticker,
                 percent_change=mover.percent_change,
                 price=mover.price,
                 volume=volume or 0,
+                relative_volume=rvol,
                 qualifies=not reasons,
                 disqualification_reasons=tuple(reasons),
             )

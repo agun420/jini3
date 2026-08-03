@@ -74,3 +74,32 @@ def test_qualifying_tickers_respects_limit():
     actives = [_active(t, 600_000) for t in ("AAAA", "BBBB", "CCCC")]
     results = qualify_candidates(gainers, actives)
     assert qualifying_tickers(results, limit=2) == ("AAAA", "BBBB")
+
+
+def test_rvol_check_is_skipped_without_a_baseline():
+    gainers = [_mover("AAAA", "9.0")]
+    actives = [_active("AAAA", 600_000)]
+    results = qualify_candidates(gainers, actives)
+    assert results[0].qualifies is True
+    assert results[0].relative_volume is None
+
+
+def test_rvol_check_disqualifies_below_threshold_when_baseline_is_provided():
+    gainers = [_mover("AAAA", "9.0")]
+    actives = [_active("AAAA", 600_000)]
+    results = qualify_candidates(
+        gainers, actives, average_volume_by_ticker={"AAAA": Decimal("500000")}
+    )
+    assert results[0].qualifies is False
+    assert results[0].relative_volume == Decimal("1.2")
+    assert "rvol_min" in results[0].disqualification_reasons[-1]
+
+
+def test_rvol_check_passes_above_threshold_when_baseline_is_provided():
+    gainers = [_mover("AAAA", "9.0")]
+    actives = [_active("AAAA", 600_000)]
+    results = qualify_candidates(
+        gainers, actives, average_volume_by_ticker={"AAAA": Decimal("100000")}
+    )
+    assert results[0].qualifies is True
+    assert results[0].relative_volume == Decimal("6")
