@@ -1,0 +1,570 @@
+{
+  "candidates": [
+    {
+      "disqualification_reasons": [],
+      "percent_change": "133.12",
+      "price": "8.509",
+      "qualifies": true,
+      "relative_volume": "10.76732954112504523804380064",
+      "ticker": "AMIX",
+      "volume": 51435025
+    },
+    {
+      "disqualification_reasons": [
+        "volume 11118 below premarket_volume_min 500000"
+      ],
+      "percent_change": "85.5",
+      "price": "0.0499",
+      "qualifies": false,
+      "relative_volume": null,
+      "ticker": "SHFSW",
+      "volume": 11118
+    },
+    {
+      "disqualification_reasons": [],
+      "percent_change": "77.13",
+      "price": "0.8148",
+      "qualifies": true,
+      "relative_volume": "539.1459072059971653553657551",
+      "ticker": "ADGM",
+      "volume": 287105035
+    },
+    {
+      "disqualification_reasons": [
+        "volume 3377 below premarket_volume_min 500000",
+        "relative_volume 0.2029373940843479201471100802 below rvol_min 5.0"
+      ],
+      "percent_change": "62.5",
+      "price": "0.0078",
+      "qualifies": false,
+      "relative_volume": "0.2029373940843479201471100802",
+      "ticker": "ANSCW",
+      "volume": 3377
+    },
+    {
+      "disqualification_reasons": [
+        "volume 1508 below premarket_volume_min 500000",
+        "relative_volume 2.288489263221792245238637226 below rvol_min 5.0"
+      ],
+      "percent_change": "56.03",
+      "price": "51.75",
+      "qualifies": false,
+      "relative_volume": "2.288489263221792245238637226",
+      "ticker": "PLTL",
+      "volume": 1508
+    },
+    {
+      "disqualification_reasons": [],
+      "percent_change": "55.5",
+      "price": "0.5559",
+      "qualifies": true,
+      "relative_volume": "52.53128908885123994415136894",
+      "ticker": "TNMG",
+      "volume": 204563829
+    },
+    {
+      "disqualification_reasons": [
+        "relative_volume 3.504168674098381358735024740 below rvol_min 5.0"
+      ],
+      "percent_change": "53.92",
+      "price": "15.515",
+      "qualifies": false,
+      "relative_volume": "3.504168674098381358735024740",
+      "ticker": "PLTG",
+      "volume": 1132093
+    },
+    {
+      "disqualification_reasons": [
+        "relative_volume 3.181181166058020774864955495 below rvol_min 5.0"
+      ],
+      "percent_change": "53.4",
+      "price": "16.23",
+      "qualifies": false,
+      "relative_volume": "3.181181166058020774864955495",
+      "ticker": "PTIR",
+      "volume": 14044497
+    },
+    {
+      "disqualification_reasons": [
+        "volume 6800 below premarket_volume_min 500000",
+        "relative_volume 0.2831540024651054332256237716 below rvol_min 5.0"
+      ],
+      "percent_change": "53.33",
+      "price": "0.069",
+      "qualifies": false,
+      "relative_volume": "0.2831540024651054332256237716",
+      "ticker": "BGLWW",
+      "volume": 6800
+    },
+    {
+      "disqualification_reasons": [
+        "relative_volume 3.226522733776519192818242195 below rvol_min 5.0"
+      ],
+      "percent_change": "53.26",
+      "price": "43.5114",
+      "qualifies": false,
+      "relative_volume": "3.226522733776519192818242195",
+      "ticker": "PLTU",
+      "volume": 8316982
+    },
+    {
+      "disqualification_reasons": [
+        "volume 237111 below premarket_volume_min 500000",
+        "relative_volume 4.557929246765529351721831199 below rvol_min 5.0"
+      ],
+      "percent_change": "52.85",
+      "price": "16.6",
+      "qualifies": false,
+      "relative_volume": "4.557929246765529351721831199",
+      "ticker": "PLTA",
+      "volume": 237111
+    },
+    {
+      "disqualification_reasons": [
+        "volume 68652 below premarket_volume_min 500000",
+        "relative_volume 1.036910835817919834703254280 below rvol_min 5.0"
+      ],
+      "percent_change": "50",
+      "price": "0.24",
+      "qualifies": false,
+      "relative_volume": "1.036910835817919834703254280",
+      "ticker": "ANNAW",
+      "volume": 68652
+    },
+    {
+      "disqualification_reasons": [
+        "volume 397210 below premarket_volume_min 500000",
+        "relative_volume 2.208843325382179498479512132 below rvol_min 5.0"
+      ],
+      "percent_change": "49.02",
+      "price": "36.63",
+      "qualifies": false,
+      "relative_volume": "2.208843325382179498479512132",
+      "ticker": "IBTA",
+      "volume": 397210
+    },
+    {
+      "disqualification_reasons": [
+        "volume 1202 below premarket_volume_min 500000",
+        "relative_volume 0.2324277288987721164072319443 below rvol_min 5.0"
+      ],
+      "percent_change": "48.57",
+      "price": "0.13",
+      "qualifies": false,
+      "relative_volume": "0.2324277288987721164072319443",
+      "ticker": "SDSTW",
+      "volume": 1202
+    },
+    {
+      "disqualification_reasons": [
+        "volume 49659 below premarket_volume_min 500000"
+      ],
+      "percent_change": "46.47",
+      "price": "0.0498",
+      "qualifies": false,
+      "relative_volume": "6.196801707087282324533764265",
+      "ticker": "COCHW",
+      "volume": 49659
+    },
+    {
+      "disqualification_reasons": [],
+      "percent_change": "46.27",
+      "price": "0.4097",
+      "qualifies": true,
+      "relative_volume": "21.02709601581793018001428508",
+      "ticker": "ENSC",
+      "volume": 155110944
+    },
+    {
+      "disqualification_reasons": [],
+      "percent_change": "42.38",
+      "price": "15.32",
+      "qualifies": true,
+      "relative_volume": "151.2857790437609190005282330",
+      "ticker": "MOVE",
+      "volume": 6057354
+    },
+    {
+      "disqualification_reasons": [],
+      "percent_change": "41.09",
+      "price": "0.148",
+      "qualifies": true,
+      "relative_volume": "15.14394005555761708844841919",
+      "ticker": "ELPW",
+      "volume": 360462221
+    },
+    {
+      "disqualification_reasons": [
+        "relative_volume 2.011193326179618399136679926 below rvol_min 5.0"
+      ],
+      "percent_change": "41.02",
+      "price": "19.545",
+      "qualifies": false,
+      "relative_volume": "2.011193326179618399136679926",
+      "ticker": "AAOX",
+      "volume": 11949281
+    },
+    {
+      "disqualification_reasons": [
+        "relative_volume 2.471633567278823076872093734 below rvol_min 5.0"
+      ],
+      "percent_change": "40.78",
+      "price": "4.35",
+      "qualifies": false,
+      "relative_volume": "2.471633567278823076872093734",
+      "ticker": "AAOG",
+      "volume": 4027518
+    },
+    {
+      "disqualification_reasons": [
+        "volume 7867 below premarket_volume_min 500000",
+        "relative_volume 0.6170050900763119299153745402 below rvol_min 5.0"
+      ],
+      "percent_change": "38.1",
+      "price": "0.0029",
+      "qualifies": false,
+      "relative_volume": "0.6170050900763119299153745402",
+      "ticker": "GDEVW",
+      "volume": 7867
+    },
+    {
+      "disqualification_reasons": [
+        "relative_volume 3.044437884492254152916561310 below rvol_min 5.0"
+      ],
+      "percent_change": "37.91",
+      "price": "21.5",
+      "qualifies": false,
+      "relative_volume": "3.044437884492254152916561310",
+      "ticker": "BLZE",
+      "volume": 6722667
+    },
+    {
+      "disqualification_reasons": [
+        "volume 345 below premarket_volume_min 500000",
+        "relative_volume 0.01966859837007180463665827663 below rvol_min 5.0"
+      ],
+      "percent_change": "35.85",
+      "price": "0.72",
+      "qualifies": false,
+      "relative_volume": "0.01966859837007180463665827663",
+      "ticker": "SVAQW",
+      "volume": 345
+    },
+    {
+      "disqualification_reasons": [
+        "volume 106 below premarket_volume_min 500000",
+        "relative_volume 0.01009004892721838292687570202 below rvol_min 5.0"
+      ],
+      "percent_change": "33.75",
+      "price": "0.0214",
+      "qualifies": false,
+      "relative_volume": "0.01009004892721838292687570202",
+      "ticker": "BEATW",
+      "volume": 106
+    },
+    {
+      "disqualification_reasons": [
+        "volume 276608 below premarket_volume_min 500000",
+        "relative_volume 1.817132515121803809889815714 below rvol_min 5.0"
+      ],
+      "percent_change": "32.46",
+      "price": "22.625",
+      "qualifies": false,
+      "relative_volume": "1.817132515121803809889815714",
+      "ticker": "PLTW",
+      "volume": 276608
+    },
+    {
+      "disqualification_reasons": [],
+      "percent_change": "32.16",
+      "price": "6.185",
+      "qualifies": true,
+      "relative_volume": "6.404866829085065088009375253",
+      "ticker": "XGN",
+      "volume": 1499689
+    },
+    {
+      "disqualification_reasons": [
+        "relative_volume 2.532627589896241840601177435 below rvol_min 5.0"
+      ],
+      "percent_change": "32.11",
+      "price": "5.39",
+      "qualifies": false,
+      "relative_volume": "2.532627589896241840601177435",
+      "ticker": "BWEN",
+      "volume": 1423835
+    },
+    {
+      "disqualification_reasons": [
+        "volume 413902 below premarket_volume_min 500000",
+        "relative_volume 2.509492401682970608644459272 below rvol_min 5.0"
+      ],
+      "percent_change": "31.42",
+      "price": "12.8",
+      "qualifies": false,
+      "relative_volume": "2.509492401682970608644459272",
+      "ticker": "MED",
+      "volume": 413902
+    },
+    {
+      "disqualification_reasons": [],
+      "percent_change": "29.61",
+      "price": "1.3609",
+      "qualifies": true,
+      "relative_volume": "59.66669968674071459754420251",
+      "ticker": "VGAS",
+      "volume": 5993159
+    },
+    {
+      "disqualification_reasons": [
+        "volume 451524 below premarket_volume_min 500000",
+        "relative_volume 1.044389152715811026266552341 below rvol_min 5.0"
+      ],
+      "percent_change": "29.24",
+      "price": "12.41",
+      "qualifies": false,
+      "relative_volume": "1.044389152715811026266552341",
+      "ticker": "AEHG",
+      "volume": 451524
+    },
+    {
+      "disqualification_reasons": [
+        "volume 24758 below premarket_volume_min 500000",
+        "relative_volume 2.759689231215097031645357975 below rvol_min 5.0"
+      ],
+      "percent_change": "29.16",
+      "price": "9.045",
+      "qualifies": false,
+      "relative_volume": "2.759689231215097031645357975",
+      "ticker": "FNG",
+      "volume": 24758
+    },
+    {
+      "disqualification_reasons": [
+        "relative_volume 2.440002242214243570973206490 below rvol_min 5.0"
+      ],
+      "percent_change": "29.01",
+      "price": "29.325",
+      "qualifies": false,
+      "relative_volume": "2.440002242214243570973206490",
+      "ticker": "AMRC",
+      "volume": 1284089
+    },
+    {
+      "disqualification_reasons": [
+        "relative_volume 2.481774085133373940603807443 below rvol_min 5.0"
+      ],
+      "percent_change": "28.97",
+      "price": "34.475",
+      "qualifies": false,
+      "relative_volume": "2.481774085133373940603807443",
+      "ticker": "COHX",
+      "volume": 1054667
+    },
+    {
+      "disqualification_reasons": [
+        "volume 242306 below premarket_volume_min 500000",
+        "relative_volume 4.513905577320375037956479055 below rvol_min 5.0"
+      ],
+      "percent_change": "28.78",
+      "price": "6.51",
+      "qualifies": false,
+      "relative_volume": "4.513905577320375037956479055",
+      "ticker": "SNAG",
+      "volume": 242306
+    },
+    {
+      "disqualification_reasons": [
+        "relative_volume 1.746250876098864498639753939 below rvol_min 5.0"
+      ],
+      "percent_change": "28.25",
+      "price": "8.58",
+      "qualifies": false,
+      "relative_volume": "1.746250876098864498639753939",
+      "ticker": "COHH",
+      "volume": 859199
+    },
+    {
+      "disqualification_reasons": [
+        "relative_volume 1.851543837130669772959092695 below rvol_min 5.0"
+      ],
+      "percent_change": "28.19",
+      "price": "114.49",
+      "qualifies": false,
+      "relative_volume": "1.851543837130669772959092695",
+      "ticker": "W",
+      "volume": 5941867
+    },
+    {
+      "disqualification_reasons": [
+        "volume 67368 below premarket_volume_min 500000",
+        "relative_volume 0.8840759249149624154873388485 below rvol_min 5.0"
+      ],
+      "percent_change": "27.1",
+      "price": "6.8",
+      "qualifies": false,
+      "relative_volume": "0.8840759249149624154873388485",
+      "ticker": "HQWWW",
+      "volume": 67368
+    },
+    {
+      "disqualification_reasons": [
+        "relative_volume 2.397075812034367686304607250 below rvol_min 5.0"
+      ],
+      "percent_change": "27.08",
+      "price": "159.6775",
+      "qualifies": false,
+      "relative_volume": "2.397075812034367686304607250",
+      "ticker": "PLTR",
+      "volume": 86518808
+    },
+    {
+      "disqualification_reasons": [
+        "volume 460199 below premarket_volume_min 500000",
+        "relative_volume 2.204299015104414642861590605 below rvol_min 5.0"
+      ],
+      "percent_change": "26.56",
+      "price": "50.85",
+      "qualifies": false,
+      "relative_volume": "2.204299015104414642861590605",
+      "ticker": "TSAT",
+      "volume": 460199
+    },
+    {
+      "disqualification_reasons": [],
+      "percent_change": "26.55",
+      "price": "2.86",
+      "qualifies": true,
+      "relative_volume": "7.097108958921853864653190714",
+      "ticker": "DXST",
+      "volume": 10831959
+    },
+    {
+      "disqualification_reasons": [
+        "volume 49058 below premarket_volume_min 500000"
+      ],
+      "percent_change": "26.37",
+      "price": "0.253",
+      "qualifies": false,
+      "relative_volume": "75.75355157504632489190858555",
+      "ticker": "PONOR",
+      "volume": 49058
+    },
+    {
+      "disqualification_reasons": [
+        "relative_volume 0.9623494391493209046992643939 below rvol_min 5.0"
+      ],
+      "percent_change": "26.19",
+      "price": "20.7585",
+      "qualifies": false,
+      "relative_volume": "0.9623494391493209046992643939",
+      "ticker": "ARMG",
+      "volume": 812561
+    },
+    {
+      "disqualification_reasons": [
+        "volume 1624 below premarket_volume_min 500000",
+        "relative_volume 0.06273055603839542654074202831 below rvol_min 5.0"
+      ],
+      "percent_change": "25.85",
+      "price": "0.818",
+      "qualifies": false,
+      "relative_volume": "0.06273055603839542654074202831",
+      "ticker": "AMPGZ",
+      "volume": 1624
+    },
+    {
+      "disqualification_reasons": [
+        "relative_volume 3.316488696240202052369068654 below rvol_min 5.0"
+      ],
+      "percent_change": "25.67",
+      "price": "28.69",
+      "qualifies": false,
+      "relative_volume": "3.316488696240202052369068654",
+      "ticker": "LIFE",
+      "volume": 2150563
+    },
+    {
+      "disqualification_reasons": [
+        "relative_volume 1.990565356650182843768548624 below rvol_min 5.0"
+      ],
+      "percent_change": "25.57",
+      "price": "11.2634",
+      "qualifies": false,
+      "relative_volume": "1.990565356650182843768548624",
+      "ticker": "POEL",
+      "volume": 920906
+    },
+    {
+      "disqualification_reasons": [
+        "volume 29865 below premarket_volume_min 500000",
+        "relative_volume 0.3782955987748618679556457436 below rvol_min 5.0"
+      ],
+      "percent_change": "25.45",
+      "price": "4.83",
+      "qualifies": false,
+      "relative_volume": "0.3782955987748618679556457436",
+      "ticker": "VELL",
+      "volume": 29865
+    },
+    {
+      "disqualification_reasons": [
+        "relative_volume 1.551757259746588457186334103 below rvol_min 5.0"
+      ],
+      "percent_change": "25.16",
+      "price": "43.205",
+      "qualifies": false,
+      "relative_volume": "1.551757259746588457186334103",
+      "ticker": "PAY",
+      "volume": 1596939
+    },
+    {
+      "disqualification_reasons": [
+        "volume 315923 below premarket_volume_min 500000",
+        "relative_volume 2.294426308087282076235642723 below rvol_min 5.0"
+      ],
+      "percent_change": "25.13",
+      "price": "36.075",
+      "qualifies": false,
+      "relative_volume": "2.294426308087282076235642723",
+      "ticker": "PLTY",
+      "volume": 315923
+    },
+    {
+      "disqualification_reasons": [
+        "relative_volume 2.353511462236107060328001256 below rvol_min 5.0"
+      ],
+      "percent_change": "24.91",
+      "price": "3.535",
+      "qualifies": false,
+      "relative_volume": "2.353511462236107060328001256",
+      "ticker": "DDD",
+      "volume": 5371037
+    },
+    {
+      "disqualification_reasons": [
+        "volume 277531 below premarket_volume_min 500000",
+        "relative_volume 0.04347086092262963348399251188 below rvol_min 5.0"
+      ],
+      "percent_change": "24.77",
+      "price": "5.49",
+      "qualifies": false,
+      "relative_volume": "0.04347086092262963348399251188",
+      "ticker": "NXTC",
+      "volume": 277531
+    }
+  ],
+  "generated_at": "2026-08-04T15:28:50.578436+00:00",
+  "qualifying_tickers": [
+    "AMIX",
+    "ADGM",
+    "TNMG",
+    "ENSC",
+    "MOVE",
+    "ELPW",
+    "XGN",
+    "VGAS",
+    "DXST"
+  ],
+  "trading_date": "2026-08-04"
+}
