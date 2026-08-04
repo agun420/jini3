@@ -5,7 +5,7 @@
   "alerts": [],
   "data_mode": "published",
   "environment": "paper",
-  "generated_at": "2026-08-04T16:52:33.999729Z",
+  "generated_at": "2026-08-04T18:10:16.048936Z",
   "orders": [],
   "performance": {
     "attributions": [],
@@ -14,18 +14,18 @@
     "summary": {
       "average_entry_slippage_bps": null,
       "average_r_multiple": null,
-      "average_return_pct": "2.087662767952763957523728455",
+      "average_return_pct": "-3.241207681640476891757078294",
       "breakeven_trade_count": 0,
       "expectancy": null,
       "fees": null,
       "gross_pnl": null,
-      "losing_trade_count": 2,
+      "losing_trade_count": 4,
       "maximum_drawdown": null,
       "net_pnl": null,
       "profit_factor": null,
       "session_count": 1,
-      "trade_count": 3,
-      "win_rate": 0.33333333333333337,
+      "trade_count": 5,
+      "win_rate": 0.2,
       "winning_trade_count": 1
     },
     "trades": []
@@ -81,7 +81,7 @@
       "catalyst_source": "",
       "conviction_score": 0,
       "entry_price": 0.8742,
-      "execution_status": "pending",
+      "execution_status": "loss",
       "rank": 2,
       "status": "scanner_signal",
       "stop_price": 0.814401,
@@ -89,14 +89,14 @@
       "technical_grade": "",
       "thesis": "no evaluator ran for this signal (mechanical scanner mode)",
       "ticker": "ADGM",
-      "updated_at": "2026-08-04T16:52:32.500895Z"
+      "updated_at": "2026-08-04T16:55:00Z"
     },
     {
       "catalyst": "",
       "catalyst_source": "",
       "conviction_score": 0,
       "entry_price": 0.5762,
-      "execution_status": "pending",
+      "execution_status": "loss",
       "rank": 3,
       "status": "scanner_signal",
       "stop_price": 0.486148,
@@ -104,7 +104,7 @@
       "technical_grade": "",
       "thesis": "no evaluator ran for this signal (mechanical scanner mode)",
       "ticker": "TNMG",
-      "updated_at": "2026-08-04T16:52:32.500895Z"
+      "updated_at": "2026-08-04T18:05:00Z"
     },
     {
       "catalyst": "",
