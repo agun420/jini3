@@ -17,6 +17,7 @@ on:
 
 permissions:
   contents: write
+  actions: write
 
 concurrency:
   group: daybreak-scanner-state
@@ -119,10 +120,12 @@ jobs:
 
       - name: Commit and push dashboard.json to main
         if: steps.window.outputs.in_window == 'true' && steps.state.outputs.exists == 'true'
+        id: dashboard_commit
         run: |
           git add dashboard/data/dashboard.json
           if git diff --cached --quiet; then
             echo "daybreak-scanner: no dashboard changes"
+            echo "changed=false" >> "$GITHUB_OUTPUT"
           else
             git commit -q -m "daybreak-scanner: publish $(date -u +%Y-%m-%dT%H:%M:%SZ) outcomes"
             for attempt in 1 2 3; do
@@ -130,4 +133,14 @@ jobs:
               git fetch origin main
               git rebase origin/main
             done
+            echo "changed=true" >> "$GITHUB_OUTPUT"
           fi
+
+      - name: Trigger dashboard redeploy
+        if: steps.window.outputs.in_window == 'true' && steps.dashboard_commit.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        # A push made with the default GITHUB_TOKEN doesn't fire other workflows'
+        # `push` triggers (GitHub's loop-prevention), so deploy-dashboard.yml's
+        # push-to-main trigger never sees the commit above. Dispatch it explicitly.
+        run: gh workflow run deploy-dashboard.yml --ref main
