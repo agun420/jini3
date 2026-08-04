@@ -193,6 +193,8 @@
         "entry_price": { "$ref": "#/$defs/nullableNonNegative" },
         "stop_price": { "$ref": "#/$defs/nullableNonNegative" },
         "target_price": { "$ref": "#/$defs/nullableNonNegative" },
+        "target_price_2": { "$ref": "#/$defs/nullableNonNegative" },
+        "target_hit": { "enum": ["target_1", "target_2", null] },
         "quantity": { "$ref": "#/$defs/nullableNonNegative" },
         "modeled_risk": { "$ref": "#/$defs/nullableNonNegative" },
         "risk_flags": { "type": "array", "items": { "type": "string" } },

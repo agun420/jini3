@@ -18,7 +18,8 @@ def _write_signals(scanner_dir: Path, trading_date: str) -> None:
                         "entry_price": "20.000000",
                         "atr_value": "2.000000",
                         "stop_price": "18.000000",
-                        "target_price": "24.000000",
+                        "target_price_1": "24.000000",
+                        "target_price_2": "26.000000",
                         "percent_change": "9.0",
                         "relative_volume": "6.0",
                     },
@@ -29,7 +30,8 @@ def _write_signals(scanner_dir: Path, trading_date: str) -> None:
                         "entry_price": "10.000000",
                         "atr_value": "1.000000",
                         "stop_price": "9.000000",
-                        "target_price": "12.000000",
+                        "target_price_1": "12.000000",
+                        "target_price_2": "13.000000",
                         "percent_change": "15.0",
                         "relative_volume": None,
                     },
@@ -52,6 +54,7 @@ def _write_outcomes(outcomes_dir: Path, trading_date: str) -> None:
                         "trading_date": trading_date,
                         "resolved_at": f"{trading_date}T14:00:00+00:00",
                         "outcome": "win",
+                        "target_hit": "target_1",
                         "exit_price": "24.000000",
                         "return_pct": "20",
                     }
@@ -68,7 +71,11 @@ def _write_outcomes(outcomes_dir: Path, trading_date: str) -> None:
                 "wins": 1,
                 "losses": 0,
                 "expired": 0,
+                "wins_target_1": 1,
+                "wins_target_2": 0,
                 "win_rate_pct": "100",
+                "target_1_hit_rate_pct": "100",
+                "target_2_hit_rate_pct": "0",
                 "average_return_pct": "20",
             }
         ),
@@ -97,13 +104,21 @@ def test_build_scanner_dashboard_snapshot_maps_signals_and_scorecard(tmp_path: P
     aaaa = next(item for item in snapshot["signals"] if item["ticker"] == "AAAA")
     assert aaaa["execution_status"] == "win"
     assert aaaa["status"] == "scanner_signal"
+    assert aaaa["target_price"] == 24.0
+    assert aaaa["target_price_2"] == 26.0
+    assert aaaa["target_hit"] == "target_1"
     bbbb = next(item for item in snapshot["signals"] if item["ticker"] == "BBBB")
     assert bbbb["execution_status"] == "pending"
+    assert bbbb["target_hit"] is None
 
     summary = snapshot["performance"]["summary"]
     assert summary["trade_count"] == 1
     assert summary["winning_trade_count"] == 1
     assert summary["win_rate"] == 1.0
+    assert summary["wins_target_1"] == 1
+    assert summary["wins_target_2"] == 0
+    assert summary["target_1_hit_rate"] == 1.0
+    assert summary["target_2_hit_rate"] == 0.0
     assert summary["profit_factor"] is None
     assert summary["net_pnl"] is None
 
@@ -118,6 +133,8 @@ def test_build_scanner_dashboard_snapshot_with_no_data_yet(tmp_path: Path) -> No
     assert snapshot["signals"] == []
     assert snapshot["performance"]["summary"]["trade_count"] == 0
     assert snapshot["performance"]["summary"]["win_rate"] is None
+    assert snapshot["performance"]["summary"]["target_1_hit_rate"] is None
+    assert snapshot["performance"]["summary"]["target_2_hit_rate"] is None
     assert snapshot["positions"] == []
     assert snapshot["orders"] == []
 

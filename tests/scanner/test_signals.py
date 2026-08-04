@@ -48,7 +48,8 @@ def test_build_signals_computes_atr_based_stop_and_target():
     assert signal.entry_price == Decimal("20.00")
     assert signal.atr_value == Decimal("2")
     assert signal.stop_price == Decimal("18.00")
-    assert signal.target_price == Decimal("24.00")
+    assert signal.target_price_1 == Decimal("24.00")
+    assert signal.target_price_2 == Decimal("26.00")
     assert signal.trading_date == date(2026, 8, 3)
 
 

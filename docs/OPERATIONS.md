@@ -55,21 +55,24 @@ journalctl -u daybreak-recorder.service -f
 `daybreak-scanner scan` reads Alpaca's market-data screener (gainers, current
 per-ticker volume, historical bars) and writes two dated files: `candidates-
 YYYY-MM-DD.json` (every scanned ticker with its qualification verdict) and
-`signals-YYYY-MM-DD.json` (an ATR-based entry/stop/target for every qualifying
-candidate — stop = entry - 1x ATR, target = entry + 2x ATR, the same fixed rule
-`daybreak_risk` always uses, computed here straight from real historical bars with
-no evaluator or float-data dependency). It needs only `APCA_API_KEY_ID`/
+`signals-YYYY-MM-DD.json` (an ATR-based entry/stop/target_1/target_2 for every
+qualifying candidate — stop = entry - 1x ATR, target_1 = entry + 2x ATR, the
+same fixed rule `daybreak_risk` always uses, computed here straight from real
+historical bars with no evaluator or float-data dependency. `target_2` = entry
++ 3x ATR has no daybreak_risk equivalent — it's a scanner-only stretch target
+purely for outcome tracking below). It needs only `APCA_API_KEY_ID`/
 `APCA_API_SECRET_KEY` — the same credentials as paper trading, against Alpaca's
 separate `data.alpaca.markets` host.
 
 `daybreak-scanner check-outcomes` resolves each day's signals against real
-subsequent minute-bar prices: whichever of the stop or target is touched first
-(chronologically) decides win/loss; a signal that touches neither by the 16:00
-America/New_York session close is finalized as `expired` at the closing price.
-It writes `outcomes-YYYY-MM-DD.json` and updates a cumulative `scorecard.json`
-(total signals, win rate, average return) recomputed from every outcomes file on
-disk. It's idempotent — a signal already resolved in `outcomes-YYYY-MM-DD.json`
-is never re-fetched or re-decided.
+subsequent minute-bar prices: whichever of the stop, target_1, or target_2 is
+touched first (chronologically) decides win/loss and, for a win, which target
+resolved it; a signal that touches neither by the 16:00 America/New_York
+session close is finalized as `expired` at the closing price. It writes
+`outcomes-YYYY-MM-DD.json` and updates a cumulative `scorecard.json` (total
+signals, win rate, target_1/target_2 hit rates, average return) recomputed
+from every outcomes file on disk. It's idempotent — a signal already resolved
+in `outcomes-YYYY-MM-DD.json` is never re-fetched or re-decided.
 
 ```bash
 sudo cp deploy/systemd/daybreak-scanner.service /etc/systemd/system/

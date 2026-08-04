@@ -66,7 +66,14 @@ def _map_signal(rank: int, signal: Signal, outcome: SignalOutcome | None) -> dic
         "thesis": "no evaluator ran for this signal (mechanical scanner mode)",
         "entry_price": float(signal.entry_price),
         "stop_price": float(signal.stop_price),
-        "target_price": float(signal.target_price),
+        # "target_price" is the dashboard schema's one pre-existing target
+        # field, shared with daybreak/dashboard_snapshot.py's real evaluator
+        # signals (daybreak_risk only ever sizes one target) -- kept pointed
+        # at target_price_1 so that shared field stays meaningful for both
+        # exporters. target_price_2 is new and scanner-only.
+        "target_price": float(signal.target_price_1),
+        "target_price_2": float(signal.target_price_2),
+        "target_hit": outcome.target_hit if outcome is not None else None,
         "updated_at": _iso(outcome.resolved_at if outcome is not None else signal.generated_at),
     }
 
@@ -114,6 +121,14 @@ def build_scanner_dashboard_snapshot(
 
     win_rate_pct = scorecard.get("win_rate_pct")
     win_rate = float(win_rate_pct) / 100 if win_rate_pct is not None else None
+    target_1_hit_rate_pct = scorecard.get("target_1_hit_rate_pct")
+    target_1_hit_rate = (
+        float(target_1_hit_rate_pct) / 100 if target_1_hit_rate_pct is not None else None
+    )
+    target_2_hit_rate_pct = scorecard.get("target_2_hit_rate_pct")
+    target_2_hit_rate = (
+        float(target_2_hit_rate_pct) / 100 if target_2_hit_rate_pct is not None else None
+    )
 
     trading_date = latest_trading_date or now.date()
     ranked = sorted(latest_signals, key=lambda item: item.percent_change, reverse=True)
@@ -158,6 +173,13 @@ def build_scanner_dashboard_snapshot(
                 "losing_trade_count": scorecard.get("losses", 0),
                 "breakeven_trade_count": scorecard.get("expired", 0),
                 "win_rate": win_rate,
+                # How far a win actually ran, split by which target resolved
+                # it -- these two always sum to win_rate exactly (see
+                # daybreak_scanner.scorecard.build_scorecard).
+                "wins_target_1": scorecard.get("wins_target_1", 0),
+                "wins_target_2": scorecard.get("wins_target_2", 0),
+                "target_1_hit_rate": target_1_hit_rate,
+                "target_2_hit_rate": target_2_hit_rate,
                 # Every one of these is a real UI card (app.mjs reads them with
                 # `=== null` checks, not `?? default`, so a *missing* key
                 # throws rather than showing "--"): genuinely null here

@@ -9,6 +9,7 @@ import {
   formatSignedMoney,
   freshnessState,
   humanize,
+  isScannerMode,
   normalizeSnapshot,
   outcomeCounts,
   qualificationProgress,
@@ -204,6 +205,11 @@ function renderShell() {
     restore.hidden = true;
   }
   setText("footer-source", `Source: ${state.sourceLabel}`);
+
+  const scannerMode = isScannerMode(snapshot);
+  byId("scanner-mode-banner").hidden = !scannerMode;
+  byId("overview-primary-grid").hidden = scannerMode;
+  byId("signal-table").dataset.scannerMode = String(scannerMode);
 }
 
 function updateFreshness() {
@@ -261,71 +267,114 @@ function renderOverview() {
   byId("status-strip").children[1].dataset.tone = system.market_status.includes("closed") ? "neutral" : "positive";
   byId("status-strip").children[2].dataset.tone = safety.kill_switch_active ? "danger" : safety.entries_enabled ? "positive" : "warning";
 
-  const dailyTone = toneForNumber(account.daily_pnl);
-  renderKpis(byId("overview-kpis"), [
-    {
-      label: "Today’s paper P&L",
-      value: formatSignedMoney(account.daily_pnl, currency),
-      footer: "Realized",
-      footerValue: formatSignedMoney(account.realized_pnl, currency),
-      icon: "$",
-      tone: dailyTone,
-      valueClass: dailyTone,
-    },
-    {
-      label: "Paper equity",
-      value: formatMoney(account.equity, currency),
-      footer: "Session start",
-      footerValue: formatMoney(account.session_start_equity, currency),
-      icon: "◫",
-      tone: "blue",
-    },
-    {
-      label: "Managed positions",
-      value: formatNumber(state.snapshot.positions.length),
-      footer: "Gross exposure",
-      footerValue: formatMoney(account.gross_exposure, currency, { compact: true }),
-      icon: "↗",
-      tone: safety.all_positions_flat ? "positive" : "warning",
-    },
-    {
-      label: "Orders filled",
-      value: `${formatNumber(session.orders_filled)} / ${formatNumber(session.orders_submitted)}`,
-      footer: "Approved setups",
-      footerValue: formatNumber(session.approved_setup_count),
-      icon: "✓",
-      tone: session.unresolved_reconciliations ? "warning" : "positive",
-    },
-  ]);
+  const scannerMode = isScannerMode(state.snapshot);
+  if (scannerMode) {
+    // Scanner mode never sizes a real dollar position, so paper P&L/equity/
+    // positions/orders/risk are all meaningless here -- lead with what the
+    // engine actually produced: setups found and how they've resolved so far.
+    const summary = state.snapshot.performance.summary;
+    const decided = summary.winning_trade_count + summary.losing_trade_count;
+    renderKpis(byId("overview-kpis"), [
+      {
+        label: "Approved setups",
+        value: formatNumber(session.approved_setup_count),
+        footer: "Signals today",
+        footerValue: formatNumber(state.snapshot.signals.length),
+        icon: "✓",
+        tone: "blue",
+      },
+      {
+        label: "Win rate",
+        value: formatPercent(summary.win_rate),
+        footer: "Wins / decided",
+        footerValue: `${formatNumber(summary.winning_trade_count)} / ${formatNumber(decided)}`,
+        icon: "◎",
+        tone: "positive",
+      },
+      {
+        label: "Target 1 hit rate",
+        value: formatPercent(summary.target_1_hit_rate),
+        footer: "2x ATR",
+        footerValue: formatNumber(summary.wins_target_1),
+        icon: "→",
+        tone: "positive",
+      },
+      {
+        label: "Target 2 hit rate",
+        value: formatPercent(summary.target_2_hit_rate),
+        footer: "3x ATR stretch",
+        footerValue: formatNumber(summary.wins_target_2),
+        icon: "⇒",
+        tone: "positive",
+      },
+    ]);
+  } else {
+    const dailyTone = toneForNumber(account.daily_pnl);
+    renderKpis(byId("overview-kpis"), [
+      {
+        label: "Today’s paper P&L",
+        value: formatSignedMoney(account.daily_pnl, currency),
+        footer: "Realized",
+        footerValue: formatSignedMoney(account.realized_pnl, currency),
+        icon: "$",
+        tone: dailyTone,
+        valueClass: dailyTone,
+      },
+      {
+        label: "Paper equity",
+        value: formatMoney(account.equity, currency),
+        footer: "Session start",
+        footerValue: formatMoney(account.session_start_equity, currency),
+        icon: "◫",
+        tone: "blue",
+      },
+      {
+        label: "Managed positions",
+        value: formatNumber(state.snapshot.positions.length),
+        footer: "Gross exposure",
+        footerValue: formatMoney(account.gross_exposure, currency, { compact: true }),
+        icon: "↗",
+        tone: safety.all_positions_flat ? "positive" : "warning",
+      },
+      {
+        label: "Orders filled",
+        value: `${formatNumber(session.orders_filled)} / ${formatNumber(session.orders_submitted)}`,
+        footer: "Approved setups",
+        footerValue: formatNumber(session.approved_setup_count),
+        icon: "✓",
+        tone: session.unresolved_reconciliations ? "warning" : "positive",
+      },
+    ]);
 
-  const curve = state.snapshot.performance.equity_curve;
-  renderLineChart(byId("equity-chart"), curve, {
-    valueKey: "equity",
-    labelKey: "timestamp",
-    formatter: (value) => formatMoney(value, currency, { compact: true }),
-    title: "Paper equity",
-  });
-  const firstEquity = curve.find((point) => point.equity !== null)?.equity ?? null;
-  const lastEquity = [...curve].reverse().find((point) => point.equity !== null)?.equity ?? null;
-  const equityChange = firstEquity !== null && lastEquity !== null ? lastEquity - firstEquity : null;
-  setText("equity-period-label", `${formatNumber(curve.length)} observations`);
-  setText("equity-change", formatSignedMoney(equityChange, currency));
-  byId("equity-change").className = toneForNumber(equityChange);
-  renderEquityFooter(curve, currency);
+    const curve = state.snapshot.performance.equity_curve;
+    renderLineChart(byId("equity-chart"), curve, {
+      valueKey: "equity",
+      labelKey: "timestamp",
+      formatter: (value) => formatMoney(value, currency, { compact: true }),
+      title: "Paper equity",
+    });
+    const firstEquity = curve.find((point) => point.equity !== null)?.equity ?? null;
+    const lastEquity = [...curve].reverse().find((point) => point.equity !== null)?.equity ?? null;
+    const equityChange = firstEquity !== null && lastEquity !== null ? lastEquity - firstEquity : null;
+    setText("equity-period-label", `${formatNumber(curve.length)} observations`);
+    setText("equity-change", formatSignedMoney(equityChange, currency));
+    byId("equity-change").className = toneForNumber(equityChange);
+    renderEquityFooter(curve, currency);
 
-  const utilization = riskUtilization(account);
-  const riskPercent = utilization === null ? null : utilization * 100;
-  byId("risk-gauge").style.setProperty("--value", `${clamp(utilization ?? 0) * 360}deg`);
-  setText("risk-gauge-value", riskPercent === null ? "—" : `${riskPercent.toFixed(0)}%`);
-  const riskTone = utilization === null ? "neutral" : utilization >= 0.85 ? "danger" : utilization >= 0.65 ? "warning" : "positive";
-  setText("risk-state-pill", utilization === null ? "Unavailable" : utilization >= 0.85 ? "Near limit" : utilization >= 0.65 ? "Elevated" : "Within limit");
-  setTone(byId("risk-state-pill"), riskTone);
-  renderMetricList(byId("risk-metrics"), [
-    ["Open modeled risk", formatMoney(account.open_risk, currency)],
-    ["Risk ceiling", formatMoney(account.open_risk_limit, currency)],
-    ["Buying power", formatMoney(account.buying_power, currency)],
-    ["Hard daily loss", formatMoney(account.hard_daily_loss_limit, currency)],
-  ]);
+    const utilization = riskUtilization(account);
+    const riskPercent = utilization === null ? null : utilization * 100;
+    byId("risk-gauge").style.setProperty("--value", `${clamp(utilization ?? 0) * 360}deg`);
+    setText("risk-gauge-value", riskPercent === null ? "—" : `${riskPercent.toFixed(0)}%`);
+    const riskTone = utilization === null ? "neutral" : utilization >= 0.85 ? "danger" : utilization >= 0.65 ? "warning" : "positive";
+    setText("risk-state-pill", utilization === null ? "Unavailable" : utilization >= 0.85 ? "Near limit" : utilization >= 0.65 ? "Elevated" : "Within limit");
+    setTone(byId("risk-state-pill"), riskTone);
+    renderMetricList(byId("risk-metrics"), [
+      ["Open modeled risk", formatMoney(account.open_risk, currency)],
+      ["Risk ceiling", formatMoney(account.open_risk_limit, currency)],
+      ["Buying power", formatMoney(account.buying_power, currency)],
+      ["Hard daily loss", formatMoney(account.hard_daily_loss_limit, currency)],
+    ]);
+  }
 
   renderSetupBoard();
   renderCompactServices();
@@ -463,19 +512,37 @@ function renderAlertPreview() {
 
 function renderTrading() {
   const { account, positions, orders, signals } = state.snapshot;
-  const approved = signals.filter((item) => item.status === "approved").length;
-  const qualified = signals.filter((item) => item.status === "qualified").length;
-  const excluded = signals.filter((item) => item.status === "excluded").length;
-  const averageScore = signals.length
-    ? signals.reduce((sum, item) => sum + item.conviction_score, 0) / signals.length
-    : null;
-  renderKpis(byId("trading-kpis"), [
-    { label: "Approved", value: approved, footer: "Top-three cap", footerValue: "Max 3", icon: "✓", tone: "positive" },
-    { label: "Qualified", value: qualified, footer: "Below cutoff", footerValue: "Tracked", icon: "＋", tone: "warning" },
-    { label: "Excluded", value: excluded, footer: "Failed hard gate", footerValue: "No trade", icon: "×", tone: excluded ? "warning" : "positive" },
-    { label: "Average score", value: averageScore === null ? "—" : averageScore.toFixed(1), footer: "Published setups", footerValue: signals.length, icon: "◎", tone: "blue" },
-    { label: "Reserved risk", value: formatMoney(account.open_risk, account.currency), footer: "Risk limit", footerValue: formatMoney(account.open_risk_limit, account.currency), icon: "◇", tone: "warning" },
-  ]);
+  if (isScannerMode(state.snapshot)) {
+    // "Approved/Qualified/Excluded" is the full evaluator's status taxonomy --
+    // every scanner signal is "scanner_signal", never any of those, so these
+    // always read 0 despite the ledger below being populated. Show the
+    // execution-outcome breakdown scanner mode actually produces instead.
+    const wins = signals.filter((item) => item.execution_status === "win").length;
+    const losses = signals.filter((item) => item.execution_status === "loss").length;
+    const expired = signals.filter((item) => item.execution_status === "expired").length;
+    const pending = signals.filter((item) => item.execution_status === "pending").length;
+    renderKpis(byId("trading-kpis"), [
+      { label: "Signals today", value: signals.length, footer: "Approved setups", footerValue: state.snapshot.session.approved_setup_count, icon: "◎", tone: "blue" },
+      { label: "Win", value: wins, footer: "Hit a target", footerValue: "Target 1 or 2", icon: "✓", tone: "positive" },
+      { label: "Loss", value: losses, footer: "Hit stop", footerValue: "1x ATR", icon: "×", tone: losses ? "warning" : "positive" },
+      { label: "Expired", value: expired, footer: "Neither touched", footerValue: "By session close", icon: "◇", tone: "neutral" },
+      { label: "Pending", value: pending, footer: "Still tracking", footerValue: "check-outcomes", icon: "↻", tone: pending ? "warning" : "positive" },
+    ]);
+  } else {
+    const approved = signals.filter((item) => item.status === "approved").length;
+    const qualified = signals.filter((item) => item.status === "qualified").length;
+    const excluded = signals.filter((item) => item.status === "excluded").length;
+    const averageScore = signals.length
+      ? signals.reduce((sum, item) => sum + item.conviction_score, 0) / signals.length
+      : null;
+    renderKpis(byId("trading-kpis"), [
+      { label: "Approved", value: approved, footer: "Top-three cap", footerValue: "Max 3", icon: "✓", tone: "positive" },
+      { label: "Qualified", value: qualified, footer: "Below cutoff", footerValue: "Tracked", icon: "＋", tone: "warning" },
+      { label: "Excluded", value: excluded, footer: "Failed hard gate", footerValue: "No trade", icon: "×", tone: excluded ? "warning" : "positive" },
+      { label: "Average score", value: averageScore === null ? "—" : averageScore.toFixed(1), footer: "Published setups", footerValue: signals.length, icon: "◎", tone: "blue" },
+      { label: "Reserved risk", value: formatMoney(account.open_risk, account.currency), footer: "Risk limit", footerValue: formatMoney(account.open_risk_limit, account.currency), icon: "◇", tone: "warning" },
+    ]);
+  }
   renderSignalTable();
 
   const positionPnl = positions.reduce((sum, item) => sum + (item.unrealized_pnl || 0), 0);
@@ -531,13 +598,15 @@ function renderSignalTable() {
     actionCell.append(action);
     row.append(
       tickerCell,
-      cellWithPill(humanize(signal.status), statusTone(signal.status)),
-      element("td", { className: "table-score", text: Math.round(signal.conviction_score) }),
-      element("td", { text: signal.technical_grade }),
+      cellWithPill(humanize(signal.status), statusTone(signal.status), "col-evaluator-only"),
+      cellWithPill(humanize(signal.execution_status), statusTone(signal.execution_status)),
+      element("td", { className: "table-score col-evaluator-only", text: Math.round(signal.conviction_score) }),
+      element("td", { className: "col-evaluator-only", text: signal.technical_grade }),
       element("td", { text: formatPrice(signal.entry_price, state.snapshot.account.currency) }),
       element("td", { text: formatPrice(signal.stop_price, state.snapshot.account.currency) }),
       element("td", { text: formatPrice(signal.target_price, state.snapshot.account.currency) }),
-      element("td", { text: formatMoney(signal.modeled_risk, state.snapshot.account.currency) }),
+      element("td", { text: formatPrice(signal.target_price_2, state.snapshot.account.currency) }),
+      element("td", { className: "col-evaluator-only", text: formatMoney(signal.modeled_risk, state.snapshot.account.currency) }),
       actionCell,
     );
     body.append(row);
@@ -664,6 +733,8 @@ function renderOutcomeDonut() {
   }
   renderMetricList(byId("performance-metric-list"), [
     ["Session count", formatNumber(summary.session_count)],
+    ["Target 1 hit rate", `${formatPercent(summary.target_1_hit_rate)} (${formatNumber(summary.wins_target_1)})`],
+    ["Target 2 hit rate", `${formatPercent(summary.target_2_hit_rate)} (${formatNumber(summary.wins_target_2)})`],
     ["Fees", formatMoney(summary.fees, state.snapshot.account.currency)],
     ["Average slippage", summary.average_entry_slippage_bps === null ? "—" : `${summary.average_entry_slippage_bps.toFixed(1)} bps`],
   ]);
@@ -1006,13 +1077,26 @@ function openSignalDialog(signal) {
   titleRow.append(element("span", { className: "rank-badge", text: signal.rank ? `#${signal.rank}` : "—" }), element("h2", { id: "dialog-title", text: signal.ticker }), element("span", { className: `pill pill-${statusTone(signal.status)}`, text: humanize(signal.status) }));
   body.append(titleRow);
 
+  const scannerMode = isScannerMode(state.snapshot);
   const scoreSection = element("section", { className: "dialog-section" });
-  scoreSection.append(element("h3", { text: "Decision summary" }), element("p", { text: `${signal.conviction_score.toFixed(0)} conviction · ${signal.technical_grade} technical grade · ${humanize(signal.execution_status)}` }));
+  scoreSection.append(
+    element("h3", { text: "Decision summary" }),
+    element("p", {
+      text: scannerMode
+        ? `Mechanical scanner signal · ${humanize(signal.execution_status)}`
+        : `${signal.conviction_score.toFixed(0)} conviction · ${signal.technical_grade} technical grade · ${humanize(signal.execution_status)}`,
+    }),
+  );
   body.append(scoreSection);
 
-  const catalystSection = element("section", { className: "dialog-section" });
-  catalystSection.append(element("h3", { text: `${signal.catalyst_source} catalyst` }), element("p", { text: signal.catalyst }));
-  body.append(catalystSection);
+  // No evaluator ran for a scanner signal, so catalyst_source/catalyst are
+  // always the same "Unavailable"/placeholder text -- the thesis section
+  // right below already says so plainly, making this one redundant noise.
+  if (!scannerMode) {
+    const catalystSection = element("section", { className: "dialog-section" });
+    catalystSection.append(element("h3", { text: `${signal.catalyst_source} catalyst` }), element("p", { text: signal.catalyst }));
+    body.append(catalystSection);
+  }
 
   const thesisSection = element("section", { className: "dialog-section" });
   thesisSection.append(element("h3", { text: "Master thesis" }), element("p", { text: signal.thesis }));
@@ -1021,11 +1105,14 @@ function openSignalDialog(signal) {
   const planSection = element("section", { className: "dialog-section" });
   planSection.append(element("h3", { text: "Deterministic trade plan" }));
   const plan = element("div", { className: "trade-plan-grid" });
+  const targetHitLabel = { target_1: "Hit target 1", target_2: "Hit target 2" }[signal.target_hit] || "—";
   for (const [label, value] of [
     ["Entry", formatPrice(signal.entry_price, state.snapshot.account.currency)],
     ["Stop", formatPrice(signal.stop_price, state.snapshot.account.currency)],
-    ["Target", formatPrice(signal.target_price, state.snapshot.account.currency)],
+    ["Target 1", formatPrice(signal.target_price, state.snapshot.account.currency)],
+    ["Target 2", formatPrice(signal.target_price_2, state.snapshot.account.currency)],
     ["Quantity", formatNumber(signal.quantity)],
+    ["Target reached", targetHitLabel],
   ]) {
     const item = element("div");
     item.append(element("span", { text: label }), element("strong", { text: value }));
@@ -1034,19 +1121,24 @@ function openSignalDialog(signal) {
   planSection.append(plan);
   body.append(planSection);
 
-  const flagsSection = element("section", { className: "dialog-section" });
-  flagsSection.append(element("h3", { text: "Risk flags" }));
-  const tags = element("div", { className: "tag-list" });
-  const flags = signal.risk_flags.length ? signal.risk_flags : ["No published risk flags"];
-  for (const flag of flags) tags.append(element("span", { className: "tag", text: humanize(flag) }));
-  flagsSection.append(tags);
-  body.append(flagsSection);
+  // No evaluator ran, so risk_flags is always empty for a scanner signal --
+  // rather than a section that only ever reads "No published risk flags",
+  // skip it entirely.
+  if (!scannerMode || signal.risk_flags.length) {
+    const flagsSection = element("section", { className: "dialog-section" });
+    flagsSection.append(element("h3", { text: "Risk flags" }));
+    const tags = element("div", { className: "tag-list" });
+    const flags = signal.risk_flags.length ? signal.risk_flags : ["No published risk flags"];
+    for (const flag of flags) tags.append(element("span", { className: "tag", text: humanize(flag) }));
+    flagsSection.append(tags);
+    body.append(flagsSection);
+  }
   content.append(body);
   byId("signal-dialog").showModal();
 }
 
-function cellWithPill(text, tone) {
-  const cell = element("td");
+function cellWithPill(text, tone, className = "") {
+  const cell = element("td", { className });
   cell.append(element("span", { className: `pill pill-${tone}`, text }));
   return cell;
 }

@@ -65,10 +65,16 @@ class Signal(StrictFrozenModel):
     """A mechanical entry/stop/target for one qualifying candidate.
 
     Uses Project Daybreak's own fixed risk rule (stop = entry - 1x ATR,
-    target = entry + 2x ATR, from daybreak_risk's TradeParameters multiples)
-    computed straight from real historical bars -- no float data, no LLM
-    evaluator, no conviction score. This is a mechanical backtest/paper
+    target_price_1 = entry + 2x ATR, from daybreak_risk's TradeParameters
+    multiples) computed straight from real historical bars -- no float data,
+    no LLM evaluator, no conviction score. This is a mechanical backtest/paper
     signal, not the audited system's own risk-sized, catalyst-scored setup.
+
+    `target_price_2` (entry + 3x ATR) is a scanner-only stretch target, purely
+    informational: it exists so `daybreak_scanner.outcomes`/`scorecard` can
+    report how often a signal keeps running past its first target, not because
+    daybreak_risk defines a second target -- it doesn't, its own fixed shape
+    is exactly the 1x/2x mirrored above.
     """
 
     ticker: CanonicalTicker
@@ -77,7 +83,8 @@ class Signal(StrictFrozenModel):
     entry_price: Money
     atr_value: Money
     stop_price: Money
-    target_price: Money
+    target_price_1: Money
+    target_price_2: Money
     percent_change: Decimal
     relative_volume: Decimal | None = None
     forecast_trend_pct: Decimal | None = None
@@ -109,12 +116,17 @@ class MinuteBar(StrictFrozenModel):
 
 
 class SignalOutcome(StrictFrozenModel):
-    """The realized result of one Signal, from real subsequent price data."""
+    """The realized result of one Signal, from real subsequent price data.
+
+    `target_hit` records which target level actually resolved a "win" --
+    None for a loss or an expiry, since neither touched a target at all.
+    """
 
     ticker: CanonicalTicker
     trading_date: date
     resolved_at: datetime
     outcome: Literal["win", "loss", "expired"]
+    target_hit: Literal["target_1", "target_2"] | None = None
     exit_price: Money
     return_pct: Decimal
 

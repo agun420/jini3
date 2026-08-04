@@ -584,6 +584,11 @@ main {
   background: var(--danger-soft);
 }
 
+.source-banner[data-mode="scanner"] {
+  border-color: rgba(106, 169, 255, 0.22);
+  background: var(--blue-soft);
+}
+
 .source-banner-icon {
   display: grid;
   width: 24px;
@@ -1452,6 +1457,14 @@ main {
 .table-scroll {
   overflow-x: auto;
   border-top: 1px solid var(--border);
+}
+
+/* Scanner-mode signals never carry a real evaluator decision, conviction
+   score, technical grade, or sized risk -- rather than showing a wall of
+   "0"/"--" for columns that never applied, hide them entirely and let the
+   real fields (Outcome, Target 1, Target 2) carry the table. */
+#signal-table[data-scanner-mode="true"] .col-evaluator-only {
+  display: none;
 }
 
 table {
