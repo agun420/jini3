@@ -98,6 +98,44 @@ def test_scan_writes_dated_candidates_and_signals_files(tmp_path: Path, monkeypa
     assert Decimal(signal["target_price_2"]) == Decimal("16")
 
 
+def test_scan_refuses_to_overwrite_an_existing_signals_file(
+    tmp_path: Path, monkeypatch, capsys
+) -> None:
+    monkeypatch.setenv("APCA_API_KEY_ID", "key")
+    monkeypatch.setenv("APCA_API_SECRET_KEY", "secret")
+    monkeypatch.setattr("daybreak_scanner.cli.AlpacaMarketDataClient", _FakeClient)
+
+    assert main(["scan", "--output-dir", str(tmp_path)]) == 0
+    signals_file = next(tmp_path.glob("signals-*.json"))
+    original = signals_file.read_text(encoding="utf-8")
+
+    class _ShouldNotBeCalledClient(_FakeClient):
+        def get_gainers(self, *, top: int):
+            raise AssertionError("a refused re-scan must not fetch anything")
+
+    monkeypatch.setattr("daybreak_scanner.cli.AlpacaMarketDataClient", _ShouldNotBeCalledClient)
+
+    assert main(["scan", "--output-dir", str(tmp_path)]) == 5
+    err = capsys.readouterr().err
+    assert "already exists" in err
+    assert "--replace" in err
+    assert signals_file.read_text(encoding="utf-8") == original
+
+
+def test_scan_replace_flag_overwrites_an_existing_signals_file(tmp_path: Path, monkeypatch) -> None:
+    monkeypatch.setenv("APCA_API_KEY_ID", "key")
+    monkeypatch.setenv("APCA_API_SECRET_KEY", "secret")
+    monkeypatch.setattr("daybreak_scanner.cli.AlpacaMarketDataClient", _FakeClient)
+
+    assert main(["scan", "--output-dir", str(tmp_path)]) == 0
+    assert main(["scan", "--output-dir", str(tmp_path), "--replace"]) == 0
+
+    signals_file = next(tmp_path.glob("signals-*.json"))
+    payload = json.loads(signals_file.read_text(encoding="utf-8"))
+    assert len(payload["signals"]) == 1
+    assert payload["signals"][0]["ticker"] == "AAAA"
+
+
 def test_scan_degrades_gracefully_when_historical_bars_are_unavailable(
     tmp_path: Path, monkeypatch, capsys
 ) -> None:
@@ -302,6 +340,102 @@ def test_check_outcomes_is_idempotent_and_skips_already_resolved_signals(
     payload = json.loads((outcomes_dir / "outcomes-2026-08-03.json").read_text(encoding="utf-8"))
     assert len(payload["outcomes"]) == 1
     assert payload["outcomes"][0]["outcome"] == "win"
+
+
+def test_check_outcomes_drops_orphaned_outcomes_not_in_current_signals(
+    tmp_path: Path, monkeypatch
+) -> None:
+    # Simulates the real Aug 2026 incident: a `scan --replace` overwrote
+    # signals-2026-08-03.json after BBBB's outcome had already been resolved
+    # against the old signal set. BBBB no longer exists as a signal, so its
+    # stale "loss" must not keep counting toward the scorecard.
+    monkeypatch.setenv("APCA_API_KEY_ID", "key")
+    monkeypatch.setenv("APCA_API_SECRET_KEY", "secret")
+    signals_dir = tmp_path / "signals"
+    outcomes_dir = tmp_path / "outcomes"
+    signals_dir.mkdir()
+    outcomes_dir.mkdir()
+
+    (signals_dir / "signals-2026-08-03.json").write_text(
+        json.dumps(
+            {
+                "generated_at": "2026-08-03T16:00:00+00:00",
+                "trading_date": "2026-08-03",
+                "signals": [
+                    {
+                        "ticker": "AAAA",
+                        "trading_date": "2026-08-03",
+                        "generated_at": "2026-08-03T16:00:00+00:00",
+                        "entry_price": "10.000000",
+                        "atr_value": "2.000000",
+                        "stop_price": "8.000000",
+                        "target_price_1": "14.000000",
+                        "target_price_2": "16.000000",
+                        "percent_change": "9.0",
+                        "relative_volume": None,
+                    }
+                ],
+            }
+        ),
+        encoding="utf-8",
+    )
+    (outcomes_dir / "outcomes-2026-08-03.json").write_text(
+        json.dumps(
+            {
+                "trading_date": "2026-08-03",
+                "checked_at": "2026-08-03T15:00:00+00:00",
+                "outcomes": [
+                    {
+                        "ticker": "AAAA",
+                        "trading_date": "2026-08-03",
+                        "resolved_at": "2026-08-03T14:00:00+00:00",
+                        "outcome": "win",
+                        "exit_price": "14.000000",
+                        "return_pct": "40",
+                    },
+                    {
+                        "ticker": "BBBB",
+                        "trading_date": "2026-08-03",
+                        "resolved_at": "2026-08-03T13:00:00+00:00",
+                        "outcome": "loss",
+                        "exit_price": "4.000000",
+                        "return_pct": "-20",
+                    },
+                ],
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    class _ShouldNotBeCalledClient(_FakeClient):
+        def get_minute_bars(self, symbol, *, start, end):
+            raise AssertionError("already-resolved signals must not be re-fetched")
+
+    monkeypatch.setattr("daybreak_scanner.cli.AlpacaMarketDataClient", _ShouldNotBeCalledClient)
+
+    assert (
+        main(
+            [
+                "check-outcomes",
+                "--signals-dir",
+                str(signals_dir),
+                "--outcomes-dir",
+                str(outcomes_dir),
+                "--trading-date",
+                "2026-08-03",
+            ]
+        )
+        == 0
+    )
+    payload = json.loads((outcomes_dir / "outcomes-2026-08-03.json").read_text(encoding="utf-8"))
+    tickers = {item["ticker"] for item in payload["outcomes"]}
+    assert tickers == {"AAAA"}
+
+    scorecard = json.loads((outcomes_dir / "scorecard.json").read_text(encoding="utf-8"))
+    assert scorecard["total_signals"] == 1
+    assert scorecard["wins"] == 1
+    assert scorecard["losses"] == 0
+    assert scorecard["win_rate_pct"] == "100"
 
 
 def test_dashboard_snapshot_needs_no_credentials_and_writes_a_private_file(

@@ -50,6 +50,17 @@ def _parser() -> argparse.ArgumentParser:
     )
     scan.add_argument("--output-dir", required=True)
     scan.add_argument(
+        "--replace",
+        action="store_true",
+        help=(
+            "Overwrite an existing signals-<date>.json for today's trading date instead of "
+            "refusing. scan is meant to run once per trading day; a second run silently "
+            "replacing the first orphans any outcomes check-outcomes already resolved against "
+            "it (they keep counting toward the scorecard even though their signal is gone). "
+            "Only pass this for a deliberate, intentional re-scan."
+        ),
+    )
+    scan.add_argument(
         "--with-forecast",
         action="store_true",
         help=(
@@ -108,6 +119,17 @@ def _run_scan(args: argparse.Namespace) -> int:
         return 2
 
     trading_date = datetime.now(ET).date()
+    output_dir = Path(args.output_dir)
+    signals_path = output_dir / f"signals-{trading_date.isoformat()}.json"
+    if signals_path.exists() and not args.replace:
+        print(
+            f"daybreak-scanner: {signals_path} already exists; scan already ran for "
+            f"{trading_date.isoformat()}. Pass --replace to overwrite anyway (only for a "
+            "deliberate re-scan -- see --replace's help text for why this is otherwise refused)",
+            file=sys.stderr,
+        )
+        return 5
+
     client = AlpacaMarketDataClient(api_key=api_key, secret_key=secret_key)
     try:
         gainers = client.get_gainers(top=args.top)
@@ -189,7 +211,6 @@ def _run_scan(args: argparse.Namespace) -> int:
         forecast_trend_by_ticker=forecast_trend_by_ticker,
     )
 
-    output_dir = Path(args.output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
     candidates_path = output_dir / f"candidates-{trading_date.isoformat()}.json"
     candidates_payload = {
@@ -203,7 +224,6 @@ def _run_scan(args: argparse.Namespace) -> int:
         encoding="utf-8",
     )
 
-    signals_path = output_dir / f"signals-{trading_date.isoformat()}.json"
     signals_payload = {
         "generated_at": generated_at.isoformat(),
         "trading_date": trading_date.isoformat(),
@@ -242,6 +262,7 @@ def _run_check_outcomes(args: argparse.Namespace) -> int:
     # through a JSON file actually needs.
     raw_signals = json.loads(signals_path.read_text(encoding="utf-8"))["signals"]
     signals = [Signal.model_validate_json(json.dumps(item)) for item in raw_signals]
+    signal_tickers = {signal.ticker for signal in signals}
 
     outcomes_dir = Path(args.outcomes_dir)
     outcomes_dir.mkdir(parents=True, exist_ok=True)
@@ -249,9 +270,15 @@ def _run_check_outcomes(args: argparse.Namespace) -> int:
     resolved: dict[str, SignalOutcome] = {}
     if outcomes_path.exists():
         raw_outcomes = json.loads(outcomes_path.read_text(encoding="utf-8"))["outcomes"]
+        # A prior run's signals-<date>.json can have since been replaced (`scan --replace`):
+        # drop any already-resolved outcome whose ticker isn't in *today's current* signal set
+        # rather than carrying it forward forever -- it would otherwise count toward the
+        # scorecard's all-time win rate for a signal that, as far as the dashboard is
+        # concerned, no longer exists.
         resolved = {
             item["ticker"]: SignalOutcome.model_validate_json(json.dumps(item))
             for item in raw_outcomes
+            if item["ticker"] in signal_tickers
         }
 
     session_close = datetime.combine(trading_date, SESSION_CLOSE_ET, tzinfo=ET).astimezone(UTC)
