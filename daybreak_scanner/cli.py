@@ -74,8 +74,8 @@ def _parser() -> argparse.ArgumentParser:
     snapshot = sub.add_parser(
         "dashboard-snapshot",
         help=(
-            "Export a private dashboard.schema.json-shaped snapshot of scanner state "
-            "(latest day's signals + the cumulative scorecard). Never commit the output."
+            "Export a dashboard.schema.json-shaped snapshot of scanner state "
+            "(latest day's signals + the cumulative scorecard)."
         ),
     )
     snapshot.add_argument(
@@ -87,6 +87,16 @@ def _parser() -> argparse.ArgumentParser:
         help="Directory 'check-outcomes' writes outcomes-*.json/scorecard.json to",
     )
     snapshot.add_argument("--output", required=True)
+    snapshot.add_argument(
+        "--public",
+        action="store_true",
+        help=(
+            "Mark the snapshot data_mode=published, public_safe=true, fit to commit as the "
+            "live dashboard/data/dashboard.json (e.g. from the GitHub Actions automation). "
+            "Without this flag the snapshot is private (data_mode=local) and must never be "
+            "committed -- load it only via the dashboard's 'Load private snapshot' control."
+        ),
+    )
     return parser
 
 
@@ -309,19 +319,28 @@ def _run_check_outcomes(args: argparse.Namespace) -> int:
 
 def _run_dashboard_snapshot(args: argparse.Namespace) -> int:
     snapshot = build_scanner_dashboard_snapshot(
-        scanner_dir=Path(args.scanner_dir), outcomes_dir=Path(args.outcomes_dir)
+        scanner_dir=Path(args.scanner_dir),
+        outcomes_dir=Path(args.outcomes_dir),
+        public=args.public,
     )
     output_path = Path(args.output)
     output_path.parent.mkdir(parents=True, exist_ok=True)
     output_path.write_text(
         json.dumps(snapshot, ensure_ascii=False, sort_keys=True, indent=2), encoding="utf-8"
     )
-    print(
-        f"daybreak-scanner: wrote a private dashboard snapshot to {output_path}. "
-        "It may contain real ticker/price data: never commit it, and load it only via "
-        "the dashboard's 'Load private snapshot' control.",
-        file=sys.stderr,
-    )
+    if args.public:
+        print(
+            f"daybreak-scanner: wrote a public dashboard snapshot to {output_path} "
+            "(data_mode=published, public_safe=true).",
+            file=sys.stderr,
+        )
+    else:
+        print(
+            f"daybreak-scanner: wrote a private dashboard snapshot to {output_path}. "
+            "It may contain real ticker/price data: never commit it, and load it only via "
+            "the dashboard's 'Load private snapshot' control.",
+            file=sys.stderr,
+        )
     return 0
 
 

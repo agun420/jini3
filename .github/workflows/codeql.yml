@@ -1,8 +1,14 @@
 name: CodeQL
 
+# dashboard/data/dashboard.json is excluded here for the same reason as in
+# ci.yml: it's a data file the scanner automation commits frequently, not code.
 on:
   push:
+    paths-ignore:
+      - "dashboard/data/dashboard.json"
   pull_request:
+    paths-ignore:
+      - "dashboard/data/dashboard.json"
   schedule:
     - cron: "17 8 * * 1"
 

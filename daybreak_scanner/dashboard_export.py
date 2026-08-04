@@ -76,9 +76,22 @@ def build_scanner_dashboard_snapshot(
     scanner_dir: Path,
     outcomes_dir: Path,
     generated_at: datetime | None = None,
+    public: bool = False,
 ) -> dict[str, Any]:
     """Reads the most recent day's signals/outcomes plus the cumulative
-    scorecard already written by `daybreak-scanner check-outcomes`."""
+    scorecard already written by `daybreak-scanner check-outcomes`.
+
+    `public=False` (the default) is this module's original private-snapshot
+    behavior: `data_mode: "local"`, `public_safe: False`, meant only for the
+    dashboard's "Load private snapshot" control and never committed.
+
+    `public=True` marks the same fields (tickers, ATR-derived entry/stop/target
+    prices, win/loss outcomes -- never an account balance, position, or broker
+    order id, since scanner mode places no real orders) fit to commit as the
+    live `dashboard/data/dashboard.json`: `data_mode: "published"`,
+    `public_safe: True`. This is an explicit, user-authorized exception to the
+    "never commit real data" rule, scoped exactly to this mechanical scanner
+    data -- see SECURITY.md."""
     now = (generated_at or datetime.now(UTC)).astimezone(UTC)
 
     signal_files = sorted(scanner_dir.glob("signals-*.json"))
@@ -108,9 +121,9 @@ def build_scanner_dashboard_snapshot(
     return {
         "schema_version": SCHEMA_VERSION,
         "generated_at": _iso(now),
-        "data_mode": "local",
+        "data_mode": "published" if public else "local",
         "environment": "paper",
-        "public_safe": False,
+        "public_safe": public,
         "system": {
             "name": "Project Daybreak Scanner (mechanical, no evaluator, no orders)",
             "version": "unknown",

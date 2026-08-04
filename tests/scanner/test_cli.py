@@ -332,6 +332,40 @@ def test_dashboard_snapshot_needs_no_credentials_and_writes_a_private_file(
     assert payload["signals"] == []
 
 
+def test_dashboard_snapshot_public_flag_writes_a_publishable_file(
+    tmp_path: Path, monkeypatch, capsys
+) -> None:
+    monkeypatch.delenv("APCA_API_KEY_ID", raising=False)
+    monkeypatch.delenv("APCA_API_SECRET_KEY", raising=False)
+    scanner_dir = tmp_path / "scanner"
+    outcomes_dir = tmp_path / "outcomes"
+    scanner_dir.mkdir()
+    outcomes_dir.mkdir()
+    output_path = tmp_path / "dashboard.json"
+
+    assert (
+        main(
+            [
+                "dashboard-snapshot",
+                "--scanner-dir",
+                str(scanner_dir),
+                "--outcomes-dir",
+                str(outcomes_dir),
+                "--output",
+                str(output_path),
+                "--public",
+            ]
+        )
+        == 0
+    )
+    err = capsys.readouterr().err
+    assert "public dashboard snapshot" in err
+    assert "never commit it" not in err
+    payload = json.loads(output_path.read_text(encoding="utf-8"))
+    assert payload["public_safe"] is True
+    assert payload["data_mode"] == "published"
+
+
 def test_scan_with_forecast_degrades_gracefully_when_timesfm_is_not_installed(
     tmp_path: Path, monkeypatch, capsys
 ) -> None:

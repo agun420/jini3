@@ -1,8 +1,15 @@
 name: CI
 
+# dashboard/data/dashboard.json is excluded because scanner-scan.yml and
+# scanner-check-outcomes.yml commit it directly to main up to ~30 times/day;
+# a commit that touches only that file needs no code-quality/test run.
 on:
   push:
+    paths-ignore:
+      - "dashboard/data/dashboard.json"
   pull_request:
+    paths-ignore:
+      - "dashboard/data/dashboard.json"
 
 jobs:
   quality:
