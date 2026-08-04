@@ -209,6 +209,7 @@ function renderShell() {
   const scannerMode = isScannerMode(snapshot);
   byId("scanner-mode-banner").hidden = !scannerMode;
   byId("overview-primary-grid").hidden = scannerMode;
+  byId("signal-table").dataset.scannerMode = String(scannerMode);
 }
 
 function updateFreshness() {
@@ -511,19 +512,37 @@ function renderAlertPreview() {
 
 function renderTrading() {
   const { account, positions, orders, signals } = state.snapshot;
-  const approved = signals.filter((item) => item.status === "approved").length;
-  const qualified = signals.filter((item) => item.status === "qualified").length;
-  const excluded = signals.filter((item) => item.status === "excluded").length;
-  const averageScore = signals.length
-    ? signals.reduce((sum, item) => sum + item.conviction_score, 0) / signals.length
-    : null;
-  renderKpis(byId("trading-kpis"), [
-    { label: "Approved", value: approved, footer: "Top-three cap", footerValue: "Max 3", icon: "✓", tone: "positive" },
-    { label: "Qualified", value: qualified, footer: "Below cutoff", footerValue: "Tracked", icon: "＋", tone: "warning" },
-    { label: "Excluded", value: excluded, footer: "Failed hard gate", footerValue: "No trade", icon: "×", tone: excluded ? "warning" : "positive" },
-    { label: "Average score", value: averageScore === null ? "—" : averageScore.toFixed(1), footer: "Published setups", footerValue: signals.length, icon: "◎", tone: "blue" },
-    { label: "Reserved risk", value: formatMoney(account.open_risk, account.currency), footer: "Risk limit", footerValue: formatMoney(account.open_risk_limit, account.currency), icon: "◇", tone: "warning" },
-  ]);
+  if (isScannerMode(state.snapshot)) {
+    // "Approved/Qualified/Excluded" is the full evaluator's status taxonomy --
+    // every scanner signal is "scanner_signal", never any of those, so these
+    // always read 0 despite the ledger below being populated. Show the
+    // execution-outcome breakdown scanner mode actually produces instead.
+    const wins = signals.filter((item) => item.execution_status === "win").length;
+    const losses = signals.filter((item) => item.execution_status === "loss").length;
+    const expired = signals.filter((item) => item.execution_status === "expired").length;
+    const pending = signals.filter((item) => item.execution_status === "pending").length;
+    renderKpis(byId("trading-kpis"), [
+      { label: "Signals today", value: signals.length, footer: "Approved setups", footerValue: state.snapshot.session.approved_setup_count, icon: "◎", tone: "blue" },
+      { label: "Win", value: wins, footer: "Hit a target", footerValue: "Target 1 or 2", icon: "✓", tone: "positive" },
+      { label: "Loss", value: losses, footer: "Hit stop", footerValue: "1x ATR", icon: "×", tone: losses ? "warning" : "positive" },
+      { label: "Expired", value: expired, footer: "Neither touched", footerValue: "By session close", icon: "◇", tone: "neutral" },
+      { label: "Pending", value: pending, footer: "Still tracking", footerValue: "check-outcomes", icon: "↻", tone: pending ? "warning" : "positive" },
+    ]);
+  } else {
+    const approved = signals.filter((item) => item.status === "approved").length;
+    const qualified = signals.filter((item) => item.status === "qualified").length;
+    const excluded = signals.filter((item) => item.status === "excluded").length;
+    const averageScore = signals.length
+      ? signals.reduce((sum, item) => sum + item.conviction_score, 0) / signals.length
+      : null;
+    renderKpis(byId("trading-kpis"), [
+      { label: "Approved", value: approved, footer: "Top-three cap", footerValue: "Max 3", icon: "✓", tone: "positive" },
+      { label: "Qualified", value: qualified, footer: "Below cutoff", footerValue: "Tracked", icon: "＋", tone: "warning" },
+      { label: "Excluded", value: excluded, footer: "Failed hard gate", footerValue: "No trade", icon: "×", tone: excluded ? "warning" : "positive" },
+      { label: "Average score", value: averageScore === null ? "—" : averageScore.toFixed(1), footer: "Published setups", footerValue: signals.length, icon: "◎", tone: "blue" },
+      { label: "Reserved risk", value: formatMoney(account.open_risk, account.currency), footer: "Risk limit", footerValue: formatMoney(account.open_risk_limit, account.currency), icon: "◇", tone: "warning" },
+    ]);
+  }
   renderSignalTable();
 
   const positionPnl = positions.reduce((sum, item) => sum + (item.unrealized_pnl || 0), 0);
@@ -579,15 +598,15 @@ function renderSignalTable() {
     actionCell.append(action);
     row.append(
       tickerCell,
-      cellWithPill(humanize(signal.status), statusTone(signal.status)),
+      cellWithPill(humanize(signal.status), statusTone(signal.status), "col-evaluator-only"),
       cellWithPill(humanize(signal.execution_status), statusTone(signal.execution_status)),
-      element("td", { className: "table-score", text: Math.round(signal.conviction_score) }),
-      element("td", { text: signal.technical_grade }),
+      element("td", { className: "table-score col-evaluator-only", text: Math.round(signal.conviction_score) }),
+      element("td", { className: "col-evaluator-only", text: signal.technical_grade }),
       element("td", { text: formatPrice(signal.entry_price, state.snapshot.account.currency) }),
       element("td", { text: formatPrice(signal.stop_price, state.snapshot.account.currency) }),
       element("td", { text: formatPrice(signal.target_price, state.snapshot.account.currency) }),
       element("td", { text: formatPrice(signal.target_price_2, state.snapshot.account.currency) }),
-      element("td", { text: formatMoney(signal.modeled_risk, state.snapshot.account.currency) }),
+      element("td", { className: "col-evaluator-only", text: formatMoney(signal.modeled_risk, state.snapshot.account.currency) }),
       actionCell,
     );
     body.append(row);
@@ -1058,13 +1077,26 @@ function openSignalDialog(signal) {
   titleRow.append(element("span", { className: "rank-badge", text: signal.rank ? `#${signal.rank}` : "—" }), element("h2", { id: "dialog-title", text: signal.ticker }), element("span", { className: `pill pill-${statusTone(signal.status)}`, text: humanize(signal.status) }));
   body.append(titleRow);
 
+  const scannerMode = isScannerMode(state.snapshot);
   const scoreSection = element("section", { className: "dialog-section" });
-  scoreSection.append(element("h3", { text: "Decision summary" }), element("p", { text: `${signal.conviction_score.toFixed(0)} conviction · ${signal.technical_grade} technical grade · ${humanize(signal.execution_status)}` }));
+  scoreSection.append(
+    element("h3", { text: "Decision summary" }),
+    element("p", {
+      text: scannerMode
+        ? `Mechanical scanner signal · ${humanize(signal.execution_status)}`
+        : `${signal.conviction_score.toFixed(0)} conviction · ${signal.technical_grade} technical grade · ${humanize(signal.execution_status)}`,
+    }),
+  );
   body.append(scoreSection);
 
-  const catalystSection = element("section", { className: "dialog-section" });
-  catalystSection.append(element("h3", { text: `${signal.catalyst_source} catalyst` }), element("p", { text: signal.catalyst }));
-  body.append(catalystSection);
+  // No evaluator ran for a scanner signal, so catalyst_source/catalyst are
+  // always the same "Unavailable"/placeholder text -- the thesis section
+  // right below already says so plainly, making this one redundant noise.
+  if (!scannerMode) {
+    const catalystSection = element("section", { className: "dialog-section" });
+    catalystSection.append(element("h3", { text: `${signal.catalyst_source} catalyst` }), element("p", { text: signal.catalyst }));
+    body.append(catalystSection);
+  }
 
   const thesisSection = element("section", { className: "dialog-section" });
   thesisSection.append(element("h3", { text: "Master thesis" }), element("p", { text: signal.thesis }));
@@ -1089,19 +1121,24 @@ function openSignalDialog(signal) {
   planSection.append(plan);
   body.append(planSection);
 
-  const flagsSection = element("section", { className: "dialog-section" });
-  flagsSection.append(element("h3", { text: "Risk flags" }));
-  const tags = element("div", { className: "tag-list" });
-  const flags = signal.risk_flags.length ? signal.risk_flags : ["No published risk flags"];
-  for (const flag of flags) tags.append(element("span", { className: "tag", text: humanize(flag) }));
-  flagsSection.append(tags);
-  body.append(flagsSection);
+  // No evaluator ran, so risk_flags is always empty for a scanner signal --
+  // rather than a section that only ever reads "No published risk flags",
+  // skip it entirely.
+  if (!scannerMode || signal.risk_flags.length) {
+    const flagsSection = element("section", { className: "dialog-section" });
+    flagsSection.append(element("h3", { text: "Risk flags" }));
+    const tags = element("div", { className: "tag-list" });
+    const flags = signal.risk_flags.length ? signal.risk_flags : ["No published risk flags"];
+    for (const flag of flags) tags.append(element("span", { className: "tag", text: humanize(flag) }));
+    flagsSection.append(tags);
+    body.append(flagsSection);
+  }
   content.append(body);
   byId("signal-dialog").showModal();
 }
 
-function cellWithPill(text, tone) {
-  const cell = element("td");
+function cellWithPill(text, tone, className = "") {
+  const cell = element("td", { className });
   cell.append(element("span", { className: `pill pill-${tone}`, text }));
   return cell;
 }
