@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from datetime import UTC, datetime, timedelta
 from uuid import uuid4
 
 import httpx
@@ -9,6 +10,13 @@ from daybreak_recorder.persistence.batch_writer import AsyncBatchWriter
 from daybreak_recorder.persistence.repository import InMemoryRawEventRepository
 from daybreak_recorder.sec.submissions import SecSubmissionsPoller, parse_recent_filings
 
+# Computed relative to "now" rather than hardcoded: the poller's bootstrap path
+# drops any filing older than `bootstrap_lookback_hours` (see
+# SecSubmissionsPoller.poll_once), so a fixed past timestamp eventually ages out
+# of that window and starts failing the suite on whatever day it crosses it.
+_FILING_1 = datetime.now(UTC) - timedelta(hours=2)
+_FILING_2 = _FILING_1 + timedelta(minutes=1)
+
 SEC_PAYLOAD = {
     "name": "Example Corp",
     "tickers": ["EXMP"],
@@ -16,11 +24,11 @@ SEC_PAYLOAD = {
     "filings": {
         "recent": {
             "accessionNumber": ["0000000000-26-000001", "0000000000-26-000002"],
-            "filingDate": ["2026-07-31", "2026-07-31"],
-            "reportDate": ["2026-07-30", "2026-07-30"],
+            "filingDate": [_FILING_1.date().isoformat(), _FILING_2.date().isoformat()],
+            "reportDate": [_FILING_1.date().isoformat(), _FILING_2.date().isoformat()],
             "acceptanceDateTime": [
-                "2026-07-31T08:01:02.123456789Z",
-                "2026-07-31T08:02:03Z",
+                _FILING_1.strftime("%Y-%m-%dT%H:%M:%S.123456789Z"),
+                _FILING_2.strftime("%Y-%m-%dT%H:%M:%SZ"),
             ],
             "form": ["8-K", "8-K"],
             "primaryDocument": ["exmp-8k.htm", "exmp2-8k.htm"],

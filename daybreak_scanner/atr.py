@@ -9,11 +9,16 @@ risk engine, without needing to run the full feature engine or evaluator to get 
 from __future__ import annotations
 
 from collections.abc import Sequence
-from decimal import Decimal
+from decimal import ROUND_HALF_EVEN, Decimal
 
 from daybreak_features.models import DailyBar
 
 ATR_PERIOD = 14
+
+# Matches the `Money` type's `decimal_places=6` in daybreak_scanner.models: Decimal
+# division below doesn't terminate cleanly (e.g. sums divided by 14), so it keeps
+# growing digits up to the active decimal context's precision if left unquantized.
+_ATR_QUANTUM = Decimal("0.000001")
 
 
 def wilder_atr(bars: Sequence[DailyBar], *, period: int = ATR_PERIOD) -> Decimal | None:
@@ -38,4 +43,4 @@ def wilder_atr(bars: Sequence[DailyBar], *, period: int = ATR_PERIOD) -> Decimal
     atr = sum(true_ranges[:period], Decimal("0")) / Decimal(period)
     for true_range in true_ranges[period:]:
         atr = (atr * Decimal(period - 1) + true_range) / Decimal(period)
-    return atr
+    return atr.quantize(_ATR_QUANTUM, rounding=ROUND_HALF_EVEN)
