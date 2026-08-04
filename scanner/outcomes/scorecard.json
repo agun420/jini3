@@ -1,9 +1,13 @@
 {
-  "average_return_pct": "-3.241207681640476891757078294",
+  "average_return_pct": null,
   "expired": 0,
-  "losses": 4,
-  "total_signals": 5,
-  "updated_at": "2026-08-04T18:10:13.042579+00:00",
-  "win_rate_pct": "20.0",
-  "wins": 1
+  "losses": 0,
+  "target_1_hit_rate_pct": null,
+  "target_2_hit_rate_pct": null,
+  "total_signals": 0,
+  "updated_at": "2026-08-04T19:32:05.000000+00:00",
+  "win_rate_pct": null,
+  "wins": 0,
+  "wins_target_1": 0,
+  "wins_target_2": 0
 }
