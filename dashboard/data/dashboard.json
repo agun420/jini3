@@ -5,7 +5,7 @@
   "alerts": [],
   "data_mode": "published",
   "environment": "paper",
-  "generated_at": "2026-08-04T15:28:51.915301Z",
+  "generated_at": "2026-08-04T16:22:21.824164Z",
   "orders": [],
   "performance": {
     "attributions": [],
@@ -14,19 +14,19 @@
     "summary": {
       "average_entry_slippage_bps": null,
       "average_r_multiple": null,
-      "average_return_pct": null,
+      "average_return_pct": "2.087662767952763957523728455",
       "breakeven_trade_count": 0,
       "expectancy": null,
       "fees": null,
       "gross_pnl": null,
-      "losing_trade_count": 0,
+      "losing_trade_count": 2,
       "maximum_drawdown": null,
       "net_pnl": null,
       "profit_factor": null,
-      "session_count": 0,
-      "trade_count": 0,
-      "win_rate": null,
-      "winning_trade_count": 0
+      "session_count": 1,
+      "trade_count": 3,
+      "win_rate": 0.33333333333333337,
+      "winning_trade_count": 1
     },
     "trades": []
   },
@@ -66,7 +66,7 @@
       "catalyst_source": "",
       "conviction_score": 0,
       "entry_price": 8.509,
-      "execution_status": "pending",
+      "execution_status": "win",
       "rank": 1,
       "status": "scanner_signal",
       "stop_price": 7.639813,
@@ -74,7 +74,7 @@
       "technical_grade": "",
       "thesis": "no evaluator ran for this signal (mechanical scanner mode)",
       "ticker": "AMIX",
-      "updated_at": "2026-08-04T15:28:50.578436Z"
+      "updated_at": "2026-08-04T15:48:00Z"
     },
     {
       "catalyst": "",
@@ -111,7 +111,7 @@
       "catalyst_source": "",
       "conviction_score": 0,
       "entry_price": 0.4097,
-      "execution_status": "pending",
+      "execution_status": "loss",
       "rank": 4,
       "status": "scanner_signal",
       "stop_price": 0.386795,
@@ -119,7 +119,7 @@
       "technical_grade": "",
       "thesis": "no evaluator ran for this signal (mechanical scanner mode)",
       "ticker": "ENSC",
-      "updated_at": "2026-08-04T15:28:50.578436Z"
+      "updated_at": "2026-08-04T15:32:00Z"
     },
     {
       "catalyst": "",
@@ -171,7 +171,7 @@
       "catalyst_source": "",
       "conviction_score": 0,
       "entry_price": 1.3609,
-      "execution_status": "pending",
+      "execution_status": "loss",
       "rank": 8,
       "status": "scanner_signal",
       "stop_price": 1.244187,
@@ -179,7 +179,7 @@
       "technical_grade": "",
       "thesis": "no evaluator ran for this signal (mechanical scanner mode)",
       "ticker": "VGAS",
-      "updated_at": "2026-08-04T15:28:50.578436Z"
+      "updated_at": "2026-08-04T16:10:00Z"
     },
     {
       "catalyst": "",
