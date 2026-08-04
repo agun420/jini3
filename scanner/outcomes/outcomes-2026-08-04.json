@@ -1,5 +1,5 @@
 {
-  "checked_at": "2026-08-04T16:22:18.164690+00:00",
+  "checked_at": "2026-08-04T18:10:13.042579+00:00",
   "outcomes": [
     {
       "exit_price": "10.247374",
@@ -23,6 +23,22 @@
       "resolved_at": "2026-08-04T16:10:00Z",
       "return_pct": "-8.576162833419060915570578294",
       "ticker": "VGAS",
+      "trading_date": "2026-08-04"
+    },
+    {
+      "exit_price": "0.814401",
+      "outcome": "loss",
+      "resolved_at": "2026-08-04T16:55:00Z",
+      "return_pct": "-6.840425531914893617021276596",
+      "ticker": "ADGM",
+      "trading_date": "2026-08-04"
+    },
+    {
+      "exit_price": "0.486148",
+      "outcome": "loss",
+      "resolved_at": "2026-08-04T18:05:00Z",
+      "return_pct": "-15.62860118014578271433530024",
+      "ticker": "TNMG",
       "trading_date": "2026-08-04"
     }
   ],
