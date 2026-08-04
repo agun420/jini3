@@ -119,10 +119,81 @@ sudo -u daybreak /opt/project-daybreak/.venv/bin/pip install '.[forecast]'
 # then add --with-forecast to daybreak-scanner.service's ExecStart line
 ```
 
+### GitHub Actions automation (no VM required)
+
+Instead of the systemd timers above, `.github/workflows/scanner-scan.yml` and
+`scanner-check-outcomes.yml` run the scanner directly on GitHub-hosted
+runners on a schedule, commit its real output to the repository, and publish
+it live on the GitHub Pages dashboard -- no host to provision, no manual
+`--load private snapshot` step. This is the current default deployment path;
+the VM/systemd path above still works if you'd rather self-host.
+
+**Setup (one manual step only you can do):** add two repository secrets --
+Settings → Secrets and variables → Actions → New repository secret -- named
+exactly `APCA_API_KEY_ID` and `APCA_API_SECRET_KEY`, using the same Alpaca
+paper credentials as everywhere else in this project. There is no API to set
+these programmatically; they must be entered through the GitHub web UI, and
+that's deliberate -- the values then never pass through anything but GitHub's
+own secret store.
+
+**What it does, each run:**
+
+1. `scanner-scan.yml` (weekdays, ~09:35 America/New_York) runs `daybreak-scanner
+   scan`, and `scanner-check-outcomes.yml` (weekdays, every 15 minutes from
+   09:00 to 16:45 America/New_York) runs `daybreak-scanner check-outcomes` --
+   both against real Alpaca market data, same as the systemd version.
+2. Their output (`candidates-*.json`, `signals-*.json`, `outcomes-*.json`,
+   `scorecard.json`) is committed to a dedicated **`scanner-data`** branch,
+   not `main` -- GitHub Actions runners have no persistent disk between
+   separate scheduled invocations, so this branch is the only state that
+   survives from one run to the next. It's created automatically on first
+   run.
+3. Each run then regenerates `dashboard/data/dashboard.json` via
+   `daybreak-scanner dashboard-snapshot --public`, validates it with
+   `scripts/validate_dashboard.py`, and commits it straight to `main` if it
+   changed. That push triggers `deploy-dashboard.yml`, which redeploys GitHub
+   Pages with the fresh data automatically.
+
+**This is a deliberate, user-authorized exception** to this project's normal
+"never commit real data" rule -- see the "Explicit, scoped exception" bullet
+in `SECURITY.md`. It is scoped exactly to scanner signals (tickers, ATR
+entry/stop/target, win/loss); no credential, account balance, position, or
+broker order id is ever in scope, because scanner mode places no real order.
+
+**DST and the trading window:** `cron:` schedules are UTC-only and can't
+express an America/New_York time precisely across the DST boundary, so both
+workflows deliberately over-fire (at both possible UTC offsets for `scan`,
+and across the full 13:00-21:45 UTC union window every 15 minutes for
+`check-outcomes`) and `daybreak_scanner/trading_window.py` checks the *real*
+current America/New_York wall-clock time before doing anything, exiting
+cleanly on every tick outside the intended window or on a weekend. Exactly
+one `scan` tick and up to ~31 `check-outcomes` ticks actually do real work on
+any given trading day, regardless of which DST regime is in effect -- more
+precise than the UTC-only cron alone would allow, and self-correcting across
+the DST transition with no manual schedule change needed.
+
+**To test without waiting for market hours:** trigger either workflow
+manually from the Actions tab ("Run workflow") with the `force` input
+checked, which bypasses the trading-window check entirely.
+
+**Not included:** `--with-forecast` (TimesFM) is intentionally left out of
+both workflows. It's unverified against the real model in any environment so
+far (see the "Optional: TimesFM trend forecast" section above) and its
+`[forecast]` extra pulls in a multi-GB PyTorch dependency that would need
+installing on every single scheduled run. Verify it manually first (on a VM
+or locally) before considering wiring it into this automation.
+
+**Branch protection caveat:** both workflows push directly to `main` using
+the default `GITHUB_TOKEN` (via `permissions: contents: write`). If `main`
+has branch-protection rules that block direct pushes, add an exception for
+the `github-actions[bot]` actor, or switch these workflows to open a PR
+instead -- this hasn't been tested against a protected `main` since this
+repository's own protection settings aren't visible to Claude Code.
+
 ### Viewing it on the dashboard
 
 `daybreak-scanner dashboard-snapshot` reads the local files above (no Alpaca
-credentials needed — it never makes a network call) and writes a private,
+credentials needed — it never makes a network call) and writes a
 `dashboard.schema.json`-shaped snapshot: the most recent day's signals (ranked,
 each tagged `win`/`loss`/`expired`/`pending`) in the Trading view, and the
 cumulative scorecard (win rate, trade counts, session count) in the Performance
@@ -130,6 +201,13 @@ view. Genuinely-unavailable fields — technical grade, catalyst thesis, dollar
 P&L, position sizing — render as empty/null rather than fabricated, and
 `system.name` says "mechanical, no evaluator, no orders" so it can never be
 mistaken for the audited system's real paper-trading output.
+
+By default (no `--public`) the snapshot is private (`data_mode: "local"`,
+`public_safe: false`) -- never commit it; load it only via the dashboard's
+"Load private snapshot" control, as below. With `--public`, the same command
+instead marks it `data_mode: "published"`, `public_safe: true`, fit to commit
+as the live `dashboard/data/dashboard.json` -- this is what the GitHub Actions
+automation above uses on every run.
 
 ```bash
 daybreak-scanner dashboard-snapshot \

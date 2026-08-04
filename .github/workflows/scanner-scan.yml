@@ -1,0 +1,124 @@
+name: Scanner Scan
+
+# Runs daybreak-scanner's dynamic candidate discovery once per weekday near
+# market open, persists its raw output on a dedicated `scanner-data` branch
+# (ephemeral runners have no disk across separate runs), and republishes a
+# public dashboard snapshot to `dashboard/data/dashboard.json` on `main`,
+# which `deploy-dashboard.yml` then redeploys to GitHub Pages.
+#
+# `cron:` is UTC-only and cannot express "09:35 America/New_York" precisely
+# across the DST transition, so this fires at both possible UTC offsets and
+# daybreak_scanner.trading_window decides, from the real current
+# America/New_York wall clock, whether this is the one that should actually
+# run. See docs/OPERATIONS.md.
+
+on:
+  schedule:
+    - cron: "35 13,14 * * 1-5"
+  workflow_dispatch:
+    inputs:
+      force:
+        description: "Run even outside the trading window (for manual testing)"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: daybreak-scanner-state
+  cancel-in-progress: false
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - run: python -m pip install --upgrade pip
+      - run: python -m pip install -e .
+
+      - name: Check trading window (09:30-09:50 America/New_York, weekdays)
+        id: window
+        run: |
+          if [ "${{ github.event.inputs.force }}" = "true" ]; then
+            echo "daybreak-scanner: forced run via workflow_dispatch, skipping window check"
+            echo "in_window=true" >> "$GITHUB_OUTPUT"
+          elif python -m daybreak_scanner.trading_window 09:30 09:50; then
+            echo "in_window=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "in_window=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Configure git identity
+        if: steps.window.outputs.in_window == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Prepare scanner-data worktree
+        if: steps.window.outputs.in_window == 'true'
+        run: |
+          git fetch origin scanner-data:refs/remotes/origin/scanner-data || true
+          if git show-ref --verify --quiet refs/remotes/origin/scanner-data; then
+            git worktree add scanner-state origin/scanner-data
+            git -C scanner-state checkout -B scanner-data
+          else
+            git worktree add --orphan -b scanner-data scanner-state
+          fi
+
+      - name: Run scan
+        if: steps.window.outputs.in_window == 'true'
+        env:
+          APCA_API_KEY_ID: ${{ secrets.APCA_API_KEY_ID }}
+          APCA_API_SECRET_KEY: ${{ secrets.APCA_API_SECRET_KEY }}
+        run: daybreak-scanner scan --output-dir scanner-state/scanner
+
+      - name: Commit and push scanner-data state
+        if: steps.window.outputs.in_window == 'true'
+        working-directory: scanner-state
+        run: |
+          git add -A
+          if git diff --cached --quiet; then
+            echo "daybreak-scanner: no scanner-data changes"
+          else
+            git commit -q -m "scan $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+            for attempt in 1 2 3; do
+              git push -q origin HEAD:scanner-data && break
+              git fetch origin scanner-data
+              git rebase origin/scanner-data
+            done
+          fi
+
+      - name: Build public dashboard snapshot
+        if: steps.window.outputs.in_window == 'true'
+        run: |
+          daybreak-scanner dashboard-snapshot \
+            --scanner-dir scanner-state/scanner \
+            --outcomes-dir scanner-state/scanner/outcomes \
+            --output dashboard/data/dashboard.json \
+            --public
+
+      - name: Validate dashboard artifact
+        if: steps.window.outputs.in_window == 'true'
+        run: python scripts/validate_dashboard.py
+
+      - name: Commit and push dashboard.json to main
+        if: steps.window.outputs.in_window == 'true'
+        run: |
+          git add dashboard/data/dashboard.json
+          if git diff --cached --quiet; then
+            echo "daybreak-scanner: no dashboard changes"
+          else
+            git commit -q -m "daybreak-scanner: publish $(date -u +%Y-%m-%d) scan"
+            for attempt in 1 2 3; do
+              git push -q origin HEAD:main && break
+              git fetch origin main
+              git rebase origin/main
+            done
+          fi

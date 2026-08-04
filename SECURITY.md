@@ -20,6 +20,15 @@ order action, credential store, remote analytics, or third-party script — see 
   "paper"`, and `safety.live_capital_eligible: false`.
 - Never commit a real account snapshot, credential, exact private balance, exact private position,
   or broker order identifier under `dashboard/data/`.
+- **Explicit, scoped exception:** `dashboard/data/dashboard.json` may instead carry real
+  `daybreak_scanner` output (tickers, ATR-derived entry/stop/target prices, win/loss outcomes)
+  committed automatically by `.github/workflows/scanner-scan.yml` and
+  `scanner-check-outcomes.yml`, marked `data_mode: "published"` and `public_safe: true`
+  (`daybreak_scanner/dashboard_export.py`'s `public=True` path). This is safe under the rule
+  above because scanner mode never places a real order, sizes no position with real capital, and
+  holds no account balance to leak — see `docs/audit/Project_Daybreak_Scanner_Mode_Audit_2026-08-03.md`.
+  This exception is scoped exactly to that mechanical scanner data; every other rule in this
+  section (no credential, no real account/broker data) still applies without exception.
 - `index.html` ships a strict Content-Security-Policy (`default-src 'self'`; no inline
   scripts/styles/handlers; no third-party origin anywhere), and `app.mjs` renders every element with
   `createElement`/`textContent` — never `innerHTML` — so a malicious or malformed snapshot (published

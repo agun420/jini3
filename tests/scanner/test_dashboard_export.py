@@ -122,6 +122,28 @@ def test_build_scanner_dashboard_snapshot_with_no_data_yet(tmp_path: Path) -> No
     assert snapshot["orders"] == []
 
 
+def test_build_scanner_dashboard_snapshot_public_mode_sets_published_and_safe(
+    tmp_path: Path,
+) -> None:
+    scanner_dir = tmp_path / "scanner"
+    outcomes_dir = tmp_path / "outcomes"
+    scanner_dir.mkdir()
+    outcomes_dir.mkdir()
+    _write_signals(scanner_dir, "2026-08-03")
+    _write_outcomes(outcomes_dir, "2026-08-03")
+
+    snapshot = build_scanner_dashboard_snapshot(
+        scanner_dir=scanner_dir, outcomes_dir=outcomes_dir, public=True
+    )
+
+    assert snapshot["data_mode"] == "published"
+    assert snapshot["public_safe"] is True
+    # Public mode only changes the two visibility flags above -- the signal
+    # content itself is identical to the private snapshot.
+    tickers = [item["ticker"] for item in snapshot["signals"]]
+    assert tickers == ["BBBB", "AAAA"]
+
+
 def test_build_scanner_dashboard_snapshot_uses_the_most_recent_signals_file(tmp_path: Path) -> None:
     scanner_dir = tmp_path / "scanner"
     outcomes_dir = tmp_path / "outcomes"
