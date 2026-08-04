@@ -9,6 +9,7 @@ import {
   formatSignedMoney,
   freshnessState,
   humanize,
+  isScannerMode,
   normalizeSnapshot,
   outcomeCounts,
   qualificationProgress,
@@ -204,6 +205,10 @@ function renderShell() {
     restore.hidden = true;
   }
   setText("footer-source", `Source: ${state.sourceLabel}`);
+
+  const scannerMode = isScannerMode(snapshot);
+  byId("scanner-mode-banner").hidden = !scannerMode;
+  byId("overview-primary-grid").hidden = scannerMode;
 }
 
 function updateFreshness() {
@@ -261,71 +266,114 @@ function renderOverview() {
   byId("status-strip").children[1].dataset.tone = system.market_status.includes("closed") ? "neutral" : "positive";
   byId("status-strip").children[2].dataset.tone = safety.kill_switch_active ? "danger" : safety.entries_enabled ? "positive" : "warning";
 
-  const dailyTone = toneForNumber(account.daily_pnl);
-  renderKpis(byId("overview-kpis"), [
-    {
-      label: "Today’s paper P&L",
-      value: formatSignedMoney(account.daily_pnl, currency),
-      footer: "Realized",
-      footerValue: formatSignedMoney(account.realized_pnl, currency),
-      icon: "$",
-      tone: dailyTone,
-      valueClass: dailyTone,
-    },
-    {
-      label: "Paper equity",
-      value: formatMoney(account.equity, currency),
-      footer: "Session start",
-      footerValue: formatMoney(account.session_start_equity, currency),
-      icon: "◫",
-      tone: "blue",
-    },
-    {
-      label: "Managed positions",
-      value: formatNumber(state.snapshot.positions.length),
-      footer: "Gross exposure",
-      footerValue: formatMoney(account.gross_exposure, currency, { compact: true }),
-      icon: "↗",
-      tone: safety.all_positions_flat ? "positive" : "warning",
-    },
-    {
-      label: "Orders filled",
-      value: `${formatNumber(session.orders_filled)} / ${formatNumber(session.orders_submitted)}`,
-      footer: "Approved setups",
-      footerValue: formatNumber(session.approved_setup_count),
-      icon: "✓",
-      tone: session.unresolved_reconciliations ? "warning" : "positive",
-    },
-  ]);
+  const scannerMode = isScannerMode(state.snapshot);
+  if (scannerMode) {
+    // Scanner mode never sizes a real dollar position, so paper P&L/equity/
+    // positions/orders/risk are all meaningless here -- lead with what the
+    // engine actually produced: setups found and how they've resolved so far.
+    const summary = state.snapshot.performance.summary;
+    const decided = summary.winning_trade_count + summary.losing_trade_count;
+    renderKpis(byId("overview-kpis"), [
+      {
+        label: "Approved setups",
+        value: formatNumber(session.approved_setup_count),
+        footer: "Signals today",
+        footerValue: formatNumber(state.snapshot.signals.length),
+        icon: "✓",
+        tone: "blue",
+      },
+      {
+        label: "Win rate",
+        value: formatPercent(summary.win_rate),
+        footer: "Wins / decided",
+        footerValue: `${formatNumber(summary.winning_trade_count)} / ${formatNumber(decided)}`,
+        icon: "◎",
+        tone: "positive",
+      },
+      {
+        label: "Target 1 hit rate",
+        value: formatPercent(summary.target_1_hit_rate),
+        footer: "2x ATR",
+        footerValue: formatNumber(summary.wins_target_1),
+        icon: "→",
+        tone: "positive",
+      },
+      {
+        label: "Target 2 hit rate",
+        value: formatPercent(summary.target_2_hit_rate),
+        footer: "3x ATR stretch",
+        footerValue: formatNumber(summary.wins_target_2),
+        icon: "⇒",
+        tone: "positive",
+      },
+    ]);
+  } else {
+    const dailyTone = toneForNumber(account.daily_pnl);
+    renderKpis(byId("overview-kpis"), [
+      {
+        label: "Today’s paper P&L",
+        value: formatSignedMoney(account.daily_pnl, currency),
+        footer: "Realized",
+        footerValue: formatSignedMoney(account.realized_pnl, currency),
+        icon: "$",
+        tone: dailyTone,
+        valueClass: dailyTone,
+      },
+      {
+        label: "Paper equity",
+        value: formatMoney(account.equity, currency),
+        footer: "Session start",
+        footerValue: formatMoney(account.session_start_equity, currency),
+        icon: "◫",
+        tone: "blue",
+      },
+      {
+        label: "Managed positions",
+        value: formatNumber(state.snapshot.positions.length),
+        footer: "Gross exposure",
+        footerValue: formatMoney(account.gross_exposure, currency, { compact: true }),
+        icon: "↗",
+        tone: safety.all_positions_flat ? "positive" : "warning",
+      },
+      {
+        label: "Orders filled",
+        value: `${formatNumber(session.orders_filled)} / ${formatNumber(session.orders_submitted)}`,
+        footer: "Approved setups",
+        footerValue: formatNumber(session.approved_setup_count),
+        icon: "✓",
+        tone: session.unresolved_reconciliations ? "warning" : "positive",
+      },
+    ]);
 
-  const curve = state.snapshot.performance.equity_curve;
-  renderLineChart(byId("equity-chart"), curve, {
-    valueKey: "equity",
-    labelKey: "timestamp",
-    formatter: (value) => formatMoney(value, currency, { compact: true }),
-    title: "Paper equity",
-  });
-  const firstEquity = curve.find((point) => point.equity !== null)?.equity ?? null;
-  const lastEquity = [...curve].reverse().find((point) => point.equity !== null)?.equity ?? null;
-  const equityChange = firstEquity !== null && lastEquity !== null ? lastEquity - firstEquity : null;
-  setText("equity-period-label", `${formatNumber(curve.length)} observations`);
-  setText("equity-change", formatSignedMoney(equityChange, currency));
-  byId("equity-change").className = toneForNumber(equityChange);
-  renderEquityFooter(curve, currency);
+    const curve = state.snapshot.performance.equity_curve;
+    renderLineChart(byId("equity-chart"), curve, {
+      valueKey: "equity",
+      labelKey: "timestamp",
+      formatter: (value) => formatMoney(value, currency, { compact: true }),
+      title: "Paper equity",
+    });
+    const firstEquity = curve.find((point) => point.equity !== null)?.equity ?? null;
+    const lastEquity = [...curve].reverse().find((point) => point.equity !== null)?.equity ?? null;
+    const equityChange = firstEquity !== null && lastEquity !== null ? lastEquity - firstEquity : null;
+    setText("equity-period-label", `${formatNumber(curve.length)} observations`);
+    setText("equity-change", formatSignedMoney(equityChange, currency));
+    byId("equity-change").className = toneForNumber(equityChange);
+    renderEquityFooter(curve, currency);
 
-  const utilization = riskUtilization(account);
-  const riskPercent = utilization === null ? null : utilization * 100;
-  byId("risk-gauge").style.setProperty("--value", `${clamp(utilization ?? 0) * 360}deg`);
-  setText("risk-gauge-value", riskPercent === null ? "—" : `${riskPercent.toFixed(0)}%`);
-  const riskTone = utilization === null ? "neutral" : utilization >= 0.85 ? "danger" : utilization >= 0.65 ? "warning" : "positive";
-  setText("risk-state-pill", utilization === null ? "Unavailable" : utilization >= 0.85 ? "Near limit" : utilization >= 0.65 ? "Elevated" : "Within limit");
-  setTone(byId("risk-state-pill"), riskTone);
-  renderMetricList(byId("risk-metrics"), [
-    ["Open modeled risk", formatMoney(account.open_risk, currency)],
-    ["Risk ceiling", formatMoney(account.open_risk_limit, currency)],
-    ["Buying power", formatMoney(account.buying_power, currency)],
-    ["Hard daily loss", formatMoney(account.hard_daily_loss_limit, currency)],
-  ]);
+    const utilization = riskUtilization(account);
+    const riskPercent = utilization === null ? null : utilization * 100;
+    byId("risk-gauge").style.setProperty("--value", `${clamp(utilization ?? 0) * 360}deg`);
+    setText("risk-gauge-value", riskPercent === null ? "—" : `${riskPercent.toFixed(0)}%`);
+    const riskTone = utilization === null ? "neutral" : utilization >= 0.85 ? "danger" : utilization >= 0.65 ? "warning" : "positive";
+    setText("risk-state-pill", utilization === null ? "Unavailable" : utilization >= 0.85 ? "Near limit" : utilization >= 0.65 ? "Elevated" : "Within limit");
+    setTone(byId("risk-state-pill"), riskTone);
+    renderMetricList(byId("risk-metrics"), [
+      ["Open modeled risk", formatMoney(account.open_risk, currency)],
+      ["Risk ceiling", formatMoney(account.open_risk_limit, currency)],
+      ["Buying power", formatMoney(account.buying_power, currency)],
+      ["Hard daily loss", formatMoney(account.hard_daily_loss_limit, currency)],
+    ]);
+  }
 
   renderSetupBoard();
   renderCompactServices();
@@ -532,11 +580,13 @@ function renderSignalTable() {
     row.append(
       tickerCell,
       cellWithPill(humanize(signal.status), statusTone(signal.status)),
+      cellWithPill(humanize(signal.execution_status), statusTone(signal.execution_status)),
       element("td", { className: "table-score", text: Math.round(signal.conviction_score) }),
       element("td", { text: signal.technical_grade }),
       element("td", { text: formatPrice(signal.entry_price, state.snapshot.account.currency) }),
       element("td", { text: formatPrice(signal.stop_price, state.snapshot.account.currency) }),
       element("td", { text: formatPrice(signal.target_price, state.snapshot.account.currency) }),
+      element("td", { text: formatPrice(signal.target_price_2, state.snapshot.account.currency) }),
       element("td", { text: formatMoney(signal.modeled_risk, state.snapshot.account.currency) }),
       actionCell,
     );
@@ -664,6 +714,8 @@ function renderOutcomeDonut() {
   }
   renderMetricList(byId("performance-metric-list"), [
     ["Session count", formatNumber(summary.session_count)],
+    ["Target 1 hit rate", `${formatPercent(summary.target_1_hit_rate)} (${formatNumber(summary.wins_target_1)})`],
+    ["Target 2 hit rate", `${formatPercent(summary.target_2_hit_rate)} (${formatNumber(summary.wins_target_2)})`],
     ["Fees", formatMoney(summary.fees, state.snapshot.account.currency)],
     ["Average slippage", summary.average_entry_slippage_bps === null ? "—" : `${summary.average_entry_slippage_bps.toFixed(1)} bps`],
   ]);
@@ -1021,11 +1073,14 @@ function openSignalDialog(signal) {
   const planSection = element("section", { className: "dialog-section" });
   planSection.append(element("h3", { text: "Deterministic trade plan" }));
   const plan = element("div", { className: "trade-plan-grid" });
+  const targetHitLabel = { target_1: "Hit target 1", target_2: "Hit target 2" }[signal.target_hit] || "—";
   for (const [label, value] of [
     ["Entry", formatPrice(signal.entry_price, state.snapshot.account.currency)],
     ["Stop", formatPrice(signal.stop_price, state.snapshot.account.currency)],
-    ["Target", formatPrice(signal.target_price, state.snapshot.account.currency)],
+    ["Target 1", formatPrice(signal.target_price, state.snapshot.account.currency)],
+    ["Target 2", formatPrice(signal.target_price_2, state.snapshot.account.currency)],
     ["Quantity", formatNumber(signal.quantity)],
+    ["Target reached", targetHitLabel],
   ]) {
     const item = element("div");
     item.append(element("span", { text: label }), element("strong", { text: value }));

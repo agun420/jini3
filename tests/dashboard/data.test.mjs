@@ -8,6 +8,7 @@ import {
   formatPercent,
   formatSignedMoney,
   freshnessState,
+  isScannerMode,
   normalizeSnapshot,
   outcomeCounts,
   qualificationProgress,
@@ -114,6 +115,44 @@ test("status tones remain deterministic", () => {
   assert.equal(statusTone("failed"), "danger");
   assert.equal(statusTone("submitted"), "blue");
   assert.equal(statusTone("custom"), "neutral");
+  assert.equal(statusTone("win"), "positive");
+  assert.equal(statusTone("loss"), "danger");
+});
+
+test("scanner mode is detected from system.phase alone", () => {
+  const scanner = normalizeSnapshot(rawSnapshot({ system: { phase: "scanning" } }));
+  assert.equal(isScannerMode(scanner), true);
+  const full = normalizeSnapshot(rawSnapshot({ system: { phase: "regular_session" } }));
+  assert.equal(isScannerMode(full), false);
+});
+
+test("signals normalize target_price_2 and target_hit, defaulting to null", () => {
+  const value = normalizeSnapshot(
+    rawSnapshot({
+      signals: [
+        { ticker: "aaaa", rank: 1, status: "scanner_signal", conviction_score: 0, target_price: 24, target_price_2: 26, target_hit: "target_2" },
+        { ticker: "bbbb", rank: 2, status: "scanner_signal", conviction_score: 0, target_price: 12 },
+      ],
+    }),
+  );
+  assert.equal(value.signals[0].target_price_2, 26);
+  assert.equal(value.signals[0].target_hit, "target_2");
+  assert.equal(value.signals[1].target_price_2, null);
+  assert.equal(value.signals[1].target_hit, null);
+});
+
+test("performance summary normalizes target hit-rate fields", () => {
+  const value = normalizeSnapshot(
+    rawSnapshot({
+      performance: {
+        summary: { win_rate: 0.6, target_1_hit_rate: 0.4, target_2_hit_rate: 0.2, wins_target_1: 2, wins_target_2: 1 },
+      },
+    }),
+  );
+  assert.equal(value.performance.summary.target_1_hit_rate, 0.4);
+  assert.equal(value.performance.summary.target_2_hit_rate, 0.2);
+  assert.equal(value.performance.summary.wins_target_1, 2);
+  assert.equal(value.performance.summary.wins_target_2, 1);
 });
 
 test("utility functions clamp values and truncate hashes", () => {

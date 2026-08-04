@@ -94,7 +94,8 @@ def test_scan_writes_dated_candidates_and_signals_files(tmp_path: Path, monkeypa
     assert signal["ticker"] == "AAAA"
     assert Decimal(signal["entry_price"]) == Decimal("10")
     assert Decimal(signal["stop_price"]) == Decimal("8")
-    assert Decimal(signal["target_price"]) == Decimal("14")
+    assert Decimal(signal["target_price_1"]) == Decimal("14")
+    assert Decimal(signal["target_price_2"]) == Decimal("16")
 
 
 def test_scan_degrades_gracefully_when_historical_bars_are_unavailable(
@@ -175,7 +176,8 @@ def test_check_outcomes_resolves_a_win_from_minute_bars(tmp_path: Path, monkeypa
                         "entry_price": "10.000000",
                         "atr_value": "2.000000",
                         "stop_price": "8.000000",
-                        "target_price": "14.000000",
+                        "target_price_1": "14.000000",
+                        "target_price_2": "16.000000",
                         "percent_change": "9.0",
                         "relative_volume": None,
                     }
@@ -247,7 +249,8 @@ def test_check_outcomes_is_idempotent_and_skips_already_resolved_signals(
                         "entry_price": "10.000000",
                         "atr_value": "2.000000",
                         "stop_price": "8.000000",
-                        "target_price": "14.000000",
+                        "target_price_1": "14.000000",
+                        "target_price_2": "16.000000",
                         "percent_change": "9.0",
                         "relative_volume": None,
                     }

@@ -130,6 +130,10 @@ export function normalizeSnapshot(raw) {
         fees: numberOr(summary.fees),
         net_pnl: numberOr(summary.net_pnl),
         win_rate: numberOr(summary.win_rate),
+        wins_target_1: Math.max(0, numberOr(summary.wins_target_1, 0)),
+        wins_target_2: Math.max(0, numberOr(summary.wins_target_2, 0)),
+        target_1_hit_rate: numberOr(summary.target_1_hit_rate),
+        target_2_hit_rate: numberOr(summary.target_2_hit_rate),
         profit_factor: numberOr(summary.profit_factor),
         expectancy: numberOr(summary.expectancy),
         maximum_drawdown: numberOr(summary.maximum_drawdown),
@@ -210,7 +214,13 @@ function normalizeSignal(value) {
     reference_price: numberOr(signal.reference_price),
     entry_price: numberOr(signal.entry_price),
     stop_price: numberOr(signal.stop_price),
+    // "target_price" is target_price_1 -- the one target field this schema
+    // shares with the full evaluator pipeline's own signals (daybreak_risk
+    // only ever sizes one target). target_price_2/target_hit are new and
+    // scanner-only: null/absent for every other signal source.
     target_price: numberOr(signal.target_price),
+    target_price_2: numberOr(signal.target_price_2),
+    target_hit: signal.target_hit === "target_1" || signal.target_hit === "target_2" ? signal.target_hit : null,
     quantity: numberOr(signal.quantity),
     modeled_risk: numberOr(signal.modeled_risk),
     risk_flags: arrayOr(signal.risk_flags).map((item) => stringOr(item)).filter(Boolean),
@@ -437,19 +447,27 @@ export function outcomeCounts(summary, trades = []) {
 
 export function statusTone(status) {
   const normalized = normalizedStatus(status);
-  if (["healthy", "verified", "passed", "approved", "filled", "protected", "active"].includes(normalized)) {
+  if (["healthy", "verified", "passed", "approved", "filled", "protected", "active", "win"].includes(normalized)) {
     return "positive";
   }
   if (["warning", "degraded", "pending", "incomplete", "qualified", "partially_filled"].includes(normalized)) {
     return "warning";
   }
-  if (["critical", "offline", "failed", "blocked", "rejected", "canceled", "active_kill"].includes(normalized)) {
+  if (["critical", "offline", "failed", "blocked", "rejected", "canceled", "active_kill", "loss"].includes(normalized)) {
     return "danger";
   }
   if (["normal", "paper_release_candidate", "paper_qualified", "submitted", "accepted"].includes(normalized)) {
     return "blue";
   }
   return "neutral";
+}
+
+// True for a snapshot published by daybreak_scanner (mechanical entry/stop/
+// target signals, no evaluator/account/order data) rather than the full
+// evaluator-risk-execution pipeline -- see daybreak_scanner/dashboard_export.py,
+// which is the only exporter that ever sets system.phase to "scanning".
+export function isScannerMode(snapshot) {
+  return snapshot.system.phase === "scanning";
 }
 
 export function truncateHash(value, size = 12) {

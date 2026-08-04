@@ -3,8 +3,12 @@
 Deliberately bypasses daybreak_features/daybreak_evaluator entirely: those
 packages require float data from a vendor (fmp/massive/sec_api) nobody has
 credentials for yet, and score a rich conviction/thesis this scanner-mode
-pivot never asked for. This produces the same fixed 1x/2x ATR risk shape
-daybreak_risk always uses, from real historical bars alone.
+pivot never asked for. `stop_price`/`target_price_1` mirror the same fixed
+1x/2x ATR risk shape daybreak_risk always uses, from real historical bars
+alone. `target_price_2` (3x ATR) has no daybreak_risk equivalent -- it's a
+scanner-only stretch target purely for outcome tracking (see
+daybreak_scanner.outcomes/scorecard): how often a signal keeps running past
+its first target, not a second real risk-engine target.
 """
 
 from __future__ import annotations
@@ -55,7 +59,8 @@ def build_signals(
                 entry_price=entry_price,
                 atr_value=atr,
                 stop_price=entry_price - atr,
-                target_price=entry_price + (atr * 2),
+                target_price_1=entry_price + (atr * 2),
+                target_price_2=entry_price + (atr * 3),
                 percent_change=candidate.percent_change,
                 relative_volume=candidate.relative_volume,
                 forecast_trend_pct=forecast_trend_by_ticker.get(candidate.ticker),

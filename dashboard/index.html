@@ -115,6 +115,14 @@
           </button>
         </section>
 
+        <section class="source-banner" id="scanner-mode-banner" data-mode="scanner" aria-live="polite" hidden>
+          <div class="source-banner-icon" aria-hidden="true">◎</div>
+          <div>
+            <strong>Mechanical scanner mode</strong>
+            <p>No evaluator, account, or live orders ran this session — these are ATR-based entry/stop/target signals only. See the Trading tab for the full setup ledger.</p>
+          </div>
+        </section>
+
         <section class="view is-active" id="view-overview" data-view-panel="overview" aria-label="Command Center overview">
           <div class="status-strip" id="status-strip">
             <article class="status-strip-item">
@@ -141,7 +149,7 @@
 
           <div class="kpi-grid" id="overview-kpis" role="group" aria-label="Key session metrics"></div>
 
-          <div class="dashboard-grid dashboard-grid-primary">
+          <div class="dashboard-grid dashboard-grid-primary" id="overview-primary-grid">
             <article class="panel panel-span-8">
               <header class="panel-header">
                 <div>
@@ -273,11 +281,13 @@
                     <tr>
                       <th scope="col">Rank / ticker</th>
                       <th scope="col">Decision</th>
+                      <th scope="col">Outcome</th>
                       <th scope="col">Score</th>
                       <th scope="col">Technical</th>
                       <th scope="col">Entry</th>
                       <th scope="col">Stop</th>
-                      <th scope="col">Target</th>
+                      <th scope="col">Target 1</th>
+                      <th scope="col">Target 2</th>
                       <th scope="col">Risk</th>
                       <th scope="col"><span class="sr-only">Details</span></th>
                     </tr>

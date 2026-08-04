@@ -584,6 +584,11 @@ main {
   background: var(--danger-soft);
 }
 
+.source-banner[data-mode="scanner"] {
+  border-color: rgba(106, 169, 255, 0.22);
+  background: var(--blue-soft);
+}
+
 .source-banner-icon {
   display: grid;
   width: 24px;
