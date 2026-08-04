@@ -151,8 +151,11 @@ own secret store.
 3. Each run then regenerates `dashboard/data/dashboard.json` via
    `daybreak-scanner dashboard-snapshot --public`, validates it with
    `scripts/validate_dashboard.py`, and commits it straight to `main` if it
-   changed. That push triggers `deploy-dashboard.yml`, which redeploys GitHub
-   Pages with the fresh data automatically.
+   changed. A push made with the default `GITHUB_TOKEN` doesn't fire other
+   workflows' `push` triggers (GitHub's own loop-prevention), so
+   `deploy-dashboard.yml` wouldn't otherwise notice that commit -- the workflow
+   dispatches it explicitly (`gh workflow run deploy-dashboard.yml`) right
+   after a successful push, which redeploys GitHub Pages with the fresh data.
 
 **This is a deliberate, user-authorized exception** to this project's normal
 "never commit real data" rule -- see the "Explicit, scoped exception" bullet
