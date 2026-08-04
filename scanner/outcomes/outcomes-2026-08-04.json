@@ -1,0 +1,30 @@
+{
+  "checked_at": "2026-08-04T16:22:18.164690+00:00",
+  "outcomes": [
+    {
+      "exit_price": "10.247374",
+      "outcome": "win",
+      "resolved_at": "2026-08-04T15:48:00Z",
+      "return_pct": "20.42982724174403572687742390",
+      "ticker": "AMIX",
+      "trading_date": "2026-08-04"
+    },
+    {
+      "exit_price": "0.386795",
+      "outcome": "loss",
+      "resolved_at": "2026-08-04T15:32:00Z",
+      "return_pct": "-5.590676104466682938735660239",
+      "ticker": "ENSC",
+      "trading_date": "2026-08-04"
+    },
+    {
+      "exit_price": "1.244187",
+      "outcome": "loss",
+      "resolved_at": "2026-08-04T16:10:00Z",
+      "return_pct": "-8.576162833419060915570578294",
+      "ticker": "VGAS",
+      "trading_date": "2026-08-04"
+    }
+  ],
+  "trading_date": "2026-08-04"
+}
