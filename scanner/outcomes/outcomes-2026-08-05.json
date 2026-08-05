@@ -1,0 +1,42 @@
+{
+  "checked_at": "2026-08-05T15:08:26.595762+00:00",
+  "outcomes": [
+    {
+      "exit_price": "17.190755",
+      "outcome": "loss",
+      "resolved_at": "2026-08-05T12:40:00Z",
+      "return_pct": "-11.84228205128205128205128205",
+      "target_hit": null,
+      "ticker": "AMIX",
+      "trading_date": "2026-08-05"
+    },
+    {
+      "exit_price": "0.696615",
+      "outcome": "loss",
+      "resolved_at": "2026-08-05T12:40:00Z",
+      "return_pct": "-12.92312500",
+      "target_hit": null,
+      "ticker": "ADGM",
+      "trading_date": "2026-08-05"
+    },
+    {
+      "exit_price": "34.625805",
+      "outcome": "loss",
+      "resolved_at": "2026-08-05T14:56:00Z",
+      "return_pct": "-7.268867166577396893411890734",
+      "target_hit": null,
+      "ticker": "IBTA",
+      "trading_date": "2026-08-05"
+    },
+    {
+      "exit_price": "0.348439",
+      "outcome": "loss",
+      "resolved_at": "2026-08-05T12:40:00Z",
+      "return_pct": "-9.307912545549193128578865174",
+      "target_hit": null,
+      "ticker": "ENSC",
+      "trading_date": "2026-08-05"
+    }
+  ],
+  "trading_date": "2026-08-05"
+}
