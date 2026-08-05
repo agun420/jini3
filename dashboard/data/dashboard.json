@@ -5,7 +5,7 @@
   "alerts": [],
   "data_mode": "published",
   "environment": "paper",
-  "generated_at": "2026-08-05T12:39:39.694770Z",
+  "generated_at": "2026-08-05T15:08:31.970908Z",
   "orders": [],
   "performance": {
     "attributions": [],
@@ -14,20 +14,20 @@
     "summary": {
       "average_entry_slippage_bps": null,
       "average_r_multiple": null,
-      "average_return_pct": null,
+      "average_return_pct": "-10.33554669085216032601050949",
       "breakeven_trade_count": 0,
       "expectancy": null,
       "fees": null,
       "gross_pnl": null,
-      "losing_trade_count": 0,
+      "losing_trade_count": 4,
       "maximum_drawdown": null,
       "net_pnl": null,
       "profit_factor": null,
-      "session_count": 0,
-      "target_1_hit_rate": null,
-      "target_2_hit_rate": null,
-      "trade_count": 0,
-      "win_rate": null,
+      "session_count": 1,
+      "target_1_hit_rate": 0.0,
+      "target_2_hit_rate": 0.0,
+      "trade_count": 4,
+      "win_rate": 0.0,
       "winning_trade_count": 0,
       "wins_target_1": 0,
       "wins_target_2": 0
@@ -70,7 +70,7 @@
       "catalyst_source": "",
       "conviction_score": 0,
       "entry_price": 19.5,
-      "execution_status": "pending",
+      "execution_status": "loss",
       "rank": 1,
       "status": "scanner_signal",
       "stop_price": 17.190755,
@@ -80,14 +80,14 @@
       "technical_grade": "",
       "thesis": "no evaluator ran for this signal (mechanical scanner mode)",
       "ticker": "AMIX",
-      "updated_at": "2026-08-05T12:39:38.242023Z"
+      "updated_at": "2026-08-05T12:40:00Z"
     },
     {
       "catalyst": "",
       "catalyst_source": "",
       "conviction_score": 0,
       "entry_price": 0.8,
-      "execution_status": "pending",
+      "execution_status": "loss",
       "rank": 2,
       "status": "scanner_signal",
       "stop_price": 0.696615,
@@ -97,7 +97,7 @@
       "technical_grade": "",
       "thesis": "no evaluator ran for this signal (mechanical scanner mode)",
       "ticker": "ADGM",
-      "updated_at": "2026-08-05T12:39:38.242023Z"
+      "updated_at": "2026-08-05T12:40:00Z"
     },
     {
       "catalyst": "",
@@ -121,7 +121,7 @@
       "catalyst_source": "",
       "conviction_score": 0,
       "entry_price": 37.34,
-      "execution_status": "pending",
+      "execution_status": "loss",
       "rank": 4,
       "status": "scanner_signal",
       "stop_price": 34.625805,
@@ -131,7 +131,7 @@
       "technical_grade": "",
       "thesis": "no evaluator ran for this signal (mechanical scanner mode)",
       "ticker": "IBTA",
-      "updated_at": "2026-08-05T12:39:38.242023Z"
+      "updated_at": "2026-08-05T14:56:00Z"
     },
     {
       "catalyst": "",
@@ -155,7 +155,7 @@
       "catalyst_source": "",
       "conviction_score": 0,
       "entry_price": 0.3842,
-      "execution_status": "pending",
+      "execution_status": "loss",
       "rank": 6,
       "status": "scanner_signal",
       "stop_price": 0.348439,
@@ -165,7 +165,7 @@
       "technical_grade": "",
       "thesis": "no evaluator ran for this signal (mechanical scanner mode)",
       "ticker": "ENSC",
-      "updated_at": "2026-08-05T12:39:38.242023Z"
+      "updated_at": "2026-08-05T12:40:00Z"
     },
     {
       "catalyst": "",
