@@ -5,7 +5,7 @@
   "alerts": [],
   "data_mode": "published",
   "environment": "paper",
-  "generated_at": "2026-08-05T18:15:20.100922Z",
+  "generated_at": "2026-08-05T20:02:49.762154Z",
   "orders": [],
   "performance": {
     "attributions": [],
@@ -14,8 +14,8 @@
     "summary": {
       "average_entry_slippage_bps": null,
       "average_r_multiple": null,
-      "average_return_pct": "-10.33554669085216032601050949",
-      "breakeven_trade_count": 0,
+      "average_return_pct": "-4.835990707246480378782734424",
+      "breakeven_trade_count": 3,
       "expectancy": null,
       "fees": null,
       "gross_pnl": null,
@@ -26,7 +26,7 @@
       "session_count": 1,
       "target_1_hit_rate": 0.0,
       "target_2_hit_rate": 0.0,
-      "trade_count": 4,
+      "trade_count": 7,
       "win_rate": 0.0,
       "winning_trade_count": 0,
       "wins_target_1": 0,
@@ -104,7 +104,7 @@
       "catalyst_source": "",
       "conviction_score": 0,
       "entry_price": 0.1594,
-      "execution_status": "pending",
+      "execution_status": "expired",
       "rank": 3,
       "status": "scanner_signal",
       "stop_price": 0.076677,
@@ -114,7 +114,7 @@
       "technical_grade": "",
       "thesis": "no evaluator ran for this signal (mechanical scanner mode)",
       "ticker": "ELPW",
-      "updated_at": "2026-08-05T12:39:38.242023Z"
+      "updated_at": "2026-08-05T20:00:00Z"
     },
     {
       "catalyst": "",
@@ -138,7 +138,7 @@
       "catalyst_source": "",
       "conviction_score": 0,
       "entry_price": 6.45,
-      "execution_status": "pending",
+      "execution_status": "expired",
       "rank": 5,
       "status": "scanner_signal",
       "stop_price": 5.970426,
@@ -148,7 +148,7 @@
       "technical_grade": "",
       "thesis": "no evaluator ran for this signal (mechanical scanner mode)",
       "ticker": "XGN",
-      "updated_at": "2026-08-05T12:39:38.242023Z"
+      "updated_at": "2026-08-05T20:00:00Z"
     },
     {
       "catalyst": "",
@@ -172,7 +172,7 @@
       "catalyst_source": "",
       "conviction_score": 0,
       "entry_price": 0.4757,
-      "execution_status": "pending",
+      "execution_status": "expired",
       "rank": 7,
       "status": "scanner_signal",
       "stop_price": 0.353995,
@@ -182,7 +182,7 @@
       "technical_grade": "",
       "thesis": "no evaluator ran for this signal (mechanical scanner mode)",
       "ticker": "TNMG",
-      "updated_at": "2026-08-05T12:39:38.242023Z"
+      "updated_at": "2026-08-05T20:00:00Z"
     }
   ],
   "system": {
