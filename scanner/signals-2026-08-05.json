@@ -1,0 +1,97 @@
+{
+  "generated_at": "2026-08-05T12:39:38.242023+00:00",
+  "signals": [
+    {
+      "atr_value": "2.309245",
+      "entry_price": "19.5",
+      "forecast_trend_pct": null,
+      "generated_at": "2026-08-05T12:39:38.242023Z",
+      "percent_change": "434.25",
+      "relative_volume": "11.13680979845446607742654728",
+      "stop_price": "17.190755",
+      "target_price_1": "24.118490",
+      "target_price_2": "26.427735",
+      "ticker": "AMIX",
+      "trading_date": "2026-08-05"
+    },
+    {
+      "atr_value": "0.103385",
+      "entry_price": "0.8",
+      "forecast_trend_pct": null,
+      "generated_at": "2026-08-05T12:39:38.242023Z",
+      "percent_change": "73.91",
+      "relative_volume": "19.56421850567507387290286000",
+      "stop_price": "0.696615",
+      "target_price_1": "1.006770",
+      "target_price_2": "1.110155",
+      "ticker": "ADGM",
+      "trading_date": "2026-08-05"
+    },
+    {
+      "atr_value": "0.082723",
+      "entry_price": "0.1594",
+      "forecast_trend_pct": null,
+      "generated_at": "2026-08-05T12:39:38.242023Z",
+      "percent_change": "51.95",
+      "relative_volume": "9.540048151235651876432428799",
+      "stop_price": "0.076677",
+      "target_price_1": "0.324846",
+      "target_price_2": "0.407569",
+      "ticker": "ELPW",
+      "trading_date": "2026-08-05"
+    },
+    {
+      "atr_value": "2.714195",
+      "entry_price": "37.34",
+      "forecast_trend_pct": null,
+      "generated_at": "2026-08-05T12:39:38.242023Z",
+      "percent_change": "51.91",
+      "relative_volume": "5.365962307179471443925862332",
+      "stop_price": "34.625805",
+      "target_price_1": "42.768390",
+      "target_price_2": "45.482585",
+      "ticker": "IBTA",
+      "trading_date": "2026-08-05"
+    },
+    {
+      "atr_value": "0.479574",
+      "entry_price": "6.45",
+      "forecast_trend_pct": null,
+      "generated_at": "2026-08-05T12:39:38.242023Z",
+      "percent_change": "37.82",
+      "relative_volume": "7.689092718104968810798014340",
+      "stop_price": "5.970426",
+      "target_price_1": "7.409148",
+      "target_price_2": "7.888722",
+      "ticker": "XGN",
+      "trading_date": "2026-08-05"
+    },
+    {
+      "atr_value": "0.035761",
+      "entry_price": "0.3842",
+      "forecast_trend_pct": null,
+      "generated_at": "2026-08-05T12:39:38.242023Z",
+      "percent_change": "37.17",
+      "relative_volume": "11.06535490622667853219040408",
+      "stop_price": "0.348439",
+      "target_price_1": "0.455722",
+      "target_price_2": "0.491483",
+      "ticker": "ENSC",
+      "trading_date": "2026-08-05"
+    },
+    {
+      "atr_value": "0.121705",
+      "entry_price": "0.4757",
+      "forecast_trend_pct": null,
+      "generated_at": "2026-08-05T12:39:38.242023Z",
+      "percent_change": "33.06",
+      "relative_volume": "17.10960299117287184628404193",
+      "stop_price": "0.353995",
+      "target_price_1": "0.719110",
+      "target_price_2": "0.840815",
+      "ticker": "TNMG",
+      "trading_date": "2026-08-05"
+    }
+  ],
+  "trading_date": "2026-08-05"
+}
