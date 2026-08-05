@@ -1,5 +1,5 @@
 {
-  "checked_at": "2026-08-05T18:15:17.901490+00:00",
+  "checked_at": "2026-08-05T20:02:47.631853+00:00",
   "outcomes": [
     {
       "exit_price": "17.190755",
@@ -35,6 +35,33 @@
       "return_pct": "-9.307912545549193128578865174",
       "target_hit": null,
       "ticker": "ENSC",
+      "trading_date": "2026-08-05"
+    },
+    {
+      "exit_price": "0.1415",
+      "outcome": "expired",
+      "resolved_at": "2026-08-05T20:00:00Z",
+      "return_pct": "-11.22961104140526976160602258",
+      "target_hit": null,
+      "ticker": "ELPW",
+      "trading_date": "2026-08-05"
+    },
+    {
+      "exit_price": "6.65",
+      "outcome": "expired",
+      "resolved_at": "2026-08-05T20:00:00Z",
+      "return_pct": "3.100775193798449612403100775",
+      "target_hit": null,
+      "ticker": "XGN",
+      "trading_date": "2026-08-05"
+    },
+    {
+      "exit_price": "0.55",
+      "outcome": "expired",
+      "resolved_at": "2026-08-05T20:00:00Z",
+      "return_pct": "15.61908766029009880176581879",
+      "target_hit": null,
+      "ticker": "TNMG",
       "trading_date": "2026-08-05"
     }
   ],
