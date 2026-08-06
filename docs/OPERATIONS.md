@@ -182,6 +182,25 @@ the DST transition with no manual schedule change needed.
 manually from the Actions tab ("Run workflow") with the `force` input
 checked, which bypasses the trading-window check entirely.
 
+**Caution -- a forced `scan` writes real, publicly-visible data.** There is
+no separate "dry run" mode: a forced `scan` outside 09:30-09:50 buys whatever
+is a top mover *at that moment* (often already extended well past the
+strategy's actual fresh-breakout-at-open thesis) and commits it to
+`scanner-data`/`main` exactly like a real scheduled run would. This actually
+happened on 2026-08-04, the automation's first live day: two forced
+dispatches used while verifying #14/#15 produced signals hours after the
+open, and because `scan` had no guard against a second same-day run, the
+later one silently overwrote the first's `signals-<date>.json` -- orphaning
+an already-resolved outcome that stayed invisible on the dashboard's signal
+list yet kept counting in the cumulative scorecard. Both gaps are now closed:
+`scan` refuses to overwrite an existing `signals-<date>.json` for the same
+trading day unless `--replace` is passed explicitly, and `check-outcomes`
+drops any already-resolved outcome whose ticker isn't in the *current*
+signals file rather than carrying it forward forever. Still: only use `force`
+to confirm a workflow *runs*, not to generate signals you intend to keep, and
+if you do produce test data this way, clean up `scanner-data` and republish
+`dashboard/data/dashboard.json` before leaving it live.
+
 **Not included:** `--with-forecast` (TimesFM) is intentionally left out of
 both workflows. It's unverified against the real model in any environment so
 far (see the "Optional: TimesFM trend forecast" section above) and its

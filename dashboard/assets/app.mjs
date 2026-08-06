@@ -796,15 +796,47 @@ function renderTrades() {
 
 function renderSystem() {
   const { release, safety, services, qualification, session, system } = state.snapshot;
+  const scannerMode = isScannerMode(state.snapshot);
   const healthyServices = services.filter((item) => ["healthy", "verified"].includes(item.status)).length;
   const qualificationScore = qualificationProgress(qualification.items);
   const summary = byId("system-summary");
   clear(summary);
-  for (const item of [
-    { label: "Runtime state", value: safety.kill_switch_active ? "Stopped" : humanize(system.phase), detail: safety.kill_switch_active ? "Kill switch requires reset" : `${healthyServices}/${services.length} services healthy`, icon: safety.kill_switch_active ? "!" : "◎", tone: safety.kill_switch_active ? "danger" : "positive" },
-    { label: "Qualification", value: humanize(qualification.status), detail: `${Math.round(qualificationScore * 100)}% of published targets`, icon: "◫", tone: qualification.status === "passed" ? "positive" : "warning" },
-    { label: "Release evidence", value: `v${release.release_version}`, detail: humanize(release.status), icon: "◇", tone: release.paper_release_candidate ? "positive" : "warning" },
-  ]) {
+  // Qualification-for-live-capital and release/build evidence are properties of
+  // the evaluator -> risk -> execution pipeline's own designation process --
+  // the mechanical scanner has neither, so showing them as "unavailable"/0% in
+  // a warning tone reads as a failing check rather than the honest "not
+  // applicable" they are. Swap in scanner-relevant cards instead, same as
+  // Overview's KPI row (see isScannerMode's call site there).
+  const summaryItems = scannerMode
+    ? [
+        {
+          label: "Runtime state",
+          value: humanize(system.phase),
+          detail: "Mechanical scan + outcome checks, no persistent services",
+          icon: "◎",
+          tone: "positive",
+        },
+        {
+          label: "Setups today",
+          value: formatNumber(session.approved_setup_count),
+          detail: `${formatNumber(state.snapshot.signals.length)} signals total`,
+          icon: "✓",
+          tone: "blue",
+        },
+        {
+          label: "Win rate",
+          value: formatPercent(state.snapshot.performance.summary.win_rate),
+          detail: `${formatNumber(state.snapshot.performance.summary.winning_trade_count)} / ${formatNumber(state.snapshot.performance.summary.winning_trade_count + state.snapshot.performance.summary.losing_trade_count)} decided`,
+          icon: "◫",
+          tone: "positive",
+        },
+      ]
+    : [
+        { label: "Runtime state", value: safety.kill_switch_active ? "Stopped" : humanize(system.phase), detail: safety.kill_switch_active ? "Kill switch requires reset" : `${healthyServices}/${services.length} services healthy`, icon: safety.kill_switch_active ? "!" : "◎", tone: safety.kill_switch_active ? "danger" : "positive" },
+        { label: "Qualification", value: humanize(qualification.status), detail: `${Math.round(qualificationScore * 100)}% of published targets`, icon: "◫", tone: qualification.status === "passed" ? "positive" : "warning" },
+        { label: "Release evidence", value: `v${release.release_version}`, detail: humanize(release.status), icon: "◇", tone: release.paper_release_candidate ? "positive" : "warning" },
+      ];
+  for (const item of summaryItems) {
     const card = element("article", { className: "summary-card" });
     const icon = element("span", { className: `summary-icon ${item.tone === "danger" ? "negative" : item.tone === "warning" ? "warning" : "positive"}`, text: item.icon, attrs: { "aria-hidden": "true" } });
     const copy = element("div");
@@ -814,9 +846,13 @@ function renderSystem() {
   }
 
   renderServices();
-  renderControls();
-  renderQualificationDetail();
-  renderEvidence();
+  renderControls(scannerMode);
+  byId("system-evidence-note").hidden = !scannerMode;
+  byId("system-evidence-grid").hidden = scannerMode;
+  if (!scannerMode) {
+    renderQualificationDetail();
+    renderEvidence();
+  }
   renderAlertTimeline();
   setText("system-alert-count", `${state.snapshot.alerts.length} event${state.snapshot.alerts.length === 1 ? "" : "s"}`);
   setText("service-health-pill", `${healthyServices} / ${services.length} healthy`);
@@ -847,13 +883,22 @@ function renderServices() {
   }
 }
 
-function renderControls() {
+function renderControls(scannerMode) {
   const safety = state.snapshot.safety;
   const controls = [
     ["Paper-only enforcement", "Live endpoint and capital disabled", safety.paper_only && !safety.live_capital_eligible],
     ["Kill switch", "Persistent stop state", !safety.kill_switch_active],
-    ["Leadership fence", "Single authorized orchestrator", safety.leadership_valid],
-    ["Account reconciliation", "Broker and internal state match", safety.account_reconciled],
+    // Leadership fence and account reconciliation are properties of the
+    // evaluator/execution pipeline's orchestrator and broker-account sync --
+    // the mechanical scanner has neither, so these fields are never
+    // populated (always false) and would otherwise show as a failing
+    // "Check" for a control that structurally doesn't exist in this mode.
+    ...(scannerMode
+      ? []
+      : [
+          ["Leadership fence", "Single authorized orchestrator", safety.leadership_valid],
+          ["Account reconciliation", "Broker and internal state match", safety.account_reconciled],
+        ]),
     ["Protective orders", "Both bracket legs verified", safety.protective_orders_verified || safety.all_positions_flat],
     ["End-of-day flat", "No overnight exposure allowed", safety.all_positions_flat],
   ];
