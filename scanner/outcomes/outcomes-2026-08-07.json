@@ -1,5 +1,5 @@
 {
-  "checked_at": "2026-08-07T15:07:04.425290+00:00",
+  "checked_at": "2026-08-07T16:07:44.330102+00:00",
   "outcomes": [
     {
       "exit_price": "16.826651",
@@ -62,6 +62,15 @@
       "return_pct": "20.5929492187500",
       "target_hit": "target_1",
       "ticker": "VATE",
+      "trading_date": "2026-08-07"
+    },
+    {
+      "exit_price": "1.611837",
+      "outcome": "loss",
+      "resolved_at": "2026-08-07T15:37:00Z",
+      "return_pct": "-5.464105571847507331378299120",
+      "target_hit": null,
+      "ticker": "ZENA",
       "trading_date": "2026-08-07"
     }
   ],
