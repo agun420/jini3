@@ -1,0 +1,42 @@
+{
+  "checked_at": "2026-08-07T14:05:38.634009+00:00",
+  "outcomes": [
+    {
+      "exit_price": "16.826651",
+      "outcome": "win",
+      "resolved_at": "2026-08-07T13:52:00Z",
+      "return_pct": "5.496244514106583072100313480",
+      "target_hit": "target_2",
+      "ticker": "MB",
+      "trading_date": "2026-08-07"
+    },
+    {
+      "exit_price": "7.157153",
+      "outcome": "loss",
+      "resolved_at": "2026-08-07T13:52:00Z",
+      "return_pct": "-4.895915275858403316679068779",
+      "target_hit": null,
+      "ticker": "NAMI",
+      "trading_date": "2026-08-07"
+    },
+    {
+      "exit_price": "0.407362",
+      "outcome": "win",
+      "resolved_at": "2026-08-07T13:54:00Z",
+      "return_pct": "9.417673918882621541767391888",
+      "target_hit": "target_1",
+      "ticker": "HCWC",
+      "trading_date": "2026-08-07"
+    },
+    {
+      "exit_price": "32.250745",
+      "outcome": "loss",
+      "resolved_at": "2026-08-07T13:49:00Z",
+      "return_pct": "-3.005278195488721804511278195",
+      "target_hit": null,
+      "ticker": "DOCS",
+      "trading_date": "2026-08-07"
+    }
+  ],
+  "trading_date": "2026-08-07"
+}
