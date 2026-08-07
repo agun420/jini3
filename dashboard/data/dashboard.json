@@ -5,7 +5,7 @@
   "alerts": [],
   "data_mode": "published",
   "environment": "paper",
-  "generated_at": "2026-08-07T13:48:40.608798Z",
+  "generated_at": "2026-08-07T14:05:42.307684Z",
   "orders": [],
   "performance": {
     "attributions": [],
@@ -14,23 +14,23 @@
     "summary": {
       "average_entry_slippage_bps": null,
       "average_r_multiple": null,
-      "average_return_pct": "-4.835990707246480378782734424",
+      "average_return_pct": "-2.439928180825753014436525689",
       "breakeven_trade_count": 3,
       "expectancy": null,
       "fees": null,
       "gross_pnl": null,
-      "losing_trade_count": 4,
+      "losing_trade_count": 6,
       "maximum_drawdown": null,
       "net_pnl": null,
       "profit_factor": null,
-      "session_count": 1,
-      "target_1_hit_rate": 0.0,
-      "target_2_hit_rate": 0.0,
-      "trade_count": 7,
-      "win_rate": 0.0,
-      "winning_trade_count": 0,
-      "wins_target_1": 0,
-      "wins_target_2": 0
+      "session_count": 2,
+      "target_1_hit_rate": 0.125,
+      "target_2_hit_rate": 0.125,
+      "trade_count": 11,
+      "win_rate": 0.25,
+      "winning_trade_count": 2,
+      "wins_target_1": 1,
+      "wins_target_2": 1
     },
     "trades": []
   },
@@ -70,24 +70,24 @@
       "catalyst_source": "",
       "conviction_score": 0,
       "entry_price": 15.95,
-      "execution_status": "pending",
+      "execution_status": "win",
       "rank": 1,
       "status": "scanner_signal",
       "stop_price": 15.657783,
-      "target_hit": null,
+      "target_hit": "target_2",
       "target_price": 16.534434,
       "target_price_2": 16.826651,
       "technical_grade": "",
       "thesis": "no evaluator ran for this signal (mechanical scanner mode)",
       "ticker": "MB",
-      "updated_at": "2026-08-07T13:48:39.107681Z"
+      "updated_at": "2026-08-07T13:52:00Z"
     },
     {
       "catalyst": "",
       "catalyst_source": "",
       "conviction_score": 0,
       "entry_price": 7.5256,
-      "execution_status": "pending",
+      "execution_status": "loss",
       "rank": 2,
       "status": "scanner_signal",
       "stop_price": 7.157153,
@@ -97,24 +97,24 @@
       "technical_grade": "",
       "thesis": "no evaluator ran for this signal (mechanical scanner mode)",
       "ticker": "NAMI",
-      "updated_at": "2026-08-07T13:48:39.107681Z"
+      "updated_at": "2026-08-07T13:52:00Z"
     },
     {
       "catalyst": "",
       "catalyst_source": "",
       "conviction_score": 0,
       "entry_price": 0.3723,
-      "execution_status": "pending",
+      "execution_status": "win",
       "rank": 3,
       "status": "scanner_signal",
       "stop_price": 0.354769,
-      "target_hit": null,
+      "target_hit": "target_1",
       "target_price": 0.407362,
       "target_price_2": 0.424893,
       "technical_grade": "",
       "thesis": "no evaluator ran for this signal (mechanical scanner mode)",
       "ticker": "HCWC",
-      "updated_at": "2026-08-07T13:48:39.107681Z"
+      "updated_at": "2026-08-07T13:54:00Z"
     },
     {
       "catalyst": "",
@@ -138,7 +138,7 @@
       "catalyst_source": "",
       "conviction_score": 0,
       "entry_price": 33.25,
-      "execution_status": "pending",
+      "execution_status": "loss",
       "rank": 5,
       "status": "scanner_signal",
       "stop_price": 32.250745,
@@ -148,7 +148,7 @@
       "technical_grade": "",
       "thesis": "no evaluator ran for this signal (mechanical scanner mode)",
       "ticker": "DOCS",
-      "updated_at": "2026-08-07T13:48:39.107681Z"
+      "updated_at": "2026-08-07T13:49:00Z"
     },
     {
       "catalyst": "",
