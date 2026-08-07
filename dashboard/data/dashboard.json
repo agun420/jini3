@@ -5,7 +5,7 @@
   "alerts": [],
   "data_mode": "published",
   "environment": "paper",
-  "generated_at": "2026-08-07T14:05:42.307684Z",
+  "generated_at": "2026-08-07T15:07:06.616304Z",
   "orders": [],
   "performance": {
     "attributions": [],
@@ -14,22 +14,22 @@
     "summary": {
       "average_entry_slippage_bps": null,
       "average_r_multiple": null,
-      "average_return_pct": "-2.439928180825753014436525689",
+      "average_return_pct": "-2.157153728281310726834166016",
       "breakeven_trade_count": 3,
       "expectancy": null,
       "fees": null,
       "gross_pnl": null,
-      "losing_trade_count": 6,
+      "losing_trade_count": 8,
       "maximum_drawdown": null,
       "net_pnl": null,
       "profit_factor": null,
       "session_count": 2,
-      "target_1_hit_rate": 0.125,
-      "target_2_hit_rate": 0.125,
-      "trade_count": 11,
-      "win_rate": 0.25,
-      "winning_trade_count": 2,
-      "wins_target_1": 1,
+      "target_1_hit_rate": 0.18181818181818182,
+      "target_2_hit_rate": 0.09090909090909091,
+      "trade_count": 14,
+      "win_rate": 0.2727272727272727,
+      "winning_trade_count": 3,
+      "wins_target_1": 2,
       "wins_target_2": 1
     },
     "trades": []
@@ -121,7 +121,7 @@
       "catalyst_source": "",
       "conviction_score": 0,
       "entry_price": 5.7801,
-      "execution_status": "pending",
+      "execution_status": "loss",
       "rank": 4,
       "status": "scanner_signal",
       "stop_price": 5.446658,
@@ -131,7 +131,7 @@
       "technical_grade": "",
       "thesis": "no evaluator ran for this signal (mechanical scanner mode)",
       "ticker": "DSY",
-      "updated_at": "2026-08-07T13:48:39.107681Z"
+      "updated_at": "2026-08-07T14:24:00Z"
     },
     {
       "catalyst": "",
@@ -155,7 +155,7 @@
       "catalyst_source": "",
       "conviction_score": 0,
       "entry_price": 0.5127,
-      "execution_status": "pending",
+      "execution_status": "loss",
       "rank": 6,
       "status": "scanner_signal",
       "stop_price": 0.419465,
@@ -165,24 +165,24 @@
       "technical_grade": "",
       "thesis": "no evaluator ran for this signal (mechanical scanner mode)",
       "ticker": "CPOP",
-      "updated_at": "2026-08-07T13:48:39.107681Z"
+      "updated_at": "2026-08-07T14:37:00Z"
     },
     {
       "catalyst": "",
       "catalyst_source": "",
       "conviction_score": 0,
       "entry_price": 10.24,
-      "execution_status": "pending",
+      "execution_status": "win",
       "rank": 7,
       "status": "scanner_signal",
       "stop_price": 9.185641,
-      "target_hit": null,
+      "target_hit": "target_1",
       "target_price": 12.348718,
       "target_price_2": 13.403077,
       "technical_grade": "",
       "thesis": "no evaluator ran for this signal (mechanical scanner mode)",
       "ticker": "VATE",
-      "updated_at": "2026-08-07T13:48:39.107681Z"
+      "updated_at": "2026-08-07T14:08:00Z"
     },
     {
       "catalyst": "",
