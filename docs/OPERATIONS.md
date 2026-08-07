@@ -183,7 +183,7 @@ manually from the Actions tab ("Run workflow") with the `force` input
 checked, which bypasses the trading-window check entirely.
 
 **Caution -- a forced `scan` writes real, publicly-visible data.** There is
-no separate "dry run" mode: a forced `scan` outside 09:30-09:50 buys whatever
+no separate "dry run" mode: a forced `scan` outside 09:30-10:00 buys whatever
 is a top mover *at that moment* (often already extended well past the
 strategy's actual fresh-breakout-at-open thesis) and commits it to
 `scanner-data`/`main` exactly like a real scheduled run would. This actually

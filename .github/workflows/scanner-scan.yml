@@ -44,7 +44,7 @@ jobs:
       - run: python -m pip install --upgrade pip
       - run: python -m pip install -e .
 
-      - name: Check trading window (09:30-09:50 America/New_York, weekdays)
+      - name: Check trading window (09:30-10:00 America/New_York, weekdays)
         id: window
         env:
           FORCE: ${{ github.event.inputs.force }}
@@ -52,7 +52,7 @@ jobs:
           if [ "$FORCE" = "true" ]; then
             echo "daybreak-scanner: forced run via workflow_dispatch, skipping window check"
             echo "in_window=true" >> "$GITHUB_OUTPUT"
-          elif python -m daybreak_scanner.trading_window 09:30 09:50; then
+          elif python -m daybreak_scanner.trading_window 09:30 10:00; then
             echo "in_window=true" >> "$GITHUB_OUTPUT"
           else
             echo "in_window=false" >> "$GITHUB_OUTPUT"
