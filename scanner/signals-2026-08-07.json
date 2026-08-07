@@ -1,0 +1,110 @@
+{
+  "generated_at": "2026-08-07T13:48:39.107681+00:00",
+  "signals": [
+    {
+      "atr_value": "0.292217",
+      "entry_price": "15.95",
+      "forecast_trend_pct": null,
+      "generated_at": "2026-08-07T13:48:39.107681Z",
+      "percent_change": "325.33",
+      "relative_volume": "10202.07804419370004701457452",
+      "stop_price": "15.657783",
+      "target_price_1": "16.534434",
+      "target_price_2": "16.826651",
+      "ticker": "MB",
+      "trading_date": "2026-08-07"
+    },
+    {
+      "atr_value": "0.368447",
+      "entry_price": "7.5256",
+      "forecast_trend_pct": null,
+      "generated_at": "2026-08-07T13:48:39.107681Z",
+      "percent_change": "158.61",
+      "relative_volume": "65.75423415105045442899112144",
+      "stop_price": "7.157153",
+      "target_price_1": "8.262494",
+      "target_price_2": "8.630941",
+      "ticker": "NAMI",
+      "trading_date": "2026-08-07"
+    },
+    {
+      "atr_value": "0.017531",
+      "entry_price": "0.3723",
+      "forecast_trend_pct": null,
+      "generated_at": "2026-08-07T13:48:39.107681Z",
+      "percent_change": "86.15",
+      "relative_volume": "356.1051771519263901438315447",
+      "stop_price": "0.354769",
+      "target_price_1": "0.407362",
+      "target_price_2": "0.424893",
+      "ticker": "HCWC",
+      "trading_date": "2026-08-07"
+    },
+    {
+      "atr_value": "0.333442",
+      "entry_price": "5.7801",
+      "forecast_trend_pct": null,
+      "generated_at": "2026-08-07T13:48:39.107681Z",
+      "percent_change": "67.54",
+      "relative_volume": "43.02970501200275453383692386",
+      "stop_price": "5.446658",
+      "target_price_1": "6.446984",
+      "target_price_2": "6.780426",
+      "ticker": "DSY",
+      "trading_date": "2026-08-07"
+    },
+    {
+      "atr_value": "0.999255",
+      "entry_price": "33.25",
+      "forecast_trend_pct": null,
+      "generated_at": "2026-08-07T13:48:39.107681Z",
+      "percent_change": "60.94",
+      "relative_volume": "5.667704309109489481598881211",
+      "stop_price": "32.250745",
+      "target_price_1": "35.248510",
+      "target_price_2": "36.247765",
+      "ticker": "DOCS",
+      "trading_date": "2026-08-07"
+    },
+    {
+      "atr_value": "0.093235",
+      "entry_price": "0.5127",
+      "forecast_trend_pct": null,
+      "generated_at": "2026-08-07T13:48:39.107681Z",
+      "percent_change": "43.17",
+      "relative_volume": "26.35155357078749535926018778",
+      "stop_price": "0.419465",
+      "target_price_1": "0.699170",
+      "target_price_2": "0.792405",
+      "ticker": "CPOP",
+      "trading_date": "2026-08-07"
+    },
+    {
+      "atr_value": "1.054359",
+      "entry_price": "10.24",
+      "forecast_trend_pct": null,
+      "generated_at": "2026-08-07T13:48:39.107681Z",
+      "percent_change": "38.19",
+      "relative_volume": "67.34606346415979742999107614",
+      "stop_price": "9.185641",
+      "target_price_1": "12.348718",
+      "target_price_2": "13.403077",
+      "ticker": "VATE",
+      "trading_date": "2026-08-07"
+    },
+    {
+      "atr_value": "0.093163",
+      "entry_price": "1.705",
+      "forecast_trend_pct": null,
+      "generated_at": "2026-08-07T13:48:39.107681Z",
+      "percent_change": "23.55",
+      "relative_volume": "12.07974407790956137275835738",
+      "stop_price": "1.611837",
+      "target_price_1": "1.891326",
+      "target_price_2": "1.984489",
+      "ticker": "ZENA",
+      "trading_date": "2026-08-07"
+    }
+  ],
+  "trading_date": "2026-08-07"
+}
