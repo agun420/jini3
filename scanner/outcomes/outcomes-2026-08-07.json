@@ -1,5 +1,5 @@
 {
-  "checked_at": "2026-08-07T14:05:38.634009+00:00",
+  "checked_at": "2026-08-07T15:07:04.425290+00:00",
   "outcomes": [
     {
       "exit_price": "16.826651",
@@ -35,6 +35,33 @@
       "return_pct": "-3.005278195488721804511278195",
       "target_hit": null,
       "ticker": "DOCS",
+      "trading_date": "2026-08-07"
+    },
+    {
+      "exit_price": "5.446658",
+      "outcome": "loss",
+      "resolved_at": "2026-08-07T14:24:00Z",
+      "return_pct": "-5.768792927458002456704901299",
+      "target_hit": null,
+      "ticker": "DSY",
+      "trading_date": "2026-08-07"
+    },
+    {
+      "exit_price": "0.419465",
+      "outcome": "loss",
+      "resolved_at": "2026-08-07T14:37:00Z",
+      "return_pct": "-18.18509849814706456017164034",
+      "target_hit": null,
+      "ticker": "CPOP",
+      "trading_date": "2026-08-07"
+    },
+    {
+      "exit_price": "12.348718",
+      "outcome": "win",
+      "resolved_at": "2026-08-07T14:08:00Z",
+      "return_pct": "20.5929492187500",
+      "target_hit": "target_1",
+      "ticker": "VATE",
       "trading_date": "2026-08-07"
     }
   ],

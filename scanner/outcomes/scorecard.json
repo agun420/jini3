@@ -1,13 +1,13 @@
 {
-  "average_return_pct": "-2.439928180825753014436525689",
+  "average_return_pct": "-2.157153728281310726834166016",
   "expired": 3,
-  "losses": 6,
-  "target_1_hit_rate_pct": "12.500",
-  "target_2_hit_rate_pct": "12.500",
-  "total_signals": 11,
-  "updated_at": "2026-08-07T14:05:38.634009+00:00",
-  "win_rate_pct": "25.00",
-  "wins": 2,
-  "wins_target_1": 1,
+  "losses": 8,
+  "target_1_hit_rate_pct": "18.18181818181818181818181818",
+  "target_2_hit_rate_pct": "9.090909090909090909090909091",
+  "total_signals": 14,
+  "updated_at": "2026-08-07T15:07:04.425290+00:00",
+  "win_rate_pct": "27.27272727272727272727272727",
+  "wins": 3,
+  "wins_target_1": 2,
   "wins_target_2": 1
 }
